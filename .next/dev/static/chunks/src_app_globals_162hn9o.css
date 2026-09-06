@@ -3023,6 +3023,10 @@ h1, h2, h3, h4, h5, h6 {
   .md\:pb-0 {
     padding-bottom: 0;
   }
+
+  .md\:text-right {
+    text-align: right;
+  }
 }
 
 @media (min-width: 1024px) {
