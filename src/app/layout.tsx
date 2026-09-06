@@ -1,13 +1,19 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ClubProvider } from "@/context/ClubContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
-  title: "Leos of Sri Lanka & Maldives • Inspiring Lives",
+  title: "Leo Club of Uva Wellassa University • District 306 C2",
   description:
-    "Official website of Leo Multiple District 306. Empowering youth across Sri Lanka and the Maldives through Leadership, Experience, and Opportunity.",
+    "Official website of the Leo Club of Uva Wellassa University, Leo District 306 C2, Sri Lanka. Empowering youth through leadership, fellowship, and service.",
 };
 
 export default function RootLayout({

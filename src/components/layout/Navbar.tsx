@@ -20,6 +20,8 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [eventsOpen, setEventsOpen] = useState(false);
+  const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
+  const [mobileEventsOpen, setMobileEventsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   // Dynamic scroll listener
@@ -37,29 +39,29 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 transition-all duration-300 w-full max-w-full ${
         scrolled
           ? "bg-[#F4F6FA]/90 backdrop-blur-xl border-b border-slate-200/80 shadow-xs"
           : "bg-[#F4F6FA] border-b border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 w-full">
         <div
-          className={`flex items-center justify-between gap-4 transition-all duration-300 ${
+          className={`flex items-center justify-between gap-3 sm:gap-4 transition-all duration-300 ${
             scrolled ? "h-16" : "h-20"
           }`}
         >
           
           {/* Brand Logo & Lockup */}
-          <Link href="/" className="flex items-center gap-2.5 shrink-0 group whitespace-nowrap">
+          <Link href="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group whitespace-nowrap">
             <div className="relative">
-              <LeoEmblemSvg className="w-10 h-10 shrink-0 group-hover:scale-105 transition-transform duration-200 drop-shadow-xs" />
+              <LeoEmblemSvg className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 group-hover:scale-105 transition-transform duration-200 drop-shadow-xs" />
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-heading font-extrabold text-[17px] sm:text-[19px] text-[#111827] tracking-tight group-hover:text-[#003B99] transition-colors whitespace-nowrap">
+              <span className="font-heading font-extrabold text-[15px] sm:text-[18px] lg:text-[19px] text-[#111827] tracking-tight group-hover:text-[#003B99] transition-colors whitespace-nowrap">
                 Leo Club of UWU
               </span>
-              <span className="hidden xl:inline-flex items-center px-2 py-0.5 rounded-md bg-white text-[10px] font-bold text-slate-600 border border-slate-200/80 tracking-wider uppercase shadow-xs">
+              <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-md bg-white text-[10px] font-bold text-slate-600 border border-slate-200/80 tracking-wider uppercase shadow-xs">
                 District 306 C2
               </span>
             </div>
@@ -68,7 +70,7 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-[14px] font-semibold text-slate-700 shrink-0">
             
-            {/* About Us Dropdown */}
+            {/* 1. About Us Dropdown */}
             <div
               className="relative"
               onMouseEnter={() => setAboutOpen(true)}
@@ -96,7 +98,7 @@ export default function Navbar() {
                       <BookOpen className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="font-semibold text-sm leading-tight">Our Story & Heritage</div>
+                      <div className="font-semibold text-sm leading-tight">Our Story &amp; Heritage</div>
                       <div className="text-[11px] text-slate-500 font-normal mt-0.5">Campus roots and history</div>
                     </div>
                   </Link>
@@ -123,14 +125,14 @@ export default function Navbar() {
                     </div>
                     <div>
                       <div className="font-semibold text-sm leading-tight">Lions Sponsorship</div>
-                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">Lions Club of Badulla & 306 C2</div>
+                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">Lions Club of Badulla &amp; 306 C2</div>
                     </div>
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* Projects Link */}
+            {/* 2. Projects Link */}
             <Link
               href="/projects"
               className="px-3 py-2 rounded-xl text-slate-700 hover:text-[#003B99] hover:bg-slate-50 transition-all duration-150 whitespace-nowrap"
@@ -138,7 +140,7 @@ export default function Navbar() {
               Projects
             </Link>
 
-            {/* Events Dropdown */}
+            {/* 3. Events Dropdown */}
             <div
               className="relative"
               onMouseEnter={() => setEventsOpen(true)}
@@ -167,7 +169,7 @@ export default function Navbar() {
                     </div>
                     <div>
                       <div className="font-semibold text-sm leading-tight">Upcoming Events</div>
-                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">Workshops, camps & ceremonies</div>
+                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">Workshops, camps &amp; ceremonies</div>
                     </div>
                   </Link>
 
@@ -179,7 +181,7 @@ export default function Navbar() {
                       <BookOpen className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="font-semibold text-sm leading-tight">E-Bulletins & News</div>
+                      <div className="font-semibold text-sm leading-tight">E-Bulletins &amp; News</div>
                       <div className="text-[11px] text-slate-500 font-normal mt-0.5">Quarterly publications</div>
                     </div>
                   </Link>
@@ -187,7 +189,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Gallery Link */}
+            {/* 4. Gallery Link */}
             <Link
               href="/gallery"
               className="px-3 py-2 rounded-xl text-slate-700 hover:text-[#003B99] hover:bg-slate-50 transition-all duration-150 whitespace-nowrap"
@@ -195,7 +197,7 @@ export default function Navbar() {
               Gallery
             </Link>
 
-            {/* Contact Link */}
+            {/* 5. Contact Link */}
             <Link
               href="/contact"
               className="px-3 py-2 rounded-xl text-slate-700 hover:text-[#003B99] hover:bg-slate-50 transition-all duration-150 whitespace-nowrap"
@@ -205,10 +207,10 @@ export default function Navbar() {
           </nav>
 
           {/* Right Action Area */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link
               href="/join"
-              className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white font-bold text-sm rounded-xl shadow-xs hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0"
+              className="hidden sm:inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0"
             >
               <span>Join UWU Leos</span>
               <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-0.5 transition-transform" />
@@ -219,7 +221,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-              className="lg:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors shrink-0"
+              className="lg:hidden p-2.5 rounded-xl text-slate-700 hover:bg-slate-200/60 active:bg-slate-200 transition-colors shrink-0 flex items-center justify-center"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -227,62 +229,144 @@ export default function Navbar() {
 
         </div>
 
-        {/* Mobile Drawer */}
+        {/* Mobile Drawer (Matches Desktop Hierarchy) */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-100 py-4 space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
-            <Link
-              href="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-800 hover:bg-slate-50 hover:text-[#003B99]"
-            >
-              <BookOpen className="w-4 h-4 text-leo-cyan" />
-              <span>About Us & Heritage</span>
-            </Link>
-            <Link
-              href="/board"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-800 hover:bg-slate-50 hover:text-[#003B99]"
-            >
-              <Users className="w-4 h-4 text-leo-cyan" />
-              <span>Executive Board</span>
-            </Link>
+          <div className="lg:hidden border-t border-slate-200/80 py-4 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200 bg-[#F4F6FA]/95 rounded-b-2xl pb-6">
+            
+            {/* 1. About Us (Accordion with sub-items) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setMobileAboutOpen(!mobileAboutOpen)}
+                className="w-full flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm text-slate-800 hover:bg-white hover:text-[#003B99] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <BookOpen className="w-4 h-4 text-leo-cyan shrink-0" />
+                  <span>About Us</span>
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                    mobileAboutOpen ? "rotate-180 text-[#003B99]" : ""
+                  }`}
+                />
+              </button>
+
+              {mobileAboutOpen && (
+                <div className="pl-11 pr-4 py-1.5 space-y-1 bg-white/70 rounded-xl mx-3 my-1 border border-slate-200/60">
+                  <Link
+                    href="/about"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setMobileAboutOpen(false);
+                    }}
+                    className="block py-2 text-xs font-semibold text-slate-700 hover:text-[#003B99] transition-colors"
+                  >
+                    Our Story &amp; Heritage
+                  </Link>
+                  <Link
+                    href="/board"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setMobileAboutOpen(false);
+                    }}
+                    className="block py-2 text-xs font-semibold text-slate-700 hover:text-[#003B99] transition-colors"
+                  >
+                    Executive Board
+                  </Link>
+                  <Link
+                    href="/about#lions-history"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setMobileAboutOpen(false);
+                    }}
+                    className="block py-2 text-xs font-semibold text-slate-700 hover:text-[#003B99] transition-colors"
+                  >
+                    Lions Sponsorship
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Projects */}
             <Link
               href="/projects"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-800 hover:bg-slate-50 hover:text-[#003B99]"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-slate-800 hover:bg-white hover:text-[#003B99] transition-colors"
             >
-              <Calendar className="w-4 h-4 text-leo-cyan" />
+              <Award className="w-4 h-4 text-leo-cyan shrink-0" />
               <span>Projects</span>
             </Link>
-            <Link
-              href="/events"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-800 hover:bg-slate-50 hover:text-[#003B99]"
-            >
-              <Calendar className="w-4 h-4 text-leo-cyan" />
-              <span>News & Events</span>
-            </Link>
+
+            {/* 3. Events (Accordion with sub-items) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setMobileEventsOpen(!mobileEventsOpen)}
+                className="w-full flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm text-slate-800 hover:bg-white hover:text-[#003B99] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-leo-cyan shrink-0" />
+                  <span>Events</span>
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                    mobileEventsOpen ? "rotate-180 text-[#003B99]" : ""
+                  }`}
+                />
+              </button>
+
+              {mobileEventsOpen && (
+                <div className="pl-11 pr-4 py-1.5 space-y-1 bg-white/70 rounded-xl mx-3 my-1 border border-slate-200/60">
+                  <Link
+                    href="/events"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setMobileEventsOpen(false);
+                    }}
+                    className="block py-2 text-xs font-semibold text-slate-700 hover:text-[#003B99] transition-colors"
+                  >
+                    Upcoming Events
+                  </Link>
+                  <Link
+                    href="/events#bulletins"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setMobileEventsOpen(false);
+                    }}
+                    className="block py-2 text-xs font-semibold text-slate-700 hover:text-[#003B99] transition-colors"
+                  >
+                    E-Bulletins &amp; News
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* 4. Gallery */}
             <Link
               href="/gallery"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-800 hover:bg-slate-50 hover:text-[#003B99]"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-slate-800 hover:bg-white hover:text-[#003B99] transition-colors"
             >
-              <ImageIcon className="w-4 h-4 text-leo-cyan" />
-              <span>Media Gallery</span>
+              <ImageIcon className="w-4 h-4 text-leo-cyan shrink-0" />
+              <span>Gallery</span>
             </Link>
+
+            {/* 5. Contact */}
             <Link
               href="/contact"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-800 hover:bg-slate-50 hover:text-[#003B99]"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-slate-800 hover:bg-white hover:text-[#003B99] transition-colors"
             >
-              <PhoneCall className="w-4 h-4 text-leo-cyan" />
+              <PhoneCall className="w-4 h-4 text-leo-cyan shrink-0" />
               <span>Contact</span>
             </Link>
-            <div className="pt-3">
+
+            {/* 6. Join CTA */}
+            <div className="pt-3 px-2">
               <Link
                 href="/join"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center py-3 bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white font-bold text-sm rounded-xl block shadow-md transition-all duration-200"
+                className="w-full text-center py-3.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white font-bold text-sm rounded-xl block shadow-sm transition-all duration-200"
               >
                 Join UWU Leos
               </Link>

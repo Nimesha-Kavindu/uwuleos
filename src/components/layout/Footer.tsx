@@ -10,21 +10,21 @@ export default function Footer() {
   const { club } = useClub();
 
   return (
-    <footer className="bg-[#050E21] text-slate-400 border-t border-white/10 pt-12 pb-8">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
+    <footer className="bg-[#050E21] text-slate-400 border-t border-white/10 pt-10 sm:pt-12 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
         
         {/* Main 3-Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 pb-10 border-b border-white/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 pb-8 sm:pb-10 border-b border-white/10">
           
           {/* Brand Col (6 Cols) */}
-          <div className="lg:col-span-6 space-y-4">
+          <div className="sm:col-span-2 lg:col-span-6 space-y-3.5 sm:space-y-4">
             <div className="flex items-center gap-3">
-              <LeoEmblemSvg className="w-10 h-10 shrink-0" />
+              <LeoEmblemSvg className="w-9 h-9 sm:w-10 sm:h-10 shrink-0" />
               <div>
-                <span className="font-heading font-extrabold text-lg text-white tracking-tight block">
+                <span className="font-heading font-extrabold text-base sm:text-lg text-white tracking-tight block">
                   {club.name}
                 </span>
-                <span className="text-[11px] font-semibold text-leo-cyan tracking-wider uppercase">
+                <span className="text-[10px] sm:text-[11px] font-semibold text-leo-cyan tracking-wider uppercase">
                   {club.district} • Sri Lanka
                 </span>
               </div>
@@ -35,7 +35,7 @@ export default function Footer() {
             </p>
 
             <div className="flex items-center gap-2 pt-1">
-              <span className="text-[11px] font-medium text-slate-500">
+              <span className="text-[10px] sm:text-[11px] font-medium text-slate-500">
                 Sponsoring Lions Club: <strong className="text-slate-300 font-semibold">{club.sponsoringLionsClub}</strong>
               </span>
             </div>
@@ -109,12 +109,12 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 text-center sm:text-left">
           <div>
             &copy; {new Date().getFullYear()} {club.name} • {club.district}
           </div>
           
-          <div className="flex items-center gap-5 text-[11px]">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 text-[11px]">
             <Link href="/about" className="hover:text-slate-300 transition-colors">About</Link>
             <Link href="/contact" className="hover:text-slate-300 transition-colors">Contact</Link>
             <Link href="/join" className="hover:text-slate-300 transition-colors">Join</Link>
