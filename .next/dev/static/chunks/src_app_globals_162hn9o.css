@@ -1010,6 +1010,15 @@ img, video {
   gap: 2rem;
 }
 
+.gap-x-6 {
+  -moz-column-gap: 1.5rem;
+  column-gap: 1.5rem;
+}
+
+.gap-y-2 {
+  row-gap: .5rem;
+}
+
 .space-y-1 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(.25rem * calc(1 - var(--tw-space-y-reverse)));
@@ -1514,6 +1523,11 @@ img, video {
 .bg-slate-300 {
   --tw-bg-opacity: 1;
   background-color: rgb(203 213 225 / var(--tw-bg-opacity, 1));
+}
+
+.bg-\[\#051430\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(5 20 48 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gradient-to-b {
@@ -2835,6 +2849,10 @@ h1, h2, h3, h4, h5, h6 {
 
   .sm\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sm\:flex-row {
+    flex-direction: row;
   }
 
   .sm\:gap-8 {
