@@ -68,7 +68,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#F4F6FA] via-[#FAFBFC] to-white pt-10 pb-16 lg:pt-16 lg:pb-24 border-b border-[#E9EDF5]">
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#F4F6FA] via-[#FAFBFC] to-white pt-4 pb-16 lg:pt-8 lg:pb-24 border-b border-[#E9EDF5]">
       
       {/* Ambient background glows */}
       <div className="absolute -top-24 right-1/4 w-[500px] h-[500px] bg-leo-cyan/10 rounded-full blur-3xl -z-10 pointer-events-none" />

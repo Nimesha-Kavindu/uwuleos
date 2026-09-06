@@ -13,11 +13,11 @@ export default function Footer() {
     <footer className="bg-[#050E21] text-slate-400 border-t border-white/10 pt-12 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main 4-Column Grid */}
+        {/* Main 3-Column Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 pb-10 border-b border-white/10">
           
-          {/* Brand Col (5 Cols) */}
-          <div className="lg:col-span-5 space-y-4">
+          {/* Brand Col (6 Cols) */}
+          <div className="lg:col-span-6 space-y-4">
             <div className="flex items-center gap-3">
               <LeoEmblemSvg className="w-10 h-10 shrink-0" />
               <div>
@@ -30,7 +30,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-md">
               The official youth service movement of Uva Wellassa University of Sri Lanka, empowering undergraduates to lead through service, fellowship, and community development.
             </p>
 
@@ -41,15 +41,15 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links (2 Cols) */}
-          <div className="lg:col-span-2">
+          {/* Quick Links (3 Cols) */}
+          <div className="lg:col-span-3">
             <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-white mb-3">
-              Navigation
+              Quick Links
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/about" className="hover:text-white transition-colors">
-                  About Us
+                  About Us &amp; Heritage
                 </Link>
               </li>
               <li>
@@ -59,7 +59,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/projects" className="hover:text-white transition-colors">
-                  Our Projects
+                  Humanitarian Projects
                 </Link>
               </li>
               <li>
@@ -72,37 +72,8 @@ export default function Footer() {
                   Media Gallery
                 </Link>
               </li>
-            </ul>
-          </div>
-
-          {/* Causes (2 Cols) */}
-          <div className="lg:col-span-2">
-            <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-white mb-3">
-              Focus Areas
-            </h4>
-            <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/projects?category=education" className="hover:text-white transition-colors">
-                  Education &amp; Schools
-                </Link>
-              </li>
-              <li>
-                <Link href="/projects?category=environment" className="hover:text-white transition-colors">
-                  Green Uva Environment
-                </Link>
-              </li>
-              <li>
-                <Link href="/projects?category=healthcare" className="hover:text-white transition-colors">
-                  Healthcare &amp; Blood Aid
-                </Link>
-              </li>
-              <li>
-                <Link href="/projects?category=youth" className="hover:text-white transition-colors">
-                  Youth Empowerment
-                </Link>
-              </li>
-              <li>
-                <Link href="/join" className="text-leo-cyan hover:underline flex items-center gap-1 font-semibold">
+                <Link href="/join" className="text-leo-cyan hover:underline inline-flex items-center gap-1 font-semibold pt-1">
                   <span>Join as Undergrad</span>
                   <ArrowUpRight className="w-3 h-3" />
                 </Link>
