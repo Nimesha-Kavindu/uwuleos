@@ -86,21 +86,20 @@ export default function HeroSection() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-leo-cyan opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-leo-cyan"></span>
               </span>
-              <span>LEO DISTRICT 306 C2 • UVA WELLASSA UNIVERSITY</span>
+              <span>UWU Leos • District 306 C2</span>
             </div>
 
             {/* Headline */}
-            <h1 className="font-heading font-extrabold text-4xl sm:text-5xl lg:text-[56px] text-[#111827] tracking-tight leading-[1.12]">
-              Empowering Undergraduates.{" "}
+            <h1 className="font-heading font-extrabold text-4xl sm:text-5xl lg:text-[48px] text-[#111827] tracking-tight leading-[1.15]">
+              Empowering Youth,{" "}
               <span className="text-[#003B99]">
-                Inspiring Change.
-              </span>{" "}
-              Serving Communities.
+                Serving Communities.
+              </span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl font-normal">
-              The official youth service organization of Uva Wellassa University of Sri Lanka. Uniting passionate undergraduates to lead impactful community initiatives, build executive leadership skills, and serve communities across Uva Province and beyond.
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl font-normal">
+              The official youth service movement of Uva Wellassa University. Uniting undergraduates to lead impactful initiatives, build leadership skills, and serve our communities.
             </p>
 
             {/* Action Buttons */}
