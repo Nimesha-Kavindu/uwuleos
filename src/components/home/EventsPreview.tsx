@@ -94,7 +94,7 @@ export default function EventsPreview() {
                   <button
                     type="button"
                     onClick={() => setRegisteredEvent(event.id)}
-                    className="px-4 py-2 text-xs font-bold text-white bg-leo-cyan hover:bg-leo-cyan-hover rounded-lg shadow-xs transition-colors"
+                    className="px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] rounded-lg shadow-xs hover:shadow transition-all duration-200"
                   >
                     RSVP / Register
                   </button>

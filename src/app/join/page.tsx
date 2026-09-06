@@ -139,7 +139,7 @@ export default function JoinPage() {
                       setIsSubmitted(false);
                       setStep(1);
                     }}
-                    className="px-8 py-3 bg-leo-blue text-white rounded-full font-bold text-sm hover:bg-leo-blue-hover"
+                    className="px-8 py-3 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-sm shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
                   >
                     Submit Another Application
                   </button>
@@ -247,10 +247,10 @@ export default function JoinPage() {
                       <div className="pt-4 flex justify-end">
                         <button
                           type="submit"
-                          className="inline-flex items-center gap-2 px-8 py-3.5 bg-leo-cyan hover:bg-leo-cyan-hover text-white rounded-full font-bold text-sm shadow-md transition-colors"
+                          className="group inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-sm shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
                         >
                           <span>Next Step</span>
-                          <ArrowRight className="w-4 h-4" />
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                         </button>
                       </div>
                     </>
@@ -263,20 +263,20 @@ export default function JoinPage() {
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                           {[
                             "Community Service",
-                            "Environmental Projects",
-                            "Public Relations & Media",
-                            "Graphic Design",
-                            "Fundraising",
+                            "Youth Leadership",
+                            "Environment & Eco",
+                            "Health & Blood Aid",
+                            "Event Management",
                             "Public Speaking",
                           ].map((cat) => (
                             <button
                               type="button"
                               key={cat}
                               onClick={() => toggleInterest(cat)}
-                              className={`p-3 rounded-2xl text-xs font-bold text-left border transition-all ${
+                              className={`p-3 rounded-xl text-xs font-bold text-left border transition-all ${
                                 formData.interests.includes(cat)
-                                  ? "bg-leo-blue text-white border-leo-blue shadow-sm"
-                                  : "bg-leo-pearl text-leo-charcoal border-leo-border hover:bg-leo-pearl-dark"
+                                  ? "bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white border-transparent shadow-xs"
+                                  : "bg-leo-pearl text-leo-charcoal border-leo-border hover:bg-slate-100"
                               }`}
                             >
                               {cat}
@@ -294,7 +294,7 @@ export default function JoinPage() {
                           placeholder="Briefly share what inspires you to serve..."
                           value={formData.motivation}
                           onChange={(e) => setFormData({ ...formData, motivation: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
+                          className="w-full px-4 py-3 rounded-xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
                         />
                       </div>
 
@@ -302,13 +302,13 @@ export default function JoinPage() {
                         <button
                           type="button"
                           onClick={() => setStep(1)}
-                          className="px-6 py-3 bg-leo-pearl hover:bg-leo-pearl-dark text-leo-charcoal rounded-full font-bold text-sm"
+                          className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm transition-colors"
                         >
                           Back
                         </button>
                         <button
                           type="submit"
-                          className="px-8 py-3.5 bg-leo-cyan hover:bg-leo-cyan-hover text-white rounded-full font-bold text-sm shadow-md transition-colors"
+                          className="px-8 py-3.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-sm shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
                         >
                           Submit Application
                         </button>

@@ -38,10 +38,10 @@ export default function EventsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("upcoming")}
-              className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
+              className={`px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                 activeTab === "upcoming"
-                  ? "bg-leo-blue text-white shadow-md"
-                  : "bg-leo-pearl text-leo-charcoal hover:bg-leo-pearl-dark"
+                  ? "bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white shadow-xs"
+                  : "bg-leo-pearl text-leo-charcoal hover:bg-slate-100"
               }`}
             >
               Upcoming Events Calendar
@@ -49,10 +49,10 @@ export default function EventsPage() {
             <button
               type="button"
               onClick={() => setActiveTab("bulletins")}
-              className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
+              className={`px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                 activeTab === "bulletins"
-                  ? "bg-leo-blue text-white shadow-md"
-                  : "bg-leo-pearl text-leo-charcoal hover:bg-leo-pearl-dark"
+                  ? "bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white shadow-xs"
+                  : "bg-leo-pearl text-leo-charcoal hover:bg-slate-100"
               }`}
             >
               E-Bulletins & Magazines
@@ -70,11 +70,11 @@ export default function EventsPage() {
               {club.upcomingEvents.map((event) => (
                 <div
                   key={event.id}
-                  className="bg-white rounded-3xl p-6 sm:p-8 border border-leo-border shadow-sm hover:shadow-card transition-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+                  className="bg-white rounded-2xl p-6 sm:p-8 border border-leo-border shadow-xs hover:shadow-card transition-card flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
                 >
                   <div className="flex items-start gap-6">
                     {/* Date Block */}
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-leo-blue text-white flex flex-col items-center justify-center font-heading shrink-0 shadow-md">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-[#003B99] text-white flex flex-col items-center justify-center font-heading shrink-0 shadow-xs">
                       <span className="text-2xl sm:text-3xl font-extrabold">{event.day}</span>
                       <span className="text-[11px] font-bold tracking-wider uppercase text-leo-cyan">
                         {event.month}
@@ -82,7 +82,7 @@ export default function EventsPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <span className="inline-block px-3 py-1 rounded-full bg-leo-cyan-light text-leo-blue text-[11px] font-bold uppercase tracking-wider">
+                      <span className="inline-block px-3 py-1 rounded-lg bg-leo-cyan-light text-[#003B99] text-[11px] font-bold uppercase tracking-wider">
                         {event.category}
                       </span>
                       <h3 className="font-heading font-extrabold text-xl text-leo-charcoal">
@@ -107,7 +107,7 @@ export default function EventsPage() {
 
                   <div className="shrink-0 w-full md:w-auto">
                     {registeredEvent === event.id ? (
-                      <div className="px-6 py-3 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold flex items-center justify-center gap-2">
+                      <div className="px-6 py-3 bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                         <span>Registered</span>
                       </div>
@@ -115,7 +115,7 @@ export default function EventsPage() {
                       <button
                         type="button"
                         onClick={() => setRegisteredEvent(event.id)}
-                        className="w-full md:w-auto px-6 py-3 bg-leo-cyan hover:bg-leo-cyan-hover text-white rounded-full font-bold text-xs shadow-md transition-colors"
+                        className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-xs shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
                       >
                         Register for Event
                       </button>
@@ -128,14 +128,14 @@ export default function EventsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 {
-                  title: "Leo Multiple District 306 Annual Review 2024",
+                  title: `${club.shortName} Annual Review & Chronicle`,
                   issue: "Volume 14 • Issue 2",
                   pages: "48 Pages",
                   size: "8.4 MB",
                 },
                 {
-                  title: "The Roar: Youth Leadership Quarterly Bulletin",
-                  issue: "Q3 2024 Edition",
+                  title: "The Roar: UWU Youth Leadership Quarterly",
+                  issue: "Q3 Edition",
                   pages: "24 Pages",
                   size: "4.2 MB",
                 },
@@ -148,10 +148,10 @@ export default function EventsPage() {
               ].map((bulletin, idx) => (
                 <div
                   key={idx}
-                  className="bg-leo-pearl rounded-3xl p-6 border border-leo-border flex flex-col justify-between space-y-6"
+                  className="bg-leo-pearl rounded-2xl p-6 border border-leo-border flex flex-col justify-between space-y-6"
                 >
                   <div className="space-y-3">
-                    <div className="w-12 h-12 rounded-2xl bg-leo-blue text-white flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-xl bg-[#003B99] text-white flex items-center justify-center">
                       <FileText className="w-6 h-6" />
                     </div>
                     <h3 className="font-heading font-bold text-lg text-leo-charcoal">
@@ -165,7 +165,7 @@ export default function EventsPage() {
 
                   <a
                     href="#download"
-                    className="inline-flex items-center justify-center gap-2 w-full py-2.5 bg-white hover:bg-leo-blue hover:text-white text-leo-charcoal border border-leo-border rounded-full font-bold text-xs transition-colors shadow-sm"
+                    className="inline-flex items-center justify-center gap-2 w-full py-2.5 bg-white hover:bg-gradient-to-r hover:from-[#003B99] hover:to-[#00A3E0] hover:text-white text-leo-charcoal border border-leo-border rounded-xl font-bold text-xs transition-all duration-200 shadow-xs"
                   >
                     <Download className="w-4 h-4" />
                     <span>Download PDF Document</span>

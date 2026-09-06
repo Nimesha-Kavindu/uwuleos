@@ -43,10 +43,10 @@ export default function SingleProjectPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           
           <div className="flex flex-wrap items-center gap-3">
-            <span className={`px-3.5 py-1 text-xs font-bold rounded-full border shadow-sm ${project.categoryColor}`}>
+            <span className={`px-3.5 py-1 text-xs font-bold rounded-lg border shadow-xs ${project.categoryColor}`}>
               {project.category}
             </span>
-            <span className="px-3 py-1 text-xs font-bold rounded-full bg-leo-pearl text-leo-charcoal">
+            <span className="px-3 py-1 text-xs font-bold rounded-lg bg-leo-pearl text-leo-charcoal border border-leo-border/60">
               Status: {project.status}
             </span>
           </div>
@@ -64,14 +64,14 @@ export default function SingleProjectPage() {
               <MapPin className="w-4 h-4 text-leo-cyan" />
               <strong>Location:</strong> {project.location}
             </span>
-            <span className="flex items-center gap-2 text-leo-blue font-bold">
+            <span className="flex items-center gap-2 text-[#003B99] font-bold">
               <Award className="w-4 h-4 text-leo-cyan" />
               {project.impactMetric}
             </span>
           </div>
 
           {/* Featured Image Banner */}
-          <div className="rounded-3xl overflow-hidden shadow-xl border border-leo-border bg-leo-dark h-96 sm:h-[480px]">
+          <div className="rounded-2xl overflow-hidden shadow-xl border border-leo-border bg-leo-dark h-96 sm:h-[480px]">
             <img
               src={project.image}
               alt={project.title}
@@ -110,7 +110,7 @@ export default function SingleProjectPage() {
 
             {/* Right Col: Quick Impact Card */}
             <div className="space-y-6">
-              <div className="bg-leo-pearl rounded-3xl p-6 border border-leo-border space-y-4">
+              <div className="bg-leo-pearl rounded-2xl p-6 border border-leo-border space-y-4">
                 <h4 className="font-heading font-bold text-base text-leo-charcoal">
                   Impact Highlights
                 </h4>
@@ -131,7 +131,7 @@ export default function SingleProjectPage() {
 
                 <Link
                   href="/contact"
-                  className="block w-full text-center py-3 bg-leo-cyan hover:bg-leo-cyan-hover text-white rounded-full font-bold text-xs shadow-md transition-colors"
+                  className="block w-full text-center py-3 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-xs shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
                 >
                   Sponsor a Similar Initiative
                 </Link>

@@ -37,10 +37,10 @@ export default function CtaBanner() {
             <div className="pt-4 flex flex-wrap items-center gap-4">
               <Link
                 href="/join"
-                className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-leo-cyan hover:bg-leo-cyan-hover text-white font-bold text-base rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+                className="group inline-flex items-center gap-2.5 px-8 py-3.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white font-bold text-base rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
               >
                 <span>Become a Leo Today</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
               </Link>
 
               <Link

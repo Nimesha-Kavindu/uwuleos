@@ -54,9 +54,9 @@ export default function ProjectsPage() {
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-bold capitalize whitespace-nowrap transition-colors ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold capitalize whitespace-nowrap transition-all duration-200 ${
                   selectedCategory === cat
-                    ? "bg-leo-blue text-white shadow-sm"
+                    ? "bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white shadow-xs"
                     : "bg-white text-leo-charcoal border border-leo-border hover:bg-leo-pearl"
                 }`}
               >
@@ -73,7 +73,7 @@ export default function ProjectsPage() {
               placeholder="Search projects..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-sm bg-white rounded-full border border-leo-border focus:outline-none focus:ring-2 focus:ring-leo-cyan"
+              className="w-full pl-10 pr-4 py-2 text-sm bg-white rounded-xl border border-leo-border focus:outline-none focus:ring-2 focus:ring-[#003B99]"
             />
           </div>
 
@@ -93,7 +93,7 @@ export default function ProjectsPage() {
               {filteredProjects.map((project) => (
                 <article
                   key={project.id}
-                  className="group bg-white rounded-3xl border border-leo-border overflow-hidden shadow-card hover:shadow-card-hover transition-card flex flex-col justify-between"
+                  className="group bg-white rounded-2xl border border-leo-border overflow-hidden shadow-card hover:shadow-card-hover transition-card flex flex-col justify-between"
                 >
                   <div>
                     <div className="relative h-56 overflow-hidden bg-leo-dark">
@@ -103,12 +103,12 @@ export default function ProjectsPage() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute top-4 left-4">
-                        <span className={`px-3 py-1 text-xs font-bold rounded-full border shadow-sm ${project.categoryColor}`}>
+                        <span className={`px-3 py-1 text-xs font-bold rounded-lg border shadow-xs ${project.categoryColor}`}>
                           {project.category}
                         </span>
                       </div>
                       <div className="absolute top-4 right-4">
-                        <span className="px-3 py-1 text-[11px] font-bold rounded-full bg-white/90 text-leo-charcoal backdrop-blur-md shadow-sm">
+                        <span className="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/90 text-leo-charcoal backdrop-blur-md shadow-xs">
                           {project.status}
                         </span>
                       </div>
@@ -126,7 +126,7 @@ export default function ProjectsPage() {
                         </span>
                       </div>
 
-                      <h2 className="font-heading font-bold text-xl text-leo-charcoal group-hover:text-leo-blue transition-colors line-clamp-2">
+                      <h2 className="font-heading font-bold text-xl text-leo-charcoal group-hover:text-[#003B99] transition-colors line-clamp-2">
                         <Link href={`/projects/${project.slug}`}>
                           {project.title}
                         </Link>
@@ -139,14 +139,14 @@ export default function ProjectsPage() {
                   </div>
 
                   <div className="p-6 pt-0 border-t border-leo-border/60 mt-4 flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-leo-blue bg-leo-cyan-light px-3 py-1.5 rounded-full">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#003B99] bg-leo-cyan-light px-3 py-1.5 rounded-lg">
                       <Award className="w-3.5 h-3.5 text-leo-cyan" />
                       <span>{project.impactMetric}</span>
                     </div>
 
                     <Link
                       href={`/projects/${project.slug}`}
-                      className="text-xs font-bold text-leo-charcoal hover:text-leo-cyan flex items-center gap-1 transition-colors"
+                      className="text-xs font-bold text-leo-charcoal hover:text-[#003B99] flex items-center gap-1 transition-colors"
                     >
                       <span>Full Case Study</span>
                       <ArrowRight className="w-3.5 h-3.5" />

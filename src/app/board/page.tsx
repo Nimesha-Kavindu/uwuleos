@@ -43,10 +43,10 @@ export default function BoardPage() {
             <button
               type="button"
               onClick={() => setActiveTab("all")}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
+              className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                 activeTab === "all"
-                  ? "bg-leo-blue text-white shadow-md"
-                  : "bg-leo-pearl text-leo-charcoal hover:bg-leo-pearl-dark"
+                  ? "bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white shadow-xs"
+                  : "bg-leo-pearl text-leo-charcoal hover:bg-slate-100"
               }`}
             >
               All Leaders ({club.boardMembers.length})
@@ -54,10 +54,10 @@ export default function BoardPage() {
             <button
               type="button"
               onClick={() => setActiveTab("top-table")}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
+              className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                 activeTab === "top-table"
-                  ? "bg-leo-blue text-white shadow-md"
-                  : "bg-leo-pearl text-leo-charcoal hover:bg-leo-pearl-dark"
+                  ? "bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white shadow-xs"
+                  : "bg-leo-pearl text-leo-charcoal hover:bg-slate-100"
               }`}
             >
               Top Table Officers
@@ -65,10 +65,10 @@ export default function BoardPage() {
             <button
               type="button"
               onClick={() => setActiveTab("director")}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
+              className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                 activeTab === "director"
-                  ? "bg-leo-blue text-white shadow-md"
-                  : "bg-leo-pearl text-leo-charcoal hover:bg-leo-pearl-dark"
+                  ? "bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white shadow-xs"
+                  : "bg-leo-pearl text-leo-charcoal hover:bg-slate-100"
               }`}
             >
               Directors & Committee Chairs
@@ -80,7 +80,7 @@ export default function BoardPage() {
             {filteredMembers.map((member) => (
               <div
                 key={member.id}
-                className="group bg-white rounded-3xl border border-leo-border overflow-hidden shadow-sm hover:shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className="group bg-white rounded-2xl border border-leo-border overflow-hidden shadow-xs hover:shadow-card hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   {/* Portrait photo */}
@@ -93,7 +93,7 @@ export default function BoardPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-leo-dark/80 via-transparent to-transparent opacity-80" />
                     
                     <div className="absolute bottom-4 left-4 right-4">
-                      <span className="px-3 py-1 rounded-full bg-leo-cyan text-white text-[11px] font-bold uppercase tracking-wider shadow-sm">
+                      <span className="px-3 py-1 rounded-lg bg-leo-cyan text-white text-[11px] font-bold uppercase tracking-wider shadow-xs">
                         {member.designation}
                       </span>
                     </div>
@@ -101,7 +101,7 @@ export default function BoardPage() {
 
                   {/* Details */}
                   <div className="p-6 space-y-3">
-                    <h3 className="font-heading font-extrabold text-xl text-leo-charcoal group-hover:text-leo-blue transition-colors">
+                    <h3 className="font-heading font-extrabold text-xl text-leo-charcoal group-hover:text-[#003B99] transition-colors">
                       {member.name}
                     </h3>
                     
@@ -119,7 +119,7 @@ export default function BoardPage() {
                     {member.email && (
                       <a
                         href={`mailto:${member.email}`}
-                        className="w-8 h-8 rounded-full bg-leo-pearl hover:bg-leo-blue hover:text-white text-leo-slate flex items-center justify-center transition-colors"
+                        className="w-8 h-8 rounded-xl bg-leo-pearl hover:bg-[#003B99] hover:text-white text-leo-slate flex items-center justify-center transition-colors"
                         title={member.email}
                       >
                         <Mail className="w-4 h-4" />
@@ -130,7 +130,7 @@ export default function BoardPage() {
                         href={member.linkedin}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-8 h-8 rounded-full bg-leo-pearl hover:bg-leo-cyan hover:text-white text-leo-slate flex items-center justify-center transition-colors"
+                        className="w-8 h-8 rounded-xl bg-leo-pearl hover:bg-leo-cyan hover:text-white text-leo-slate flex items-center justify-center transition-colors"
                         title="LinkedIn Profile"
                       >
                         <Globe className="w-4 h-4" />

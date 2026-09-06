@@ -89,10 +89,10 @@ export default function GalleryPage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveFilter(tab.id)}
-                className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
+                className={`px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                   activeFilter === tab.id
-                    ? "bg-leo-blue text-white shadow-sm"
-                    : "bg-leo-pearl text-leo-charcoal hover:bg-leo-pearl-dark"
+                    ? "bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white shadow-xs"
+                    : "bg-leo-pearl text-leo-charcoal hover:bg-slate-100"
                 }`}
               >
                 {tab.label}
@@ -110,7 +110,7 @@ export default function GalleryPage() {
               <div
                 key={photo.id}
                 onClick={() => setActiveImage(photo.url)}
-                className="group relative rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-card cursor-pointer bg-leo-dark h-72 border border-leo-border"
+                className="group relative rounded-2xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 cursor-pointer bg-leo-dark h-72 border border-leo-border"
               >
                 <img
                   src={photo.url}
@@ -141,7 +141,7 @@ export default function GalleryPage() {
         >
           <button
             type="button"
-            className="absolute top-6 right-6 text-white p-2 rounded-full bg-white/20 hover:bg-white/30"
+            className="absolute top-6 right-6 text-white p-2.5 rounded-xl bg-white/20 hover:bg-white/30 transition-colors"
           >
             <X className="w-6 h-6" />
           </button>

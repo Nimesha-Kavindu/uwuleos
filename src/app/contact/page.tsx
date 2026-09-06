@@ -122,7 +122,7 @@ export default function ContactPage() {
                     <button
                       type="button"
                       onClick={() => setSubmitted(false)}
-                      className="px-6 py-2.5 bg-leo-blue text-white rounded-full font-bold text-xs"
+                      className="px-6 py-2.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-xs shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
                     >
                       Send Another Message
                     </button>
@@ -148,7 +148,7 @@ export default function ContactPage() {
                           required
                           type="text"
                           placeholder="Kasun Fernando"
-                          className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
+                          className="w-full px-4 py-3 rounded-xl border border-leo-border text-sm focus:ring-2 focus:ring-[#003B99] focus:outline-none"
                         />
                       </div>
                       <div>
@@ -159,7 +159,7 @@ export default function ContactPage() {
                           required
                           type="email"
                           placeholder="kasun@domain.com"
-                          className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
+                          className="w-full px-4 py-3 rounded-xl border border-leo-border text-sm focus:ring-2 focus:ring-[#003B99] focus:outline-none"
                         />
                       </div>
                     </div>
@@ -168,7 +168,7 @@ export default function ContactPage() {
                       <label className="block text-xs font-bold text-leo-charcoal uppercase mb-1.5">
                         Inquiry Purpose
                       </label>
-                      <select className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none">
+                      <select className="w-full px-4 py-3 rounded-xl border border-leo-border text-sm focus:ring-2 focus:ring-[#003B99] focus:outline-none">
                         <option>General Information</option>
                         <option>Corporate Partnership / CSR Sponsorship</option>
                         <option>Project Joint Collaboration</option>
@@ -184,14 +184,14 @@ export default function ContactPage() {
                         required
                         rows={5}
                         placeholder="Write your message here..."
-                        className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
+                        className="w-full px-4 py-3 rounded-xl border border-leo-border text-sm focus:ring-2 focus:ring-[#003B99] focus:outline-none"
                       />
                     </div>
 
                     <div className="pt-2">
                       <button
                         type="submit"
-                        className="inline-flex items-center gap-2 px-8 py-3.5 bg-leo-cyan hover:bg-leo-cyan-hover text-white rounded-full font-bold text-sm shadow-md transition-colors"
+                        className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-sm shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                       >
                         <Send className="w-4 h-4" />
                         <span>Send Message</span>
