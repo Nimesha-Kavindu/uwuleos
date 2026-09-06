@@ -120,19 +120,30 @@ export default function HeroSection() {
               </Link>
             </div>
 
-            {/* Trust Highlights */}
-            <div className="pt-6 border-t border-slate-200/80 flex flex-wrap items-center gap-6 sm:gap-10 text-xs text-slate-600">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#003B99] shrink-0" />
-                <span className="font-semibold text-slate-800">District 306 C2</span>
+            {/* Trust Highlights & Faculty Representation */}
+            <div className="pt-6 border-t border-slate-200/80 space-y-4">
+              <div className="flex flex-wrap items-center gap-5 sm:gap-8 text-xs text-slate-600">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#003B99] shrink-0" />
+                  <span className="font-semibold text-slate-800">District 306 C2</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-leo-cyan shrink-0" />
+                  <span className="font-semibold text-slate-800">100% University Undergrads</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#F5A800] shrink-0" />
+                  <span className="font-semibold text-slate-800">60+ Community Projects</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <GraduationCap className="w-4 h-4 text-leo-cyan shrink-0" />
-                <span className="font-semibold text-slate-800">100% University Undergraduates</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#F5A800] shrink-0" />
-                <span className="font-semibold text-slate-800">60+ Community Projects</span>
+
+              {/* 4 UWU Faculties Tag */}
+              <div className="flex items-center gap-2 text-[11px] text-slate-500 font-medium">
+                <span className="text-slate-400">Faculties:</span>
+                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold">Applied Sciences</span>
+                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold">Science &amp; Tech</span>
+                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold">Management</span>
+                <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold">Animal Science</span>
               </div>
             </div>
 

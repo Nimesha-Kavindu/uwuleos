@@ -74,11 +74,11 @@ export default function TestimonialsSection() {
           </div>
 
           {/* 2 Clean Side Voices (5 Cols) */}
-          <div className="lg:col-span-5 flex flex-col justify-between gap-6">
+          <div className="lg:col-span-5 flex flex-col gap-6">
             {others.map((item) => (
               <div
                 key={item.id}
-                className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between"
+                className="flex-1 p-7 rounded-2xl bg-[#FAFAFC] border border-slate-200/90 shadow-xs hover:bg-white hover:border-slate-300 transition-colors flex flex-col justify-between"
               >
                 <div>
                   {item.tag && (
