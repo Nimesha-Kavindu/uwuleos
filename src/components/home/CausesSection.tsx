@@ -8,69 +8,36 @@ import {
   Utensils,
   Eye,
   GraduationCap,
-  Ribbon,
+  HeartHandshake,
   ShieldAlert,
+  Users,
   ArrowRight,
 } from "lucide-react";
+import { useClub } from "@/context/ClubContext";
 
-const PILLARS = [
-  {
-    id: "environment",
-    title: "Environment & Climate Action",
-    tagline: "Preserving Island Ecosystems",
-    desc: "Tree plantation drives, coastal mangrove restoration, and clean beach campaigns across Sri Lanka and the Maldives.",
-    icon: TreePine,
-    color: "emerald",
-    bgClass: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  },
-  {
-    id: "vision",
-    title: "Vision Care & Screening",
-    tagline: "Restoring Sight in Rural Schools",
-    desc: "Free comprehensive pediatric eye screening camps, spectacles distribution, and cataract surgery sponsorships.",
-    icon: Eye,
-    color: "blue",
-    bgClass: "bg-blue-50 text-blue-700 border-blue-100",
-  },
-  {
-    id: "hunger",
-    title: "Hunger Relief & Nutrition",
-    tagline: "Combating Food Insecurity",
-    desc: "Delivering wholesome meals, dry ration packs, and school nutritional support for underserved families.",
-    icon: Utensils,
-    color: "amber",
-    bgClass: "bg-amber-50 text-amber-700 border-amber-100",
-  },
-  {
-    id: "youth",
-    title: "Youth Leadership & Education",
-    tagline: "Empowering Next-Gen Leaders",
-    desc: "Executive public speaking academies, career mentorship summits, and rural smart-classroom infrastructure.",
-    icon: GraduationCap,
-    color: "indigo",
-    bgClass: "bg-indigo-50 text-indigo-700 border-indigo-100",
-  },
-  {
-    id: "cancer",
-    title: "Childhood Cancer Support",
-    tagline: "Standing with Young Fighters",
-    desc: "Pediatric oncology ward upliftment, essential medicines funding, and patient happiness initiatives.",
-    icon: Ribbon,
-    color: "rose",
-    bgClass: "bg-rose-50 text-rose-700 border-rose-100",
-  },
-  {
-    id: "relief",
-    title: "Disaster Emergency Aid",
-    tagline: "Rapid Humanitarian Response",
-    desc: "Emergency relief packages and clean water supply during floods, landslides, and island crises.",
-    icon: ShieldAlert,
-    color: "cyan",
-    bgClass: "bg-cyan-50 text-cyan-700 border-cyan-100",
-  },
-];
+const ICON_MAP: Record<string, any> = {
+  GraduationCap,
+  TreePine,
+  HeartHandshake,
+  Users,
+  ShieldAlert,
+  Eye,
+  Utensils,
+};
+
+const COLOR_MAP: Record<string, string> = {
+  blue: "bg-blue-50 text-blue-700 border-blue-100",
+  emerald: "bg-emerald-50 text-emerald-700 border-emerald-100",
+  rose: "bg-rose-50 text-rose-700 border-rose-100",
+  indigo: "bg-indigo-50 text-indigo-700 border-indigo-100",
+  amber: "bg-amber-50 text-amber-700 border-amber-100",
+  cyan: "bg-cyan-50 text-cyan-700 border-cyan-100",
+};
 
 export default function CausesSection() {
+  const { club } = useClub();
+  const pillars = club.pillars && club.pillars.length > 0 ? club.pillars : [];
+
   return (
     <section className="py-20 lg:py-28 bg-[#F7F9FC] border-t border-[#EDF0F5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,15 +65,17 @@ export default function CausesSection() {
 
         {/* Pillars Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PILLARS.map((p) => {
-            const Icon = p.icon;
+          {pillars.map((p) => {
+            const Icon = ICON_MAP[p.icon] || HeartHandshake;
+            const colorClass = COLOR_MAP[p.color] || "bg-blue-50 text-blue-700 border-blue-100";
+
             return (
               <div
                 key={p.id}
-                className="group bg-white rounded-[24px] p-8 border border-slate-200/80 shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className="group bg-white rounded-2xl p-8 border border-slate-200/80 shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 border ${p.bgClass} group-hover:scale-105 transition-transform`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 border ${colorClass} group-hover:scale-105 transition-transform`}>
                     <Icon className="w-6 h-6" />
                   </div>
 
@@ -119,7 +88,7 @@ export default function CausesSection() {
                   </h3>
 
                   <p className="text-sm text-slate-600 leading-relaxed font-normal">
-                    {p.desc}
+                    {p.description}
                   </p>
                 </div>
 

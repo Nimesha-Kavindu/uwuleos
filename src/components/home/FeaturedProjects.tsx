@@ -4,47 +4,14 @@ import React from "react";
 import Link from "next/link";
 import CyanBar from "@/components/ui/CyanBar";
 import { ArrowRight, Calendar, MapPin, Award } from "lucide-react";
-
-const PROJECTS = [
-  {
-    id: "proj-1",
-    slug: "haritha-dharani-island-green",
-    title: "Project Haritha Dharani: 50,000 Mangrove & Coastal Reforestation",
-    category: "Environment",
-    badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1000&q=80",
-    summary: "A nationwide coastal mangrove conservation drive restoring over 25 hectares of critical wetland ecosystems across Kalpitiya, Negombo, and Mannar.",
-    metric: "52,400 Trees Planted",
-    date: "Aug 2024",
-    location: "Coastal Belt, Sri Lanka",
-  },
-  {
-    id: "proj-2",
-    slug: "sight-first-schools",
-    title: "Sight For Youth: Nationwide School Vision & Spectacle Drive",
-    category: "Healthcare",
-    badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
-    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1000&q=80",
-    summary: "Screening over 15,000 rural primary school students and providing high-quality custom prescription spectacles free of charge.",
-    metric: "3,200 Glasses Donated",
-    date: "Oct 2024",
-    location: "Central & Uva Provinces",
-  },
-  {
-    id: "proj-3",
-    slug: "suwa-diviya-hunger-relief",
-    title: "Project Suwa Diviya: Zero-Hunger Community Kitchens",
-    category: "Hunger Relief",
-    badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
-    image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1000&q=80",
-    summary: "Delivering wholesome nutritious hot meals and essential dry ration packages to underserved urban families and elder care centers.",
-    metric: "28,000+ Meals Served",
-    date: "Sep 2024",
-    location: "Western & Southern Districts",
-  },
-];
+import { useClub } from "@/context/ClubContext";
 
 export default function FeaturedProjects() {
+  const { club } = useClub();
+  const projects = club.featuredProjects && club.featuredProjects.length > 0
+    ? club.featuredProjects
+    : [];
+
   return (
     <section className="py-20 lg:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,10 +39,10 @@ export default function FeaturedProjects() {
 
         {/* 3-Column Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {PROJECTS.map((p) => (
+          {projects.map((p) => (
             <article
               key={p.id}
-              className="group bg-white rounded-[24px] border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+              className="group bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
             >
               <div>
                 {/* Photo banner */}
@@ -86,7 +53,7 @@ export default function FeaturedProjects() {
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className={`px-3 py-1 text-xs font-bold rounded-full border shadow-xs ${p.badgeClass}`}>
+                    <span className={`px-3 py-1 text-xs font-bold rounded-lg border shadow-xs ${p.categoryColor}`}>
                       {p.category}
                     </span>
                   </div>
@@ -119,9 +86,9 @@ export default function FeaturedProjects() {
 
               {/* Bottom Card Footer */}
               <div className="p-7 pt-0 border-t border-slate-100 mt-4 flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-[#003B99] bg-leo-cyan-light px-3 py-1.5 rounded-full">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[#003B99] bg-leo-cyan-light px-3 py-1.5 rounded-lg">
                   <Award className="w-3.5 h-3.5 text-leo-cyan" />
-                  <span>{p.metric}</span>
+                  <span>{p.impactMetric}</span>
                 </div>
 
                 <Link

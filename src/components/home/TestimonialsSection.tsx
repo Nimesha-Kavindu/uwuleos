@@ -30,7 +30,7 @@ export default function TestimonialsSection() {
           {club.testimonials.map((item) => (
             <div
               key={item.id}
-              className="bg-leo-pearl rounded-3xl p-8 sm:p-10 border border-leo-border relative flex flex-col justify-between"
+              className="bg-leo-pearl rounded-2xl p-8 sm:p-10 border border-leo-border relative flex flex-col justify-between"
             >
               <Quote className="w-10 h-10 text-leo-cyan/30 absolute top-6 right-8" />
               

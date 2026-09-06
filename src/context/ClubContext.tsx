@@ -13,9 +13,9 @@ interface ClubContextType {
 const ClubContext = createContext<ClubContextType | undefined>(undefined);
 
 export function ClubProvider({ children }: { children: ReactNode }) {
-  const [activeClubId, setActiveClubId] = useState<string>("leo-md-306");
+  const [activeClubId, setActiveClubId] = useState<string>("leo-uwu");
 
-  const club = CLUBS_DATA[activeClubId] || CLUBS_DATA["leo-md-306"];
+  const club = CLUBS_DATA[activeClubId] || CLUBS_DATA["leo-uwu"];
 
   const availableClubs = Object.values(CLUBS_DATA).map((c) => ({
     id: c.id,
