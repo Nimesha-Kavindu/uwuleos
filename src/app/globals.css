@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-navy: #003399;
+  --dark-navy: #061838;
+  --accent-cyan: #00A3E0;
+  --accent-gold: #F5A800;
+  --bg-pearl: #F4F6F9;
+  --bg-white: #FFFFFF;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: #111827;
+  background-color: #FFFFFF;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Custom Watermark patterns for cards */
+.bg-doodle-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.bg-doodle-pattern-dark {
+  background-image: radial-gradient(rgba(0, 51, 153, 0.08) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-panel-dark {
+  background: rgba(6, 24, 56, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Smooth transitions */
+.transition-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F4F6F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00A3E0;
+}
