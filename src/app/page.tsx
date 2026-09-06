@@ -5,7 +5,6 @@ import ImpactSection from "@/components/home/ImpactSection";
 import FeaturedProjects from "@/components/home/FeaturedProjects";
 import EventsPreview from "@/components/home/EventsPreview";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
-import CtaBanner from "@/components/home/CtaBanner";
 
 export default function HomePage() {
   return (
@@ -22,14 +21,11 @@ export default function HomePage() {
       {/* 4. Featured Signature Projects */}
       <FeaturedProjects />
 
-      {/* 6. Upcoming Events Calendar */}
+      {/* 5. Upcoming Events Calendar */}
       <EventsPreview />
 
-      {/* 7. Voices of Service / Testimonials */}
+      {/* 6. Member Reflections / Testimonials */}
       <TestimonialsSection />
-
-      {/* 8. Call to Action Banner */}
-      <CtaBanner />
     </>
   );
 }
