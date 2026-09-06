@@ -74,7 +74,7 @@ export default function HeroSection() {
       <div className="absolute -top-24 right-1/4 w-[500px] h-[500px] bg-leo-cyan/10 rounded-full blur-3xl -z-10 pointer-events-none" />
       <div className="absolute top-12 left-10 w-[400px] h-[400px] bg-[#003B99]/5 rounded-full blur-3xl -z-10 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* Left Column: Typography & CTAs */}

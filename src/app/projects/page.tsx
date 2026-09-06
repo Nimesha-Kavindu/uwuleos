@@ -27,7 +27,7 @@ export default function ProjectsPage() {
       
       {/* Hero */}
       <section className="bg-gradient-to-b from-leo-pearl via-white to-white py-16 lg:py-24 border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="max-w-3xl">
             <CyanBar />
             <span className="block text-xs font-bold tracking-[0.14em] text-leo-slate uppercase mb-2">
@@ -45,7 +45,7 @@ export default function ProjectsPage() {
 
       {/* Filter and Search Bar */}
       <section className="py-8 bg-leo-pearl/60 border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 flex flex-col md:flex-row items-center justify-between gap-4">
           
           {/* Category Chips */}
           <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
@@ -82,7 +82,7 @@ export default function ProjectsPage() {
 
       {/* Projects Grid */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           
           {filteredProjects.length === 0 ? (
             <div className="text-center py-20 text-leo-slate">

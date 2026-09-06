@@ -105,7 +105,7 @@ export default function ImpactSection() {
 
   return (
     <section className="py-20 lg:py-24 bg-white border-t border-slate-200/80 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
         
         {/* Top Editorial Split Header */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end pb-14 border-b border-slate-200">

@@ -21,7 +21,7 @@ export default function AboutPage() {
       
       {/* Page Hero */}
       <section className="bg-gradient-to-b from-leo-pearl via-white to-white py-16 lg:py-24 border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="max-w-3xl">
             <CyanBar />
             <span className="block text-xs font-bold tracking-[0.14em] text-leo-slate uppercase mb-2">
@@ -39,7 +39,7 @@ export default function AboutPage() {
 
       {/* Origin Story & Melvin Jones Heritage */}
       <section id="lions-history" className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             
             <div className="space-y-6">
@@ -89,7 +89,7 @@ export default function AboutPage() {
 
       {/* The 3 Core Pillars: L-E-O */}
       <section className="py-20 bg-leo-pearl border-y border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           
           <div className="text-center max-w-2xl mx-auto mb-16">
             <div className="flex justify-center">
@@ -151,7 +151,7 @@ export default function AboutPage() {
 
       {/* Organizational Hierarchy Tree */}
       <section id="hierarchy" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           
           <div className="max-w-3xl mb-14">
             <CyanBar />

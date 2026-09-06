@@ -28,7 +28,7 @@ export default function SingleProjectPage() {
       
       {/* Top Breadcrumb Header */}
       <section className="bg-leo-pearl py-6 border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <Link
             href="/projects"
             className="inline-flex items-center gap-2 text-xs font-bold text-leo-blue hover:text-leo-cyan uppercase tracking-wider"
@@ -40,7 +40,7 @@ export default function SingleProjectPage() {
 
       {/* Main Project Hero */}
       <section className="py-12 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 space-y-6">
           
           <div className="flex flex-wrap items-center gap-3">
             <span className={`px-3.5 py-1 text-xs font-bold rounded-lg border shadow-xs ${project.categoryColor}`}>

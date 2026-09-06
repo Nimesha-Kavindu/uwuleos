@@ -19,7 +19,7 @@ export default function FeaturedProjects() {
 
   return (
     <section className="py-20 lg:py-24 bg-white border-t border-slate-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
         
         {/* Section Header: Fully Populated Balanced Split */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end justify-between mb-12 pb-8 border-b border-slate-100">
