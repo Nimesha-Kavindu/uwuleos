@@ -22,7 +22,7 @@ export default function Footer() {
         {/* Top Affiliation Banner */}
         <div className="bg-white/5 rounded-3xl p-8 border border-white/10 mb-14 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <LeoEmblemSvg className="w-14 h-14 shrink-0" dark={true} />
+            <LeoEmblemSvg className="w-14 h-14 shrink-0" />
             <div>
               <h4 className="font-heading font-bold text-lg text-white">
                 Affiliated with Lions Clubs International
