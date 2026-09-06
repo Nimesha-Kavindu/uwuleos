@@ -8,6 +8,7 @@ import {
   LionsEmblemSvg,
   LeoEmblemSvg,
   DistrictEmblemSvg,
+  CardDoodlePattern,
 } from "@/components/ui/BrandingLogos";
 
 export default function AffiliationSection() {
@@ -16,7 +17,7 @@ export default function AffiliationSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Header: 2-Column Split directly matching reference screenshot */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start mb-14">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start mb-12">
           
           {/* Left Column: Cyan Bar + Label + Heading */}
           <div className="lg:col-span-5">
@@ -41,22 +42,16 @@ export default function AffiliationSection() {
         <div className="space-y-6">
           
           {/* CARD 1: Full-Width Primary Blue Lions International Card */}
-          <div className="group relative rounded-[24px] bg-[#003B99] text-white p-8 sm:p-10 lg:p-12 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
+          <div className="group relative rounded-[28px] bg-[#003B99] text-white p-8 sm:p-10 lg:p-12 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
             
-            {/* Subtle decorative watermark lines in corner */}
-            <div className="absolute right-0 bottom-0 top-0 w-1/3 opacity-10 pointer-events-none flex items-center justify-end pr-10">
-              <svg viewBox="0 0 200 200" className="w-64 h-64 text-white fill-none stroke-current stroke-2">
-                <circle cx="100" cy="100" r="80" strokeDasharray="6 6" />
-                <ellipse cx="100" cy="100" rx="80" ry="35" />
-                <line x1="100" y1="20" x2="100" y2="180" />
-              </svg>
-            </div>
+            {/* Subtle authentic doodle pattern in card background */}
+            <CardDoodlePattern className="absolute inset-0 text-white pointer-events-none" />
 
             <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6 sm:gap-8">
               
-              {/* Authentic Lions International Logo Emblem */}
-              <div className="shrink-0 p-1.5 bg-white/10 rounded-2xl backdrop-blur-xs group-hover:scale-105 transition-transform duration-300">
-                <LionsEmblemSvg className="w-16 h-16 sm:w-20 sm:h-20" />
+              {/* Official Lions International Emblem - Sits cleanly without artificial box wrapper */}
+              <div className="shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <LionsEmblemSvg className="w-20 h-20 sm:w-24 sm:h-24" />
               </div>
 
               {/* Text & Action Link */}
@@ -89,11 +84,14 @@ export default function AffiliationSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* CARD 2: Leo (Light pearl/grey background) */}
-            <div className="group relative rounded-[24px] bg-[#F4F5F8] text-[#111827] p-8 sm:p-10 border border-[#E5E8EE] shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden">
+            <div className="group relative rounded-[28px] bg-[#F4F5F8] text-[#111827] p-8 sm:p-10 border border-[#E5E8EE] shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden">
               
+              {/* Subtle doodle pattern */}
+              <CardDoodlePattern className="absolute inset-0 text-slate-900 pointer-events-none opacity-40" />
+
               <div className="relative z-10 flex items-center gap-6">
-                {/* Authentic Leo Emblem */}
-                <div className="shrink-0 p-1 bg-white rounded-2xl shadow-xs border border-slate-200 group-hover:scale-105 transition-transform duration-300">
+                {/* Official Leo Emblem */}
+                <div className="shrink-0 group-hover:scale-105 transition-transform duration-300">
                   <LeoEmblemSvg className="w-16 h-16 sm:w-18 sm:h-18" />
                 </div>
 
@@ -109,11 +107,14 @@ export default function AffiliationSection() {
             </div>
 
             {/* CARD 3: Leo MD 306 (Deep Navy Blue background) */}
-            <div className="group relative rounded-[24px] bg-[#082E6E] text-white p-8 sm:p-10 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-white/10">
+            <div className="group relative rounded-[28px] bg-[#072B6B] text-white p-8 sm:p-10 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-white/10">
               
+              {/* Subtle doodle pattern */}
+              <CardDoodlePattern className="absolute inset-0 text-white pointer-events-none" />
+
               <div className="relative z-10 flex items-center gap-6">
-                {/* Authentic District Badge */}
-                <div className="shrink-0 p-1 bg-white/10 rounded-2xl backdrop-blur-xs group-hover:scale-105 transition-transform duration-300">
+                {/* Official District Badge */}
+                <div className="shrink-0 group-hover:scale-105 transition-transform duration-300">
                   <DistrictEmblemSvg className="w-16 h-16 sm:w-18 sm:h-18" />
                 </div>
 

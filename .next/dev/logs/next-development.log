@@ -22,3 +22,5 @@
 {"timestamp":"00:14:05.035","source":"Server","level":"LOG","message":"✓ Compiled in 254ms"}
 {"timestamp":"00:14:21.054","source":"Server","level":"LOG","message":"✓ Compiled in 729ms"}
 {"timestamp":"00:14:35.505","source":"Server","level":"LOG","message":"✓ Compiled in 200ms"}
+{"timestamp":"00:25:37.375","source":"Server","level":"LOG","message":"✓ Compiled in 1240ms"}
+{"timestamp":"00:25:54.835","source":"Server","level":"LOG","message":"✓ Compiled in 360ms"}
