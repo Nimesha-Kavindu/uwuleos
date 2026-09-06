@@ -103,6 +103,8 @@ export interface ClubConfig {
     author: string;
     role: string;
     avatar: string;
+    tag?: string;
+    faculty?: string;
   }[];
 }
 
@@ -325,17 +327,30 @@ export const CLUBS_DATA: Record<string, ClubConfig> = {
     testimonials: [
       {
         id: "t-uwu-1",
-        quote: "Being a part of the Leo Club of Uva Wellassa University has given me the confidence to lead community projects, connect with inspiring peers, and give back to the society while pursuing my degree.",
-        author: "Leo Undergrad Member",
-        role: "Faculty of Applied Sciences • UWU",
-        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80",
+        quote: "Leading Project Sipnana to renovate rural school libraries in Passara gave me practical project management leadership while creating lasting impact for hundreds of underprivileged children.",
+        author: "Leo Rashmi Jayawardena",
+        role: "Project Director • Project Sipnana",
+        faculty: "Faculty of Applied Sciences • UWU",
+        tag: "Youth Leadership",
+        avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80",
       },
       {
         id: "t-uwu-2",
-        quote: "UWU Leos show exceptional energy and dedication. Their service initiatives across Badulla and Uva Province reflect the true spirit of Lions Clubs International.",
-        author: "Lion Guiding Lion / Advisor",
-        role: "Lions Club of Badulla • District 306 C2",
-        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80",
+        quote: "Being part of UWU Leos connected me with passionate peers across faculties. From organizing our annual mega blood drive to district leadership camps, it truly transformed my university journey.",
+        author: "Leo Kavindu Bandara",
+        role: "Club Director of IT & Media",
+        faculty: "Faculty of Technological Studies • UWU",
+        tag: "Campus Experience",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+      },
+      {
+        id: "t-uwu-3",
+        quote: "The undergraduate Leos of Uva Wellassa University consistently demonstrate exceptional discipline, creativity, and community spirit. Their service initiatives across Badulla reflect true Lions excellence.",
+        author: "Lion Dr. Sunil Wickramasinghe PMJF",
+        role: "Guiding Lion & Sponsoring Advisor",
+        faculty: "Lions Club of Badulla • District 306 C2",
+        tag: "Lions Mentorship",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80",
       },
     ],
   },
