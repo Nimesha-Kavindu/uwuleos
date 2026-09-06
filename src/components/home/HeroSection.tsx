@@ -156,7 +156,7 @@ export default function HeroSection() {
             onMouseLeave={() => setIsPaused(false)}
           >
             {/* Carousel Container */}
-            <div className="relative mx-auto rounded-2xl overflow-hidden shadow-xl border-4 border-white bg-[#082E6E] max-w-md lg:max-w-none h-[420px] sm:h-[480px]">
+            <div className="relative mx-auto rounded-xl overflow-hidden shadow-xl border-4 border-white bg-[#082E6E] max-w-md lg:max-w-none h-[420px] sm:h-[480px]">
               
               {/* Slides */}
               {HERO_SLIDES.map((slide, idx) => (
@@ -180,7 +180,7 @@ export default function HeroSection() {
                 type="button"
                 onClick={prevSlide}
                 aria-label="Previous Slide"
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-xl bg-black/40 hover:bg-black/70 text-white backdrop-blur-md flex items-center justify-center transition-all duration-200 border border-white/20 shadow-sm"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-lg bg-black/40 hover:bg-black/70 text-white backdrop-blur-md flex items-center justify-center transition-all duration-200 border border-white/20 shadow-sm"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -189,7 +189,7 @@ export default function HeroSection() {
                 type="button"
                 onClick={nextSlide}
                 aria-label="Next Slide"
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-xl bg-black/40 hover:bg-black/70 text-white backdrop-blur-md flex items-center justify-center transition-all duration-200 border border-white/20 shadow-sm"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-lg bg-black/40 hover:bg-black/70 text-white backdrop-blur-md flex items-center justify-center transition-all duration-200 border border-white/20 shadow-sm"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -200,7 +200,7 @@ export default function HeroSection() {
               </div>
 
               {/* Bottom Glass Caption Card */}
-              <div className="absolute bottom-4 left-4 right-4 z-20 p-4 rounded-xl bg-white/95 backdrop-blur-md shadow-md border border-white/80">
+              <div className="absolute bottom-4 left-4 right-4 z-20 p-4 rounded-lg bg-white/95 backdrop-blur-md shadow-md border border-white/80">
                 <div className="flex items-center justify-between gap-2">
                   <div>
                     <div className="text-[10px] font-bold uppercase tracking-wider text-leo-cyan">
@@ -240,7 +240,7 @@ export default function HeroSection() {
             </div>
 
             {/* Overlapping Bottom-Right Floating Badge */}
-            <div className="absolute -bottom-3 -right-2 hidden sm:flex items-center gap-3 bg-[#003B99] text-white px-4 py-3 rounded-xl shadow-lg border border-white/20 z-30">
+            <div className="absolute -bottom-3 -right-2 hidden sm:flex items-center gap-3 bg-[#003B99] text-white px-4 py-3 rounded-lg shadow-lg border border-white/20 z-30">
               <Users className="w-5 h-5 text-leo-cyan" />
               <div>
                 <div className="font-heading font-extrabold text-sm leading-none">150+</div>

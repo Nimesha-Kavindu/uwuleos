@@ -36,12 +36,12 @@ export default function TestimonialsSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
           
           {/* Main Editorial Hero Quote (7 Cols) */}
-          <div className="lg:col-span-7 bg-[#F4F6FA] rounded-3xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden border border-slate-200/70">
+          <div className="lg:col-span-7 bg-[#F4F6FA] rounded-xl p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden border border-slate-200/70">
             <Quote className="w-12 h-12 text-[#003B99]/15 absolute top-6 right-6 pointer-events-none" />
 
             <div>
               {featured.tag && (
-                <span className="inline-block px-3 py-1 rounded-lg bg-blue-100/80 text-[#003B99] text-xs font-bold uppercase tracking-wider mb-6">
+                <span className="inline-block px-3 py-1 rounded-md bg-blue-100/80 text-[#003B99] text-xs font-bold uppercase tracking-wider mb-6">
                   {featured.tag}
                 </span>
               )}
@@ -78,7 +78,7 @@ export default function TestimonialsSection() {
             {others.map((item) => (
               <div
                 key={item.id}
-                className="flex-1 p-7 rounded-2xl bg-[#FAFAFC] border border-slate-200/90 shadow-xs hover:bg-white hover:border-slate-300 transition-colors flex flex-col justify-between"
+                className="flex-1 p-7 rounded-xl bg-[#FAFAFC] border border-slate-200/90 shadow-xs hover:bg-white hover:border-slate-300 transition-colors flex flex-col justify-between"
               >
                 <div>
                   {item.tag && (

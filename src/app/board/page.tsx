@@ -152,7 +152,7 @@ export default function BoardPage() {
       {/* Advisory & Guiding Lions Section */}
       <section className="py-16 bg-leo-pearl border-t border-leo-border">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
-          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-leo-border shadow-sm flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="bg-white rounded-xl p-8 sm:p-12 border border-leo-border shadow-sm flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="space-y-3 max-w-2xl">
               <div className="flex items-center gap-2 text-leo-gold font-bold text-xs uppercase tracking-wider">
                 <ShieldCheck className="w-4 h-4" /> Mentorship & Governance

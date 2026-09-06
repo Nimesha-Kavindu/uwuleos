@@ -40,7 +40,7 @@ export default function EventsPreview() {
         </div>
 
         {/* Clean Interactive Agenda Schedule List (No floating individual cards!) */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs divide-y divide-slate-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs divide-y divide-slate-200 overflow-hidden">
           {events.map((event) => (
             <div
               key={event.id}
@@ -50,7 +50,7 @@ export default function EventsPreview() {
               <div className="flex items-start sm:items-center gap-5 sm:gap-6 min-w-0">
                 
                 {/* Date Box */}
-                <div className="w-16 h-16 rounded-2xl bg-[#003B99] text-white flex flex-col items-center justify-center font-heading shrink-0 shadow-xs group-hover:bg-[#002D7A] transition-colors">
+                <div className="w-16 h-16 rounded-xl bg-[#003B99] text-white flex flex-col items-center justify-center font-heading shrink-0 shadow-xs group-hover:bg-[#002D7A] transition-colors">
                   <span className="text-2xl font-extrabold leading-none">{event.day}</span>
                   <span className="text-[10px] font-bold tracking-wider uppercase text-cyan-300 mt-1">
                     {event.month}

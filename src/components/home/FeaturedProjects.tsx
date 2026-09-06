@@ -51,7 +51,7 @@ export default function FeaturedProjects() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
           {/* Main Feature Spotlight (7 Columns) */}
-          <article className="lg:col-span-7 bg-[#FAFAFC] rounded-3xl border border-slate-200/90 overflow-hidden flex flex-col justify-between hover:border-slate-300 hover:shadow-xl transition-all duration-300 group">
+          <article className="lg:col-span-7 bg-[#FAFAFC] rounded-xl border border-slate-200/90 overflow-hidden flex flex-col justify-between hover:border-slate-300 hover:shadow-xl transition-all duration-300 group">
             <div>
               <div className="relative h-64 sm:h-80 overflow-hidden bg-slate-900">
                 <img
@@ -63,10 +63,10 @@ export default function FeaturedProjects() {
                 
                 {/* Category & Status */}
                 <div className="absolute top-4 left-4 flex items-center gap-2">
-                  <span className="px-3 py-1 text-xs font-bold rounded-lg bg-white/95 text-slate-900 backdrop-blur-md shadow-xs">
+                  <span className="px-3 py-1 text-xs font-bold rounded-md bg-white/95 text-slate-900 backdrop-blur-md shadow-xs">
                     {mainProject.category}
                   </span>
-                  <span className="px-3 py-1 text-xs font-bold rounded-lg bg-[#003B99] text-white shadow-xs">
+                  <span className="px-3 py-1 text-xs font-bold rounded-md bg-[#003B99] text-white shadow-xs">
                     FLAGSHIP INITIATIVE
                   </span>
                 </div>
@@ -100,7 +100,7 @@ export default function FeaturedProjects() {
             {/* Bottom Impact & Action Bar */}
             <div className="p-6 sm:p-7 pt-0">
               <div className="pt-4 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 text-[#003B99] text-xs font-bold">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 text-[#003B99] text-xs font-bold">
                   <Award className="w-4 h-4 text-[#00A3E0]" />
                   <span>{mainProject.impactMetric}</span>
                 </div>
@@ -121,10 +121,10 @@ export default function FeaturedProjects() {
             {secondaryProjects.map((p) => (
               <article
                 key={p.id}
-                className="flex-1 bg-[#FAFAFC] rounded-2xl p-6 border border-slate-200/90 hover:bg-white hover:border-slate-300 hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row gap-5 group justify-between"
+                className="flex-1 bg-[#FAFAFC] rounded-xl p-6 border border-slate-200/90 hover:bg-white hover:border-slate-300 hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row gap-5 group justify-between"
               >
                 {/* Thumbnail */}
-                <div className="relative w-full sm:w-44 h-44 sm:h-auto rounded-xl overflow-hidden shrink-0 bg-slate-900">
+                <div className="relative w-full sm:w-44 h-44 sm:h-auto rounded-lg overflow-hidden shrink-0 bg-slate-900">
                   <img
                     src={p.image}
                     alt={p.title}

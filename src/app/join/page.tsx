@@ -62,7 +62,7 @@ export default function JoinPage() {
       
       {/* Hero */}
       <section className="bg-gradient-to-b from-leo-pearl via-white to-white py-16 lg:py-24 border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="max-w-3xl">
             <CyanBar />
             <span className="block text-xs font-bold tracking-[0.14em] text-leo-slate uppercase mb-2">
@@ -80,7 +80,7 @@ export default function JoinPage() {
 
       {/* Benefits Grid */}
       <section className="py-16 bg-white border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[
               {
@@ -104,7 +104,7 @@ export default function JoinPage() {
                 desc: "Lead tree planting, food relief, pediatric cancer aid, and sight care camps.",
               },
             ].map((item, idx) => (
-              <div key={idx} className="bg-leo-pearl rounded-3xl p-6 border border-leo-border space-y-3">
+              <div key={idx} className="bg-leo-pearl rounded-xl p-6 border border-leo-border space-y-3">
                 <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm">
                   {item.icon}
                 </div>
@@ -120,7 +120,7 @@ export default function JoinPage() {
       <section className="py-20 bg-leo-pearl">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-leo-border shadow-xl">
+          <div className="bg-white rounded-xl p-8 sm:p-12 border border-leo-border shadow-xl">
             {isSubmitted ? (
               <div className="text-center py-12 space-y-5">
                 <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">

@@ -74,7 +74,7 @@ export default function AboutPage() {
             </div>
 
             <div className="relative">
-              <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-leo-dark">
+              <div className="rounded-xl overflow-hidden shadow-xl border-4 border-white bg-leo-dark">
                 <img
                   src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1000&q=80"
                   alt="Fellowship and Service"
@@ -106,7 +106,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
             {/* Leadership */}
-            <div className="bg-white rounded-3xl p-8 border border-leo-border shadow-sm hover:shadow-card transition-card space-y-4">
+            <div className="bg-white rounded-xl p-8 border border-leo-border shadow-sm hover:shadow-card transition-card space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-leo-cyan-light text-leo-blue flex items-center justify-center font-heading font-extrabold text-2xl">
                 L
               </div>
@@ -119,7 +119,7 @@ export default function AboutPage() {
             </div>
 
             {/* Experience */}
-            <div className="bg-white rounded-3xl p-8 border border-leo-border shadow-sm hover:shadow-card transition-card space-y-4">
+            <div className="bg-white rounded-xl p-8 border border-leo-border shadow-sm hover:shadow-card transition-card space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-heading font-extrabold text-2xl">
                 E
               </div>
@@ -132,7 +132,7 @@ export default function AboutPage() {
             </div>
 
             {/* Opportunity */}
-            <div className="bg-white rounded-3xl p-8 border border-leo-border shadow-sm hover:shadow-card transition-card space-y-4">
+            <div className="bg-white rounded-xl p-8 border border-leo-border shadow-sm hover:shadow-card transition-card space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-heading font-extrabold text-2xl">
                 O
               </div>

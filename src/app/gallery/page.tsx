@@ -59,7 +59,7 @@ export default function GalleryPage() {
       
       {/* Hero */}
       <section className="bg-gradient-to-b from-leo-pearl via-white to-white py-16 lg:py-24 border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="max-w-3xl">
             <CyanBar />
             <span className="block text-xs font-bold tracking-[0.14em] text-leo-slate uppercase mb-2">
@@ -77,7 +77,7 @@ export default function GalleryPage() {
 
       {/* Filter Chips */}
       <section className="py-8 bg-white border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="flex items-center gap-3 overflow-x-auto pb-2">
             {[
               { id: "all", label: "All Photos" },
@@ -104,7 +104,7 @@ export default function GalleryPage() {
 
       {/* Masonry / Grid Gallery */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPhotos.map((photo) => (
               <div

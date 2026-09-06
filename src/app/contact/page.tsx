@@ -24,7 +24,7 @@ export default function ContactPage() {
       
       {/* Hero */}
       <section className="bg-gradient-to-b from-leo-pearl via-white to-white py-16 lg:py-24 border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="max-w-3xl">
             <CyanBar />
             <span className="block text-xs font-bold tracking-[0.14em] text-leo-slate uppercase mb-2">
@@ -42,13 +42,13 @@ export default function ContactPage() {
 
       {/* Main Grid: Contact Info & Form */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             
             {/* Left Col: Contact Information Cards */}
             <div className="lg:col-span-5 space-y-6">
               
-              <div className="bg-leo-blue text-white rounded-3xl p-8 shadow-card space-y-6">
+              <div className="bg-leo-blue text-white rounded-xl p-8 shadow-card space-y-6">
                 <h3 className="font-heading font-extrabold text-2xl">
                   Club Secretariat & Office
                 </h3>
@@ -91,7 +91,7 @@ export default function ContactPage() {
               </div>
 
               {/* Corporate Partnership Card */}
-              <div className="bg-leo-pearl rounded-3xl p-8 border border-leo-border space-y-4">
+              <div className="bg-leo-pearl rounded-xl p-8 border border-leo-border space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-white text-leo-cyan flex items-center justify-center shadow-sm">
                   <Heart className="w-6 h-6 text-rose-500" />
                 </div>
@@ -107,7 +107,7 @@ export default function ContactPage() {
 
             {/* Right Col: Interactive Message Form */}
             <div className="lg:col-span-7">
-              <div className="bg-white rounded-3xl p-8 sm:p-10 border border-leo-border shadow-card">
+              <div className="bg-white rounded-xl p-8 sm:p-10 border border-leo-border shadow-card">
                 {submitted ? (
                   <div className="text-center py-12 space-y-4">
                     <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">

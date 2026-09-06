@@ -87,10 +87,10 @@ export default function Navbar() {
               </button>
 
               {aboutOpen && (
-                <div className="absolute top-full left-0 w-72 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-900/5 border border-slate-100 p-2.5 animate-in fade-in slide-in-from-top-2 duration-150 z-50 space-y-1">
+                <div className="absolute top-full left-0 w-72 bg-white/95 backdrop-blur-xl rounded-xl shadow-xl shadow-slate-900/5 border border-slate-100 p-2 animate-in fade-in slide-in-from-top-2 duration-150 z-50 space-y-1">
                   <Link
                     href="/about"
-                    className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 text-slate-800 hover:text-[#003B99] transition-colors group/item"
+                    className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 text-slate-800 hover:text-[#003B99] transition-colors group/item"
                   >
                     <div className="w-8 h-8 rounded-lg bg-blue-50 text-[#003B99] flex items-center justify-center shrink-0 mt-0.5 group-hover/item:bg-[#003B99] group-hover/item:text-white transition-colors">
                       <BookOpen className="w-4 h-4" />
@@ -103,7 +103,7 @@ export default function Navbar() {
 
                   <Link
                     href="/board"
-                    className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 text-slate-800 hover:text-[#003B99] transition-colors group/item"
+                    className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 text-slate-800 hover:text-[#003B99] transition-colors group/item"
                   >
                     <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 mt-0.5 group-hover/item:bg-indigo-600 group-hover/item:text-white transition-colors">
                       <Users className="w-4 h-4" />
@@ -116,7 +116,7 @@ export default function Navbar() {
 
                   <Link
                     href="/about#lions-history"
-                    className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 text-slate-800 hover:text-[#003B99] transition-colors group/item"
+                    className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 text-slate-800 hover:text-[#003B99] transition-colors group/item"
                   >
                     <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 mt-0.5 group-hover/item:bg-amber-600 group-hover/item:text-white transition-colors">
                       <Award className="w-4 h-4" />
@@ -157,7 +157,7 @@ export default function Navbar() {
               </button>
 
               {eventsOpen && (
-                <div className="absolute top-full left-0 w-68 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-900/5 border border-slate-100 p-2.5 animate-in fade-in slide-in-from-top-2 duration-150 z-50 space-y-1">
+                <div className="absolute top-full left-0 w-68 bg-white/95 backdrop-blur-xl rounded-xl shadow-xl shadow-slate-900/5 border border-slate-100 p-2 animate-in fade-in slide-in-from-top-2 duration-150 z-50 space-y-1">
                   <Link
                     href="/events"
                     className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 text-slate-800 hover:text-[#003B99] transition-colors group/item"

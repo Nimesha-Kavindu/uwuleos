@@ -66,7 +66,7 @@ export default function AffiliationSection() {
         </div>
 
         {/* Connected Integrated Governance Pathway (No individual floating boxes!) */}
-        <div className="relative bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        <div className="relative bg-white rounded-xl border border-slate-200/90 shadow-xs overflow-hidden">
           
           {/* Subtle Top Gradient Accent */}
           <div className="h-1 bg-gradient-to-r from-[#003B99] via-[#00A3E0] to-[#003B99]" />
