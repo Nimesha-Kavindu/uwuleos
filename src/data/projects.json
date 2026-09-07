@@ -1,0 +1,134 @@
+[
+  {
+    "id": "proj-uwu-1",
+    "slug": "project-sipnana-badulla",
+    "title": "Project Sipnana: Rural School Educational Aid Drive",
+    "category": "Education",
+    "directorate": "Directorate of Education & STEM",
+    "icon": "BookOpen",
+    "color": "blue",
+    "summary": "Providing comprehensive book sets, essential stationery packs, and classroom learning equipment to underprivileged primary schools across the Passara and Badulla education zones.",
+    "impactMetric": "450+ Students Supported",
+    "date": "December 2024",
+    "location": "Passara Central & Rural Schools, Badulla",
+    "status": "Completed",
+    "volunteers": "45+ Leo Volunteers",
+    "beneficiaries": "4 Underprivileged Rural Schools",
+    "highlights": [
+      "Distributed over 1,200 exercise books and complete stationery packs.",
+      "Renovated primary reading corners with curated storybook libraries.",
+      "Conducted interactive STEM curiosity sessions for Grade 3-5 students."
+    ],
+    "image": ""
+  },
+  {
+    "id": "proj-uwu-2",
+    "slug": "uwu-annual-blood-donation",
+    "title": "UWU Annual Mega Blood Donation & Health Camp",
+    "category": "Healthcare",
+    "directorate": "Directorate of Health & Wellbeing",
+    "icon": "Activity",
+    "color": "rose",
+    "summary": "Organized in direct collaboration with the Badulla Teaching Hospital Blood Bank, collecting vital blood units and providing free baseline health screenings for university staff and local residents.",
+    "impactMetric": "220+ Blood Units Collected",
+    "date": "November 2024",
+    "location": "UWU Main Auditorium, Badulla",
+    "status": "Annual Flagship",
+    "volunteers": "60+ Leo Volunteers",
+    "beneficiaries": "Badulla Teaching Hospital Blood Bank",
+    "highlights": [
+      "220+ screened and verified donors in a single day.",
+      "Free BMI, blood pressure, and basic glucose screening for 350+ attendees.",
+      "First aid and emergency preparedness booth led by medical officers."
+    ],
+    "image": ""
+  },
+  {
+    "id": "proj-uwu-3",
+    "slug": "green-uva-reforestation",
+    "title": "Project Green Uva: Central Highlands Reforestation",
+    "category": "Environment",
+    "directorate": "Directorate of Environmental Conservation",
+    "icon": "Trees",
+    "color": "emerald",
+    "summary": "Planting native forest trees, soil-binding grasses, and medicinal plants across critical water catchment areas surrounding Namunukula and Badulla to combat hillside erosion.",
+    "impactMetric": "1,500+ Saplings Planted",
+    "date": "October 2024",
+    "location": "Namunukula Catchment & Ella Hills, Badulla",
+    "status": "Completed",
+    "volunteers": "50+ Leo Volunteers",
+    "beneficiaries": "Uva Province Water Catchment Ecosystem",
+    "highlights": [
+      "1,500+ indigenous trees and Kumbuk saplings planted.",
+      "Eco-trail cleanup removing 180kg of non-biodegradable waste from Ella.",
+      "Long-term growth monitoring partnered with local forest rangers."
+    ],
+    "image": ""
+  },
+  {
+    "id": "proj-uwu-4",
+    "slug": "manusath-derana-relief-drive",
+    "title": "Passara Community Food & Winter Relief Mission",
+    "category": "Community",
+    "directorate": "Directorate of Community Services",
+    "icon": "HeartHandshake",
+    "color": "amber",
+    "summary": "Delivering essential dry rations, warm winter clothing, and emergency flood relief packages to vulnerable tea estate families in the high-altitude Passara region.",
+    "impactMetric": "180+ Families Aided",
+    "date": "September 2024",
+    "location": "Passara Tea Estate Sector, Badulla",
+    "status": "Completed",
+    "volunteers": "35+ Leo Volunteers",
+    "beneficiaries": "Tea Estate Farming Families",
+    "highlights": [
+      "Distributed 180 essential grocery and dry ration hampers.",
+      "Provided warm clothing packs and blankets for elderly residents.",
+      "Organized community tea and counseling session with village elders."
+    ],
+    "image": ""
+  },
+  {
+    "id": "proj-uwu-5",
+    "slug": "tech-ignite-stem-workshop",
+    "title": "TechIgnite: Digital Literacy & Coding for Rural Youth",
+    "category": "Education",
+    "directorate": "Directorate of Information Technology",
+    "icon": "Laptop",
+    "color": "cyan",
+    "summary": "Introducing basic computer skills, Scratch visual programming, and internet safety awareness to rural secondary students with limited access to modern computer labs.",
+    "impactMetric": "120+ Students Trained",
+    "date": "August 2024",
+    "location": "Badulla District Rural Schools",
+    "status": "Completed",
+    "volunteers": "25+ Leo IT Mentors",
+    "beneficiaries": "Grade 7-10 Underprivileged Students",
+    "highlights": [
+      "Hands-on computer basics and block-coding workshops.",
+      "Setup of refurbished computer workstations in 2 village schools.",
+      "Digital career guidance by UWU Computer Science undergraduates."
+    ],
+    "image": ""
+  },
+  {
+    "id": "proj-uwu-6",
+    "slug": "leo-leadership-bootcamp-uwu",
+    "title": "Leostride: Undergraduate Leadership & Public Speaking",
+    "category": "Youth Development",
+    "directorate": "Directorate of Member Development",
+    "icon": "Users",
+    "color": "purple",
+    "summary": "An intensive weekend leadership workshop designed to equip first-year university undergraduates with public speaking, project management, and team collaboration skills.",
+    "impactMetric": "85+ New Leaders Trained",
+    "date": "July 2024",
+    "location": "UWU Campus, Badulla",
+    "status": "Annual Flagship",
+    "volunteers": "20+ Executive Trainers",
+    "beneficiaries": "UWU Undergraduates",
+    "highlights": [
+      "Keynote sessions from Guiding Lions and corporate leaders.",
+      "Live crisis-management simulations and debate challenges.",
+      "Induction of 40+ new enthusiastic Leo members."
+    ],
+    "image": ""
+  }
+]
