@@ -1,0 +1,214 @@
+{
+  "leisticYear": "2024/2025",
+  "district": "District 306 C2",
+  "sponsoringClub": "Lions Club of Badulla",
+  "stats": [
+    { "label": "Advisory Mentors", "value": "02", "desc": "Academic & Lions Governance" },
+    { "label": "Executive Officers", "value": "05", "desc": "Top Table Management" },
+    { "label": "Portfolio Directorates", "value": "08", "desc": "Community & Campus Impact" },
+    { "label": "Faculties Represented", "value": "04", "desc": "Uva Wellassa University" }
+  ],
+  "advisoryCouncil": [
+    {
+      "id": "adv-1",
+      "category": "Academic Mentorship",
+      "roleBadge": "UWU FACULTY MENTOR",
+      "title": "University Staff Advisor",
+      "name": "Staff Advisor — Uva Wellassa University",
+      "designation": "Senior Lecturer & Academic Mentor",
+      "institution": "Uva Wellassa University of Sri Lanka",
+      "scope": "Provides strategic counsel on university policy adherence, academic faculty liaison, student development ethics, and campus governance integration.",
+      "email": "staff.advisor@uwu.ac.lk",
+      "initials": "SA",
+      "image": ""
+    },
+    {
+      "id": "adv-2",
+      "category": "LCI District Governance",
+      "roleBadge": "LIONS DISTRICT ADVISOR",
+      "title": "Leo Club Advisor (Guiding Lion)",
+      "name": "Club Advisor — Lions Club of Badulla",
+      "designation": "Guiding Lion & Past District Officer",
+      "institution": "Lions Club of Badulla • Leo District 306 C2",
+      "scope": "Ensures adherence to the Lions Clubs International Constitution, mentors club officers on youth leadership stewardship, and coordinates district funding pipelines.",
+      "email": "advisor.badulla@lions306c2.org",
+      "initials": "CA",
+      "image": ""
+    }
+  ],
+  "president": {
+    "id": "exco-pres",
+    "roleBadge": "CHIEF EXECUTIVE OFFICER",
+    "designation": "Club President",
+    "name": "Leo Club President",
+    "faculty": "Faculty of Applied Sciences",
+    "institution": "Uva Wellassa University",
+    "term": "Leistic Year 2024/2025",
+    "responsibilities": "Presides over all executive and general assemblies, directs overall strategic vision, represents UWU Leos at District 306 C2 conventions, and stewards inter-faculty service initiatives.",
+    "email": "president.uwuleos@gmail.com",
+    "motto": "“Leading with passion, serving with purpose for Uva Wellassa and beyond.”",
+    "initials": "CP",
+    "image": ""
+  },
+  "excoOfficers": [
+    {
+      "id": "exco-vp",
+      "roleBadge": "EXECUTIVE COUNCIL",
+      "designation": "Club Vice President",
+      "name": "Leo Vice President",
+      "faculty": "Faculty of Management",
+      "scope": "Directs project directorate coordination, supervises internal operational logistics, and represents the president in executive assemblies.",
+      "email": "vp.uwuleos@gmail.com",
+      "initials": "VP",
+      "color": "cyan",
+      "image": ""
+    },
+    {
+      "id": "exco-sec",
+      "roleBadge": "EXECUTIVE COUNCIL",
+      "designation": "Club Secretary",
+      "name": "Leo Secretary",
+      "faculty": "Faculty of Science & Technology",
+      "scope": "Stewards official records, meeting minutes, monthly district activity reporting via Lion Portal / MyLCI, and inter-club correspondence.",
+      "email": "secretary.uwuleos@gmail.com",
+      "initials": "CS",
+      "color": "blue",
+      "image": ""
+    },
+    {
+      "id": "exco-tre",
+      "roleBadge": "EXECUTIVE COUNCIL",
+      "designation": "Club Treasurer",
+      "name": "Leo Treasurer",
+      "faculty": "Faculty of Management",
+      "scope": "Manages treasury accounts, oversees project funding allocations, financial auditing, and ensures fiscal accountability to Lions District 306 C2.",
+      "email": "treasurer.uwuleos@gmail.com",
+      "initials": "CT",
+      "color": "emerald",
+      "image": ""
+    },
+    {
+      "id": "exco-asst-sec",
+      "roleBadge": "EXECUTIVE COUNCIL",
+      "designation": "Assistant Secretary",
+      "name": "Leo Assistant Secretary",
+      "faculty": "Faculty of Animal Science & Export Agriculture",
+      "scope": "Maintains official membership rolls, secretarial dispatch logistics, meeting attendance verification, and circular distribution.",
+      "email": "asst.secretary.uwuleos@gmail.com",
+      "initials": "AS",
+      "color": "amber",
+      "image": ""
+    }
+  ],
+  "directors": [
+    {
+      "id": "dir-1",
+      "portfolio": "Community Services & Relief",
+      "name": "Director of Community Services",
+      "faculty": "Faculty of Applied Sciences",
+      "scope": "Coordinates rural welfare missions, humanitarian relief distribution in Passara and Badulla, and emergency community support.",
+      "email": "community.uwuleos@gmail.com",
+      "initials": "DCS",
+      "category": "Service & Welfare",
+      "color": "rose",
+      "icon": "HeartHandshake",
+      "image": ""
+    },
+    {
+      "id": "dir-2",
+      "portfolio": "Project Sipnana & STEM",
+      "name": "Director of Education & STEM",
+      "faculty": "Faculty of Science & Technology",
+      "scope": "Directs Project Sipnana, rural school book distribution campaigns, science laboratory workshops, and youth scholarship initiatives.",
+      "email": "sipnana.uwuleos@gmail.com",
+      "initials": "DES",
+      "category": "Youth & Education",
+      "color": "blue",
+      "icon": "BookOpen",
+      "image": ""
+    },
+    {
+      "id": "dir-3",
+      "portfolio": "Green Uva & Environment",
+      "name": "Director of Environmental Conservation",
+      "faculty": "Faculty of Animal Science & Export Agriculture",
+      "scope": "Oversees Central Highlands reforestation, eco-trail cleanups across Ella/Dunhinda, and campus sustainability drives.",
+      "email": "environment.uwuleos@gmail.com",
+      "initials": "DEV",
+      "category": "Sustainability",
+      "color": "emerald",
+      "icon": "Trees",
+      "image": ""
+    },
+    {
+      "id": "dir-4",
+      "portfolio": "Healthcare & Blood Aid",
+      "name": "Director of Health & Wellbeing",
+      "faculty": "Faculty of Applied Sciences",
+      "scope": "Leads the Annual Mega Blood Donation campaign with Badulla Teaching Hospital, health screening clinics, and first-aid workshops.",
+      "email": "health.uwuleos@gmail.com",
+      "initials": "DHW",
+      "category": "Public Health",
+      "color": "red",
+      "icon": "Activity",
+      "image": ""
+    },
+    {
+      "id": "dir-5",
+      "portfolio": "PR, Branding & Media",
+      "name": "Director of Public Relations",
+      "faculty": "Faculty of Management",
+      "scope": "Manages official club branding, press releases, social media channels, event photography, and publication design.",
+      "email": "media.uwuleos@gmail.com",
+      "initials": "DPR",
+      "category": "Communications",
+      "color": "amber",
+      "icon": "Megaphone",
+      "image": ""
+    },
+    {
+      "id": "dir-6",
+      "portfolio": "IT & Digital Systems",
+      "name": "Director of Information Technology",
+      "faculty": "Faculty of Science & Technology",
+      "scope": "Develops and maintains the official club digital portal, cloud directories, digital publishing pipelines, and tech operations.",
+      "email": "it.uwuleos@gmail.com",
+      "initials": "DIT",
+      "category": "Technology",
+      "color": "cyan",
+      "icon": "Laptop",
+      "image": ""
+    },
+    {
+      "id": "dir-7",
+      "portfolio": "Membership & Fellowship",
+      "name": "Director of Member Development",
+      "faculty": "Faculty of Management",
+      "scope": "Orchestrates undergraduate member onboarding, annual induction assemblies, leadership bootcamps, and fellowship outings.",
+      "email": "membership.uwuleos@gmail.com",
+      "initials": "DMD",
+      "category": "Leadership",
+      "color": "purple",
+      "icon": "Users",
+      "image": ""
+    },
+    {
+      "id": "dir-8",
+      "portfolio": "International Relations & LCI",
+      "name": "Director of International Relations",
+      "faculty": "Faculty of Applied Sciences",
+      "scope": "Facilitates twinning programs with global Leo clubs, Multiple District 306 youth conferences, and international humanitarian exchanges.",
+      "email": "ir.uwuleos@gmail.com",
+      "initials": "DIR",
+      "category": "Global Relations",
+      "color": "teal",
+      "icon": "Globe2",
+      "image": ""
+    }
+  ],
+  "governance": {
+    "title": "Constitution & Standard Leo Club By-Laws",
+    "description": "Operating under the official Charter of Lions Clubs International, sponsored by the Lions Club of Badulla within Leo District 306 C2, Sri Lanka.",
+    "districtTag": "District 306 C2 • Sri Lanka"
+  }
+}
