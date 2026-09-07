@@ -2,363 +2,402 @@
 
 import React, { useState } from "react";
 import { useClub } from "@/context/ClubContext";
-import CyanBar from "@/components/ui/CyanBar";
 import {
   CheckCircle2,
   Sparkles,
   Award,
   Users,
   Globe,
-  HelpCircle,
+  HeartHandshake,
+  Send,
   ChevronDown,
-  ArrowRight,
+  MessageSquare,
+  GraduationCap,
+  ShieldCheck,
 } from "lucide-react";
 
 export default function JoinPage() {
   const { club } = useClub();
-  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
-    dob: "",
-    occupation: "",
+    faculty: "Applied Sciences",
+    academicYear: "1st Year (Fresher)",
+    regNo: "",
     interests: [] as string[],
     motivation: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const toggleInterest = (val: string) => {
+  const toggleInterest = (interest: string) => {
     setFormData((prev) => ({
       ...prev,
-      interests: prev.interests.includes(val)
-        ? prev.interests.filter((i) => i !== val)
-        : [...prev.interests, val],
+      interests: prev.interests.includes(interest)
+        ? prev.interests.filter((i) => i !== interest)
+        : [...prev.interests, interest],
     }));
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+  };
+
+  const INTEREST_OPTIONS = [
+    "Community Service & Relief",
+    "Environment & Green Uva",
+    "Education & School Aid",
+    "Healthcare & Blood Drives",
+    "Media, Photography & Design",
+    "IT, Web & Digital Systems",
+    "Event Management & Sports",
+  ];
+
   const FAQS = [
     {
-      q: "What is the age requirement to join a Leo Club?",
-      a: "Alpha Leo Clubs are organized for youth aged 12 to 18 (typically school-based), while Omega Leo Clubs are tailored for young adults aged 18 to 30 (university students and working professionals).",
+      q: "Do I need prior experience to join UWU Leos?",
+      a: "No! Most members join in their 1st year with zero prior experience. We provide full training in project management, leadership, and public speaking.",
     },
     {
-      q: "What are the core benefits of becoming a Leo?",
-      a: "Leos gain certified executive leadership training, public speaking experience, community project management exposure, and direct entry into Lions Clubs International's global network of 1.4 million leaders.",
+      q: "How will club activities affect my academic studies?",
+      a: "Academics always come first. Projects and meetings are held on weekends with flexible shifts so lectures and exam prep are never compromised.",
     },
     {
-      q: "How often do Leo clubs meet?",
-      a: "Most clubs hold regular general meetings twice a month (physical or hybrid), along with service projects organized over weekends.",
+      q: "What do I receive as an official Leo member?",
+      a: "You receive an official Lions International membership kit, gilded Leo lapel pin, verified leadership certificates, and access to national youth conferences.",
     },
     {
-      q: "Is there a membership fee?",
-      a: "A nominal annual district dues fee covers your official Lions International membership kit, Leo lapel pin, insurance coverage, and official certificate.",
+      q: "Is there an orientation for new recruits?",
+      a: "Yes! After submitting this form, you will be invited to our New Recruits Orientation Mixer to meet senior mentors and fellow batchmates.",
     },
   ];
 
   return (
-    <div className="bg-white">
+    <div className="min-h-screen bg-[#FAFAFC] text-slate-900">
       
-      {/* Hero */}
-      <section className="bg-gradient-to-b from-leo-pearl via-white to-white py-16 lg:py-24 border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
-          <div className="max-w-3xl">
-            <CyanBar />
-            <span className="block text-xs font-bold tracking-[0.14em] text-leo-slate uppercase mb-2">
-              BECOME A YOUNG LEADER
-            </span>
-            <h1 className="font-heading font-extrabold text-4xl sm:text-5xl text-leo-charcoal tracking-tight leading-tight mb-6">
-              Begin Your Leadership Journey with {club.shortName}
-            </h1>
-            <p className="text-lg text-leo-slate leading-relaxed">
-              Join thousands of passionate youth serving communities, mastering project leadership, and forging lifelong international friendships.
-            </p>
+      {/* 1. Clean Header */}
+      <section className="bg-white border-b border-slate-200/80 pt-12 pb-8 sm:pt-16 sm:pb-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2.5">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-100 text-[11px] font-medium text-slate-600">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#003B99]" />
+            <span>District 306 C2 • Uva Wellassa University</span>
           </div>
-        </div>
-      </section>
-
-      {/* Benefits Grid */}
-      <section className="py-16 bg-white border-b border-leo-border">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {[
-              {
-                icon: <Award className="w-8 h-8 text-leo-cyan" />,
-                title: "Global Recognition",
-                desc: "Official LCI certificates, leadership awards, and international youth conventions.",
-              },
-              {
-                icon: <Sparkles className="w-8 h-8 text-leo-gold" />,
-                title: "Executive Skills",
-                desc: "Learn real-world budgeting, public speaking, team coordination, and crisis response.",
-              },
-              {
-                icon: <Users className="w-8 h-8 text-leo-blue" />,
-                title: "Lifelong Fellowship",
-                desc: "Connect with like-minded ambitious youth across Sri Lanka, the Maldives, and worldwide.",
-              },
-              {
-                icon: <Globe className="w-8 h-8 text-emerald-500" />,
-                title: "Tangible Social Impact",
-                desc: "Lead tree planting, food relief, pediatric cancer aid, and sight care camps.",
-              },
-            ].map((item, idx) => (
-              <div key={idx} className="bg-leo-pearl rounded-xl p-6 border border-leo-border space-y-3">
-                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm">
-                  {item.icon}
-                </div>
-                <h3 className="font-heading font-bold text-lg text-leo-charcoal">{item.title}</h3>
-                <p className="text-xs text-leo-slate leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Application Form */}
-      <section className="py-20 bg-leo-pearl">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="bg-white rounded-xl p-8 sm:p-12 border border-leo-border shadow-xl">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 font-heading">
+            Join the Leo Club of UWU
+          </h1>
+
+          <p className="text-slate-500 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+            Open to all undergraduates across all 4 faculties. Build leadership skills, connect with fellow students, and make a lasting impact.
+          </p>
+        </div>
+      </section>
+
+      {/* 2. Main Simple Registration Form */}
+      <section className="py-10 sm:py-14">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
+            
             {isSubmitted ? (
-              <div className="text-center py-12 space-y-5">
-                <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
-                  <CheckCircle2 className="w-10 h-10" />
+              /* Simple Confirmation State */
+              <div className="text-center py-8 space-y-4">
+                <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="font-heading font-extrabold text-3xl text-leo-charcoal">
-                  Welcome to the Pride!
-                </h3>
-                <p className="text-base text-leo-slate max-w-md mx-auto">
-                  Thank you, <strong>{formData.fullName}</strong>. Your membership application for <strong>{club.name}</strong> has been submitted. Our Club Membership Director will contact you within 48 hours.
+                
+                <h2 className="text-xl font-bold text-slate-900 font-heading">
+                  Welcome to the Pride, {formData.fullName.split(" ")[0] || "Friend"}!
+                </h2>
+
+                <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
+                  Your application has been received. Our Membership Directorate will contact you via WhatsApp with details for the upcoming Recruits Orientation.
                 </p>
-                <div className="pt-4">
+
+                <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+                  <a
+                    href="https://chat.whatsapp.com/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-xs transition-colors"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>Join Recruits WhatsApp Group</span>
+                  </a>
+
                   <button
                     type="button"
                     onClick={() => {
                       setIsSubmitted(false);
-                      setStep(1);
+                      setFormData({
+                        fullName: "",
+                        email: "",
+                        phone: "",
+                        faculty: "Applied Sciences",
+                        academicYear: "1st Year (Fresher)",
+                        regNo: "",
+                        interests: [],
+                        motivation: "",
+                      });
                     }}
-                    className="px-8 py-3 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-sm shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+                    className="w-full sm:w-auto px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition-colors"
                   >
-                    Submit Another Application
+                    Submit Another
                   </button>
                 </div>
               </div>
             ) : (
-              <div>
-                {/* Form Steps Header */}
-                <div className="flex items-center justify-between border-b border-leo-border pb-6 mb-8">
+              /* Simple 1-Page Form */
+              <form onSubmit={handleSubmit} className="space-y-4">
+                
+                <div className="border-b border-slate-100 pb-3">
+                  <h2 className="text-base font-bold text-slate-900 font-heading">
+                    Membership Registration
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Fill in your details below to begin your journey.
+                  </p>
+                </div>
+
+                {/* Full Name */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    Full Name <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="e.g. Kasun Mihiran Fernando"
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#003B99] focus:border-[#003B99] font-medium text-slate-800 placeholder:text-slate-400"
+                  />
+                </div>
+
+                {/* Email & Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <span className="text-xs font-bold text-leo-cyan uppercase tracking-wider">Step {step} of 2</span>
-                    <h3 className="font-heading font-bold text-2xl text-leo-charcoal">
-                      {step === 1 ? "Personal & Contact Details" : "Interests & Service Motivation"}
-                    </h3>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Email Address <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      required
+                      type="email"
+                      placeholder="kasun@gmail.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#003B99] focus:border-[#003B99] font-medium text-slate-800 placeholder:text-slate-400"
+                    />
                   </div>
-                  <div className="flex gap-2">
-                    <span className={`w-3 h-3 rounded-full ${step === 1 ? "bg-leo-cyan" : "bg-leo-border"}`} />
-                    <span className={`w-3 h-3 rounded-full ${step === 2 ? "bg-leo-cyan" : "bg-leo-border"}`} />
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      WhatsApp Mobile Number <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      required
+                      type="tel"
+                      placeholder="+94 77 123 4567"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#003B99] focus:border-[#003B99] font-medium text-slate-800 placeholder:text-slate-400"
+                    />
                   </div>
                 </div>
 
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (step === 1) {
-                      setStep(2);
-                    } else {
-                      setIsSubmitted(true);
-                    }
-                  }}
-                  className="space-y-6"
-                >
-                  {step === 1 ? (
-                    <>
-                      <div>
-                        <label className="block text-xs font-bold text-leo-charcoal uppercase mb-1.5">
-                          Full Legal Name *
-                        </label>
-                        <input
-                          required
-                          type="text"
-                          placeholder="e.g. Kasun Mihiran Silva"
-                          value={formData.fullName}
-                          onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
-                        />
-                      </div>
+                {/* Faculty & Academic Year (Simple Dropdowns!) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Your Faculty <span className="text-rose-500">*</span>
+                    </label>
+                    <select
+                      value={formData.faculty}
+                      onChange={(e) => setFormData({ ...formData, faculty: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#003B99] focus:border-[#003B99] font-medium text-slate-800 cursor-pointer"
+                    >
+                      <option>Faculty of Applied Sciences</option>
+                      <option>Faculty of Science &amp; Technology</option>
+                      <option>Faculty of Management</option>
+                      <option>Faculty of Animal Science &amp; Export Agriculture</option>
+                    </select>
+                  </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs font-bold text-leo-charcoal uppercase mb-1.5">
-                            Email Address *
-                          </label>
-                          <input
-                            required
-                            type="email"
-                            placeholder="kasun@example.com"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-bold text-leo-charcoal uppercase mb-1.5">
-                            Mobile / WhatsApp Phone *
-                          </label>
-                          <input
-                            required
-                            type="tel"
-                            placeholder="+94 77 123 4567"
-                            value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                            className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
-                          />
-                        </div>
-                      </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Academic Year <span className="text-rose-500">*</span>
+                    </label>
+                    <select
+                      value={formData.academicYear}
+                      onChange={(e) => setFormData({ ...formData, academicYear: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#003B99] focus:border-[#003B99] font-medium text-slate-800 cursor-pointer"
+                    >
+                      <option>1st Year (Fresher)</option>
+                      <option>2nd Year</option>
+                      <option>3rd Year</option>
+                      <option>4th Year / Finalist</option>
+                    </select>
+                  </div>
+                </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs font-bold text-leo-charcoal uppercase mb-1.5">
-                            Date of Birth *
-                          </label>
-                          <input
-                            required
-                            type="date"
-                            value={formData.dob}
-                            onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-                            className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-bold text-leo-charcoal uppercase mb-1.5">
-                            Occupation / School / University
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Undergraduate / Engineer"
-                            value={formData.occupation}
-                            onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
-                            className="w-full px-4 py-3 rounded-2xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
-                          />
-                        </div>
-                      </div>
+                {/* Student Reg Number or Degree (Optional) */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    Degree Program or Student ID (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. BSc in Computer Science / UWU/CST/22/045"
+                    value={formData.regNo}
+                    onChange={(e) => setFormData({ ...formData, regNo: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#003B99] focus:border-[#003B99] font-medium text-slate-800 placeholder:text-slate-400"
+                  />
+                </div>
 
-                      <div className="pt-4 flex justify-end">
+                {/* Interests (Simple Toggle Pills) */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    Areas You Are Interested In (Optional)
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {INTEREST_OPTIONS.map((item) => {
+                      const isSelected = formData.interests.includes(item);
+                      return (
                         <button
-                          type="submit"
-                          className="group inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-sm shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
-                        >
-                          <span>Next Step</span>
-                          <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        <label className="block text-xs font-bold text-leo-charcoal uppercase mb-3">
-                          Select Your Areas of Interest (Choose all that apply)
-                        </label>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                          {[
-                            "Community Service",
-                            "Youth Leadership",
-                            "Environment & Eco",
-                            "Health & Blood Aid",
-                            "Event Management",
-                            "Public Speaking",
-                          ].map((cat) => (
-                            <button
-                              type="button"
-                              key={cat}
-                              onClick={() => toggleInterest(cat)}
-                              className={`p-3 rounded-xl text-xs font-bold text-left border transition-all ${
-                                formData.interests.includes(cat)
-                                  ? "bg-gradient-to-r from-[#003B99] to-[#00A3E0] text-white border-transparent shadow-xs"
-                                  : "bg-leo-pearl text-leo-charcoal border-leo-border hover:bg-slate-100"
-                              }`}
-                            >
-                              {cat}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-leo-charcoal uppercase mb-1.5">
-                          Why do you want to join {club.shortName}?
-                        </label>
-                        <textarea
-                          rows={4}
-                          placeholder="Briefly share what inspires you to serve..."
-                          value={formData.motivation}
-                          onChange={(e) => setFormData({ ...formData, motivation: e.target.value })}
-                          className="w-full px-4 py-3 rounded-xl border border-leo-border text-sm focus:ring-2 focus:ring-leo-cyan focus:outline-none"
-                        />
-                      </div>
-
-                      <div className="pt-4 flex items-center justify-between">
-                        <button
+                          key={item}
                           type="button"
-                          onClick={() => setStep(1)}
-                          className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm transition-colors"
+                          onClick={() => toggleInterest(item)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                            isSelected
+                              ? "bg-[#003B99] text-white border-[#003B99] font-semibold"
+                              : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+                          }`}
                         >
-                          Back
+                          {item}
                         </button>
-                        <button
-                          type="submit"
-                          className="px-8 py-3.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white rounded-xl font-bold text-sm shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
-                        >
-                          Submit Application
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </form>
-              </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Short Motivation */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    Why do you want to join? (Short note)
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Tell us briefly what inspires you or what you hope to achieve as a Leo..."
+                    value={formData.motivation}
+                    onChange={(e) => setFormData({ ...formData, motivation: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#003B99] focus:border-[#003B99] font-medium text-slate-800 placeholder:text-slate-400 leading-relaxed"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-3">
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-[#003B99] hover:bg-[#002D7A] text-white rounded-xl font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Submit Membership Application</span>
+                  </button>
+                </div>
+
+              </form>
             )}
+
           </div>
 
         </div>
       </section>
 
-      {/* FAQ Accordion */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <CyanBar className="mx-auto" />
-            <h3 className="font-heading font-extrabold text-3xl text-leo-charcoal">
-              Frequently Asked Questions
-            </h3>
+      {/* 3. 4 Clean Benefits Cards */}
+      <section className="py-12 bg-white border-t border-slate-200/80">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                icon: <Sparkles className="w-5 h-5 text-[#003B99]" />,
+                title: "Leadership Skills",
+                desc: "Project management, public speaking, and team leadership.",
+              },
+              {
+                icon: <Globe className="w-5 h-5 text-[#00A3E0]" />,
+                title: "Global Network",
+                desc: "Connect with 1.4M Lions and Leos across 200+ countries.",
+              },
+              {
+                icon: <HeartHandshake className="w-5 h-5 text-emerald-600" />,
+                title: "Community Service",
+                desc: "Lead tree planting, healthcare camps, and rural school aid.",
+              },
+              {
+                icon: <Award className="w-5 h-5 text-amber-500" />,
+                title: "Certified Recognition",
+                desc: "Official certificates signed by Lions Clubs International.",
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2"
+              >
+                <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-xs">
+                  {item.icon}
+                </div>
+                <h3 className="font-heading font-bold text-xs sm:text-sm text-slate-900">{item.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
 
-          <div className="space-y-4">
+        </div>
+      </section>
+
+      {/* 4. Frequently Asked Questions */}
+      <section className="py-12 bg-[#FAFAFC] border-t border-slate-200/80">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="mb-6 text-center space-y-1">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 font-heading">
+              Frequently Asked Questions
+            </h3>
+            <p className="text-xs text-slate-500">
+              Quick answers for new recruits.
+            </p>
+          </div>
+
+          <div className="space-y-2.5">
             {FAQS.map((faq, idx) => (
               <div
                 key={idx}
-                className="border border-leo-border rounded-2xl overflow-hidden transition-all"
+                className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs"
               >
                 <button
                   type="button"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full flex items-center justify-between p-5 text-left font-heading font-bold text-base text-leo-charcoal hover:bg-leo-pearl transition-colors"
+                  className="w-full flex items-center justify-between p-4 text-left font-heading font-bold text-xs sm:text-sm text-slate-800 cursor-pointer"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
-                    className={`w-5 h-5 text-leo-slate transition-transform ${
-                      openFaq === idx ? "rotate-180 text-leo-cyan" : ""
+                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2 ${
+                      openFaq === idx ? "rotate-180 text-[#003B99]" : ""
                     }`}
                   />
                 </button>
                 {openFaq === idx && (
-                  <div className="px-5 pb-5 text-sm text-leo-slate leading-relaxed bg-leo-pearl/40">
+                  <div className="px-4 pb-4 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                     {faq.a}
                   </div>
                 )}
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
