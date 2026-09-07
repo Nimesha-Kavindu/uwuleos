@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClubProvider } from "@/context/ClubContext";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Preloader from "@/components/layout/Preloader";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -32,6 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className="min-h-screen flex flex-col bg-white text-leo-charcoal antialiased">
+        <Preloader />
         <ClubProvider>
           {/* Main Top Navigation */}
           <Navbar />
