@@ -68,8 +68,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/gallery" className="hover:text-white transition-colors">
-                  Media Gallery
+                <Link href="/magazine" className="hover:text-white transition-colors">
+                  Leo Magazine &amp; Publications
                 </Link>
               </li>
               <li>

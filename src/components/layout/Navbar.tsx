@@ -189,12 +189,12 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* 4. Gallery Link */}
+            {/* 4. Magazine Link */}
             <Link
-              href="/gallery"
+              href="/magazine"
               className="px-3 py-2 rounded-xl text-slate-700 hover:text-[#003B99] hover:bg-slate-50 transition-all duration-150 whitespace-nowrap"
             >
-              Gallery
+              Magazine
             </Link>
 
             {/* 5. Contact Link */}
@@ -341,14 +341,14 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* 4. Gallery */}
+            {/* 4. Magazine */}
             <Link
-              href="/gallery"
+              href="/magazine"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-slate-800 hover:bg-white hover:text-[#003B99] transition-colors"
             >
-              <ImageIcon className="w-4 h-4 text-leo-cyan shrink-0" />
-              <span>Gallery</span>
+              <BookOpen className="w-4 h-4 text-leo-cyan shrink-0" />
+              <span>Magazine</span>
             </Link>
 
             {/* 5. Contact */}
