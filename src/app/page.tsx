@@ -21,7 +21,7 @@ export default function HomePage() {
       {/* 4. Featured Signature Projects */}
       <FeaturedProjects />
 
-      {/* 5. Upcoming Events Calendar */}
+      {/* 5. Official Announcements & News */}
       <EventsPreview />
 
       {/* 6. Member Reflections / Testimonials */}
