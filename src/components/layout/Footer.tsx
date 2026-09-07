@@ -118,6 +118,7 @@ export default function Footer() {
             <Link href="/about" className="hover:text-slate-300 transition-colors">About</Link>
             <Link href="/contact" className="hover:text-slate-300 transition-colors">Contact</Link>
             <Link href="/join" className="hover:text-slate-300 transition-colors">Join</Link>
+            <Link href="/admin" className="text-slate-400 hover:text-white transition-colors font-medium">Officer Admin</Link>
             <span className="flex items-center gap-1 text-slate-500">
               <span>Made for UWU Leos</span>
               <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
