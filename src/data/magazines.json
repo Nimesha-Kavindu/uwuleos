@@ -1,0 +1,109 @@
+[
+  {
+    "id": "mag-1",
+    "title": "ROAR: The Official Leistic Annual Magazine",
+    "edition": "Volume 06 • Leistic Year 2024/2025",
+    "category": "Annual Flagship",
+    "date": "December 2024",
+    "pages": "52 Pages",
+    "directorate": "Directorate of PR & Media",
+    "editor": "Leo Editorial Board — Uva Wellassa University",
+    "driveUrl": "https://drive.google.com/file/d/1sample-drive-roar-vol6/view?usp=sharing",
+    "summary": "The flagship annual retrospective chronicling university humanitarian missions, leadership milestones, rural community transformations, and undergraduate creative essays.",
+    "highlights": [
+      "Presidential Retrospective: The 2024 Service Roadmap",
+      "Special Feature: 100+ Hours in Passara Rural Classrooms",
+      "Voices of Uva: Undergraduate Poetry and Research Articles",
+      "District 306 C2 Fellowship & Twin Club Collaborations"
+    ],
+    "isFeatured": true
+  },
+  {
+    "id": "mag-2",
+    "title": "Project Sipnana: Rural Education Special Gazette",
+    "edition": "Special Impact Report • Issue 03",
+    "category": "Special Issue",
+    "date": "October 2024",
+    "pages": "36 Pages",
+    "directorate": "Directorate of Education & STEM",
+    "editor": "Project Sipnana Committee",
+    "driveUrl": "https://drive.google.com/file/d/1sample-drive-sipnana-gazette/view?usp=sharing",
+    "summary": "A comprehensive photographic case study and student evaluation report detailing school library restorations and rural STEM labs established in Badulla.",
+    "highlights": [
+      "Field Reports from 4 Primary Education Zones",
+      "STEM Workshop Curriculums & Student Feedback",
+      "Donor Transparency & Financial Allocation Ledger"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "mag-3",
+    "title": "Green Uva Chronicle: Central Highlands Eco-Bulletin",
+    "edition": "Conservation Edition • Vol 02",
+    "category": "Environment",
+    "date": "August 2024",
+    "pages": "28 Pages",
+    "directorate": "Directorate of Environmental Conservation",
+    "editor": "Green Uva Environmental Cell",
+    "driveUrl": "https://drive.google.com/file/d/1sample-drive-green-uva-bulletin/view?usp=sharing",
+    "summary": "Dedicated to the biodiversity preservation of Namunukula ridge and Ella eco-trails, featuring native flora catalogs and catchment water table research.",
+    "highlights": [
+      "Flora & Fauna of Namunukula Catchment Areas",
+      "Soil Erosion Mitigation via Kumbuk Tree Planting",
+      "Campus Green Audit: Moving Towards Zero Single-Use Plastics"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "mag-4",
+    "title": "The Leo Pulse: Quarterly District Dispatch",
+    "edition": "Quarterly Bulletin • Q2 2024",
+    "category": "Quarterly Bulletin",
+    "date": "June 2024",
+    "pages": "24 Pages",
+    "directorate": "Directorate of Member Development",
+    "editor": "Secretarial & Media Wing",
+    "driveUrl": "https://drive.google.com/file/d/1sample-drive-leo-pulse-q2/view?usp=sharing",
+    "summary": "A crisp quarterly gazette covering new member induction ceremonies, executive assembly resolutions, and inter-university fellowship retreats.",
+    "highlights": [
+      "Induction of 40+ First-Year Undergraduates",
+      "Leadership Bootcamp Workshops & Public Speaking Drills",
+      "Upcoming Multi-District 306 Convention Agenda"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "mag-5",
+    "title": "Blood Aid & Community Health Retrospective",
+    "edition": "Health Directorate Special Issue",
+    "category": "Special Issue",
+    "date": "April 2024",
+    "pages": "20 Pages",
+    "directorate": "Directorate of Health & Wellbeing",
+    "editor": "Health Camp Committee",
+    "driveUrl": "https://drive.google.com/file/d/1sample-drive-health-retrospective/view?usp=sharing",
+    "summary": "Medical officer reflections, donor statistics, and health awareness articles from the Badulla Annual Mega Blood Donation.",
+    "highlights": [
+      "Badulla Hospital Blood Bank Donor Statistics",
+      "Undergraduate First-Aid Guidelines & Emergency Tips"
+    ],
+    "isFeatured": false
+  },
+  {
+    "id": "mag-6",
+    "title": "Leostride Leadership & Public Speaking Handbook",
+    "edition": "Training Publication • Issue 01",
+    "category": "Quarterly Bulletin",
+    "date": "February 2024",
+    "pages": "32 Pages",
+    "directorate": "Directorate of Member Development",
+    "editor": "Youth Leadership Cell",
+    "driveUrl": "https://drive.google.com/file/d/1sample-drive-leadership-handbook/view?usp=sharing",
+    "summary": "Essential guide on university project management, meeting etiquette, district reporting standards, and speech craft for new Leos.",
+    "highlights": [
+      "Standard Leo Meeting Procedures & Protocols",
+      "District 306 C2 Reporting & MyLCI Guide"
+    ],
+    "isFeatured": false
+  }
+]

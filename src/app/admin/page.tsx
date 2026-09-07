@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import projectsData from "@/data/projects.json";
+import magazinesData from "@/data/magazines.json";
 import leadershipData from "@/data/leadership.json";
 import {
   Layers,
@@ -35,6 +36,10 @@ import {
   KeyRound,
   AlertCircle,
   UserCheck,
+  BookOpen,
+  HardDrive,
+  Download,
+  Save,
 } from "lucide-react";
 
 // Types
@@ -63,6 +68,21 @@ interface ProjectItem {
   volunteers?: string;
   beneficiaries?: string;
   highlights?: string[];
+}
+
+interface MagazineItem {
+  id: string;
+  title: string;
+  edition: string;
+  category: string;
+  date: string;
+  pages: string;
+  directorate: string;
+  editor: string;
+  driveUrl: string;
+  summary: string;
+  highlights?: string[];
+  isFeatured?: boolean;
 }
 
 interface MemberApplicant {
@@ -175,11 +195,12 @@ export default function AdminPage() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Navigation Tab State
-  const [activeTab, setActiveTab] = useState<"overview" | "announcements" | "projects" | "members">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "announcements" | "projects" | "magazines" | "members">("overview");
 
   // App Data State
   const [announcements, setAnnouncements] = useState<Announcement[]>(INITIAL_ANNOUNCEMENTS);
   const [projects, setProjects] = useState<ProjectItem[]>(projectsData);
+  const [magazines, setMagazines] = useState<MagazineItem[]>(magazinesData);
   const [members, setMembers] = useState<MemberApplicant[]>(INITIAL_MEMBERS);
 
   // Search & Filter state
@@ -196,6 +217,7 @@ export default function AdminPage() {
   // Modals State
   const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [isMagazineModalOpen, setIsMagazineModalOpen] = useState(false);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
 
   // New Announcement Form State
@@ -218,14 +240,20 @@ export default function AdminPage() {
   const [newProjSummary, setNewProjSummary] = useState("");
   const [newProjHighlights, setNewProjHighlights] = useState("");
 
-  // New Member Form State
-  const [newMemName, setNewMemName] = useState("");
-  const [newMemRegNo, setNewMemRegNo] = useState("");
-  const [newMemFaculty, setNewMemFaculty] = useState("Faculty of Science & Technology");
-  const [newMemYear, setNewMemYear] = useState("1st Year");
-  const [newMemEmail, setNewMemEmail] = useState("");
-  const [newMemPhone, setNewMemPhone] = useState("");
-  const [newMemInterests, setNewMemInterests] = useState("");
+  // New Magazine Form State
+  const [newMagTitle, setNewMagTitle] = useState("");
+  const [newMagEdition, setNewMagEdition] = useState("");
+  const [newMagCategory, setNewMagCategory] = useState("Annual Flagship");
+  const [newMagDate, setNewMagDate] = useState("");
+  const [newMagPages, setNewMagPages] = useState("");
+  const [newMagDirectorate, setNewMagDirectorate] = useState("Directorate of PR & Media");
+  const [newMagEditor, setNewMagEditor] = useState("Leo Editorial Board — UWU");
+  const [newMagDriveUrl, setNewMagDriveUrl] = useState("");
+  const [newMagSummary, setNewMagSummary] = useState("");
+  const [newMagHighlights, setNewMagHighlights] = useState("");
+
+  // Dynamic inline Google Drive URLs editor map
+  const [driveUrlEdits, setDriveUrlEdits] = useState<Record<string, string>>({});
 
   // Check saved session on mount
   useEffect(() => {
@@ -269,6 +297,17 @@ export default function AdminPage() {
     setLoginEmail("");
     setLoginPassword("");
     showToast("Logged out of Admin Portal.");
+  };
+
+  // Update Magazine Google Drive URL
+  const handleUpdateDriveUrl = (magId: string) => {
+    const updatedUrl = driveUrlEdits[magId];
+    if (!updatedUrl) return;
+
+    setMagazines(
+      magazines.map((m) => (m.id === magId ? { ...m, driveUrl: updatedUrl } : m))
+    );
+    showToast("Google Drive link updated successfully!");
   };
 
   // Submit Handlers
@@ -323,6 +362,48 @@ export default function AdminPage() {
     setNewProjHighlights("");
     showToast("New project registered successfully!");
   };
+
+  const handleCreateMagazine = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMagTitle || !newMagSummary) return;
+
+    const newEntry: MagazineItem = {
+      id: `mag-${Date.now()}`,
+      title: newMagTitle,
+      edition: newMagEdition || "Leistic Year 2024/2025",
+      category: newMagCategory,
+      date: newMagDate || "2025",
+      pages: newMagPages ? `${newMagPages} Pages` : "32 Pages",
+      directorate: newMagDirectorate,
+      editor: newMagEditor || "Leo Editorial Board",
+      driveUrl: newMagDriveUrl || "https://drive.google.com",
+      summary: newMagSummary,
+      highlights: newMagHighlights ? newMagHighlights.split("\n").filter((h) => h.trim().length > 0) : [],
+      isFeatured: false,
+    };
+
+    setMagazines([newEntry, ...magazines]);
+    setIsMagazineModalOpen(false);
+    setNewMagTitle("");
+    setNewMagEdition("");
+    setNewMagDriveUrl("");
+    setNewMagSummary("");
+    setNewMagHighlights("");
+    showToast("New magazine issue added with Google Drive link!");
+  };
+
+  const handleDeleteMagazine = (id: string) => {
+    setMagazines(magazines.filter((m) => m.id !== id));
+    showToast("Magazine issue removed.");
+  };
+
+  const [newMemName, setNewMemName] = useState("");
+  const [newMemRegNo, setNewMemRegNo] = useState("");
+  const [newMemFaculty, setNewMemFaculty] = useState("Faculty of Science & Technology");
+  const [newMemYear, setNewMemYear] = useState("1st Year");
+  const [newMemEmail, setNewMemEmail] = useState("");
+  const [newMemPhone, setNewMemPhone] = useState("");
+  const [newMemInterests, setNewMemInterests] = useState("");
 
   const handleCreateMember = (e: React.FormEvent) => {
     e.preventDefault();
@@ -380,6 +461,14 @@ export default function AdminPage() {
       p.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredMagazinesList = magazines.filter(
+    (m) =>
+      m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.edition.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredMembersList = members.filter((m) => {
@@ -593,7 +682,7 @@ export default function AdminPage() {
         {/* Tab Navigation Bar */}
         <div className="border-t border-slate-100 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex space-x-1 sm:space-x-4 overflow-x-auto no-scrollbar py-2">
+            <nav className="flex space-x-1 sm:space-x-3 overflow-x-auto no-scrollbar py-2">
               <button
                 onClick={() => { setActiveTab("overview"); setSearchQuery(""); }}
                 className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
@@ -631,6 +720,18 @@ export default function AdminPage() {
               </button>
 
               <button
+                onClick={() => { setActiveTab("magazines"); setSearchQuery(""); }}
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === "magazines"
+                    ? "bg-[#003B99] text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>Magazines &amp; Google Drive ({magazines.length})</span>
+              </button>
+
+              <button
                 onClick={() => { setActiveTab("members"); setSearchQuery(""); }}
                 className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                   activeTab === "members"
@@ -665,7 +766,7 @@ export default function AdminPage() {
                   Officer Management Hub
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Manage club circulars, add new community projects, review undergraduate membership applicants, and maintain compliance records.
+                  Manage club circulars, add new community projects, update magazine Google Drive links, and review undergraduate membership applicants.
                 </p>
               </div>
 
@@ -679,10 +780,17 @@ export default function AdminPage() {
                 </button>
                 <button
                   onClick={() => setIsProjectModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors"
+                >
+                  <FolderKanban className="w-3.5 h-3.5 text-[#00A3E0]" />
+                  <span>+ Project</span>
+                </button>
+                <button
+                  onClick={() => setIsMagazineModalOpen(true)}
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#003B99] hover:bg-[#002D7A] text-white text-xs font-bold shadow-xs transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>+ New Project</span>
+                  <span>+ Magazine Drive Link</span>
                 </button>
               </div>
             </div>
@@ -724,6 +832,23 @@ export default function AdminPage() {
               </div>
 
               <div
+                onClick={() => setActiveTab("magazines")}
+                className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-xs transition-all cursor-pointer group"
+              >
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
+                  <span className="font-semibold">Magazine Editions</span>
+                  <BookOpen className="w-4 h-4 text-[#003B99]" />
+                </div>
+                <div className="text-3xl font-extrabold text-slate-900 font-heading">
+                  {magazines.length}
+                </div>
+                <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+                  <span>Manage Drive Links</span>
+                  <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </div>
+
+              <div
                 onClick={() => setActiveTab("members")}
                 className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-xs transition-all cursor-pointer group"
               >
@@ -736,19 +861,6 @@ export default function AdminPage() {
                 </div>
                 <div className="text-[11px] text-amber-600 font-semibold mt-1 flex items-center gap-1">
                   <span>{members.filter((m) => m.status === "pending").length} Pending Review</span>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-                  <span className="font-semibold">Governance Status</span>
-                  <ShieldCheck className="w-4 h-4 text-[#003B99]" />
-                </div>
-                <div className="text-3xl font-extrabold text-emerald-600 font-heading">
-                  100%
-                </div>
-                <div className="text-[11px] text-slate-400 mt-1">
-                  District 306 C2 Compliant
                 </div>
               </div>
             </div>
@@ -787,39 +899,37 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Pending Applicants */}
+              {/* Magazines Drive Links Quick Overview */}
               <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                   <div className="font-bold text-sm text-slate-900 font-heading flex items-center gap-2">
-                    <Users className="w-4 h-4 text-emerald-600" />
-                    <span>Recent Member Applicants</span>
+                    <BookOpen className="w-4 h-4 text-[#003B99]" />
+                    <span>Magazine Google Drive Links</span>
                   </div>
                   <button
-                    onClick={() => setActiveTab("members")}
+                    onClick={() => setActiveTab("magazines")}
                     className="text-xs font-semibold text-[#003B99] hover:underline"
                   >
-                    Manage Applicants →
+                    Edit Drive Links →
                   </button>
                 </div>
 
                 <div className="space-y-3">
-                  {members.slice(0, 3).map((m) => (
-                    <div key={m.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3">
-                      <div>
-                        <div className="font-bold text-xs text-slate-900">{m.name}</div>
-                        <div className="text-[10px] text-slate-500">{m.regNo} • {m.faculty}</div>
+                  {magazines.slice(0, 3).map((mag) => (
+                    <div key={mag.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold text-xs text-slate-900 truncate">{mag.title}</div>
+                        <div className="text-[10px] text-slate-500 truncate">{mag.edition}</div>
                       </div>
-                      <span
-                        className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-                          m.status === "approved"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : m.status === "inducted"
-                            ? "bg-blue-50 text-[#003B99] border border-blue-200"
-                            : "bg-amber-50 text-amber-700 border border-amber-200"
-                        }`}
+                      <a
+                        href={mag.driveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#003B99] hover:underline shrink-0"
                       >
-                        {m.status}
-                      </span>
+                        <HardDrive className="w-3.5 h-3.5" />
+                        <span>Drive Link</span>
+                      </a>
                     </div>
                   ))}
                 </div>
@@ -1018,7 +1128,134 @@ export default function AdminPage() {
         )}
 
         {/* ===================================================================== */}
-        {/* 4. MEMBERSHIP APPLICANTS TAB                                          */}
+        {/* 4. MAGAZINES & GOOGLE DRIVE MANAGER TAB                               */}
+        {/* ===================================================================== */}
+        {activeTab === "magazines" && (
+          <div className="space-y-6">
+            
+            {/* Toolbar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h2 className="text-xl font-extrabold text-slate-900 font-heading">
+                  Leo Magazine Publications &amp; Google Drive Links
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Update Google Drive download links, add new periodicals, and manage publication archives.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="relative w-full sm:w-64">
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search magazines..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-[#003B99]"
+                  />
+                </div>
+
+                <button
+                  onClick={() => setIsMagazineModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#003B99] hover:bg-[#002D7A] text-white text-xs font-bold shadow-xs whitespace-nowrap transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ New Magazine Issue</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Magazines List with Editable Google Drive Links */}
+            <div className="space-y-4">
+              {filteredMagazinesList.map((mag) => {
+                const currentEditValue = driveUrlEdits[mag.id] !== undefined ? driveUrlEdits[mag.id] : mag.driveUrl;
+
+                return (
+                  <div
+                    key={mag.id}
+                    className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+                  >
+                    <div className="space-y-2 max-w-xl min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-50 text-[#003B99] border border-blue-100">
+                          {mag.category}
+                        </span>
+                        <span className="text-xs text-slate-400">
+                          {mag.date} • {mag.pages}
+                        </span>
+                      </div>
+
+                      <h3 className="font-bold text-base text-slate-900 font-heading leading-snug">
+                        {mag.title}
+                      </h3>
+
+                      <div className="text-[11px] text-slate-500">
+                        {mag.edition} • {mag.editor}
+                      </div>
+
+                      <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                        {mag.summary}
+                      </p>
+                    </div>
+
+                    {/* Google Drive Link Input & Action Bar */}
+                    <div className="lg:w-96 space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200/80 shrink-0">
+                      <label className="block text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+                        <HardDrive className="w-3.5 h-3.5 text-[#003B99]" />
+                        <span>Google Drive PDF Download URL:</span>
+                      </label>
+
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="url"
+                          value={currentEditValue}
+                          onChange={(e) => setDriveUrlEdits({ ...driveUrlEdits, [mag.id]: e.target.value })}
+                          placeholder="https://drive.google.com/file/d/..."
+                          className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#003B99] text-slate-800 font-mono text-[11px]"
+                        />
+
+                        <button
+                          onClick={() => handleUpdateDriveUrl(mag.id)}
+                          className="px-3 py-1.5 bg-[#003B99] hover:bg-[#002D7A] text-white rounded-lg text-xs font-bold shrink-0 transition-colors inline-flex items-center gap-1 shadow-xs"
+                          title="Save Google Drive URL"
+                        >
+                          <Save className="w-3.5 h-3.5" />
+                          <span>Save</span>
+                        </button>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] pt-1 text-slate-500">
+                        <a
+                          href={mag.driveUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-[#003B99] hover:underline font-semibold"
+                        >
+                          <span>Test Drive Link</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+
+                        <button
+                          onClick={() => handleDeleteMagazine(mag.id)}
+                          className="text-slate-400 hover:text-rose-600 inline-flex items-center gap-1 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                );
+              })}
+            </div>
+
+          </div>
+        )}
+
+        {/* ===================================================================== */}
+        {/* 5. MEMBERSHIP APPLICANTS TAB                                          */}
         {/* ===================================================================== */}
         {activeTab === "members" && (
           <div className="space-y-6">
@@ -1367,7 +1604,141 @@ export default function AdminPage() {
       )}
 
       {/* ======================================================================= */}
-      {/* MODAL 3: ADD NEW MEMBER RECORD                                          */}
+      {/* MODAL 3: NEW MAGAZINE / ISSUE REGISTRATION                              */}
+      {/* ======================================================================= */}
+      {isMagazineModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-xl space-y-5 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="font-bold text-base text-slate-900 font-heading">
+                Add Magazine Edition &amp; Google Drive Link
+              </h3>
+              <button onClick={() => setIsMagazineModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateMagazine} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Magazine Title *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. ROAR: Volume 07 (2025 Special Edition)"
+                  value={newMagTitle}
+                  onChange={(e) => setNewMagTitle(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Volume / Edition</label>
+                  <input
+                    type="text"
+                    placeholder="Volume 07 • 2025"
+                    value={newMagEdition}
+                    onChange={(e) => setNewMagEdition(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Category</label>
+                  <select
+                    value={newMagCategory}
+                    onChange={(e) => setNewMagCategory(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                  >
+                    <option>Annual Flagship</option>
+                    <option>Special Issue</option>
+                    <option>Environment</option>
+                    <option>Quarterly Bulletin</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Google Drive PDF / Download URL *</label>
+                <input
+                  type="url"
+                  required
+                  placeholder="https://drive.google.com/file/d/..."
+                  value={newMagDriveUrl}
+                  onChange={(e) => setNewMagDriveUrl(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99] font-mono text-[11px]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Publication Date</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. January 2025"
+                    value={newMagDate}
+                    onChange={(e) => setNewMagDate(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Page Count</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 48"
+                    value={newMagPages}
+                    onChange={(e) => setNewMagPages(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Magazine Summary *</label>
+                <textarea
+                  rows={3}
+                  required
+                  placeholder="Brief synopsis of this edition's articles and themes..."
+                  value={newMagSummary}
+                  onChange={(e) => setNewMagSummary(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Featured Article Highlights (One per line)</label>
+                <textarea
+                  rows={2}
+                  placeholder="Presidential Address&#10;Passara Field Trip Photos"
+                  value={newMagHighlights}
+                  onChange={(e) => setNewMagHighlights(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-[11px]"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsMagazineModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-[#003B99] text-white font-bold hover:bg-[#002D7A] shadow-xs"
+                >
+                  Save Publication
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================================= */}
+      {/* MODAL 4: ADD NEW MEMBER RECORD                                          */}
       {/* ======================================================================= */}
       {isMemberModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
