@@ -14,7 +14,7 @@ import {
   Image as ImageIcon,
   PhoneCall,
 } from "lucide-react";
-import { LeoEmblemSvg } from "@/components/ui/BrandingLogos";
+import { UwuLeoOfficialLogo, UwuLeoEmblem } from "@/components/ui/BrandingLogos";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -52,19 +52,12 @@ export default function Navbar() {
           }`}
         >
           
-          {/* Brand Logo & Lockup */}
-          <Link href="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group whitespace-nowrap">
-            <div className="relative">
-              <LeoEmblemSvg className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 group-hover:scale-105 transition-transform duration-200 drop-shadow-xs" />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-heading font-extrabold text-[15px] sm:text-[18px] lg:text-[19px] text-[#111827] tracking-tight group-hover:text-[#003B99] transition-colors whitespace-nowrap">
-                Leo Club of UWU
-              </span>
-              <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-md bg-white text-[10px] font-bold text-slate-600 border border-slate-200/80 tracking-wider uppercase shadow-xs">
-                District 306 C2
-              </span>
-            </div>
+          {/* Official Brand Logo */}
+          <Link href="/" className="flex items-center gap-2 group shrink-0">
+            <UwuLeoOfficialLogo
+              className="h-10 sm:h-12 w-auto group-hover:opacity-90 transition-opacity"
+              theme="dark"
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -125,7 +118,7 @@ export default function Navbar() {
                     </div>
                     <div>
                       <div className="font-semibold text-sm leading-tight">Lions Sponsorship</div>
-                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">Lions Club of Badulla &amp; 306 C2</div>
+                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">Lions Club of Badulla &amp; 306 D10</div>
                     </div>
                   </Link>
                 </div>

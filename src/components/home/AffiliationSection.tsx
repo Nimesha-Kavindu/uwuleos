@@ -36,8 +36,8 @@ export default function AffiliationSection() {
     {
       id: "district",
       level: "LEVEL 03 • LOCAL CHAPTER",
-      title: "District 306 C2 & UWU",
-      description: "Governing district in Sri Lanka. UWU Leos operates under District 306 C2, sponsored by the Lions Club of Badulla.",
+      title: "District 306 D10 & UWU",
+      description: "Governing district in Sri Lanka. UWU Leos operates under District 306 D10, sponsored by the Lions Club of Badulla.",
       emblem: <DistrictEmblemSvg className="w-12 h-12" />,
       link: "/board",
       linkText: "Club governance",
@@ -61,7 +61,7 @@ export default function AffiliationSection() {
           </div>
 
           <p className="text-slate-600 text-xs sm:text-base leading-relaxed max-w-lg font-normal lg:pb-1">
-            Sponsored for the Leo Club of Badulla under Leo District 306 C2, our club unites undergraduates from Uva Wellassa University in global humanitarian service.
+            Sponsored for the Leo Club of Badulla under Leo District 306 D10, our club unites undergraduates from Uva Wellassa University in global humanitarian service.
           </p>
         </div>
 

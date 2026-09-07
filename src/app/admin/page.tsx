@@ -516,7 +516,7 @@ export default function AdminPage() {
             Officer Admin Portal
           </h2>
           <p className="mt-1.5 text-center text-xs text-slate-500 max-w-sm mx-auto">
-            Leo Club of Uva Wellassa University • District 306 C2
+            Leo Club of Uva Wellassa University • District 306 D10
           </p>
         </div>
 
@@ -760,7 +760,7 @@ export default function AdminPage() {
             <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-1.5 max-w-xl">
                 <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#003B99]">
-                  District 306 C2 • Administrative Portal
+                  District 306 D10 • Administrative Portal
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">
                   Officer Management Hub

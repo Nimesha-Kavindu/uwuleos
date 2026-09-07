@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { LeoEmblemSvg, LionsEmblemSvg } from "@/components/ui/BrandingLogos";
+import { UwuLeoOfficialLogo, LionsEmblemSvg } from "@/components/ui/BrandingLogos";
 import { Mail, Phone, MapPin, ArrowUpRight, Heart } from "lucide-react";
 import { useClub } from "@/context/ClubContext";
 
@@ -18,16 +18,11 @@ export default function Footer() {
           
           {/* Brand Col (6 Cols) */}
           <div className="sm:col-span-2 lg:col-span-6 space-y-3.5 sm:space-y-4">
-            <div className="flex items-center gap-3">
-              <LeoEmblemSvg className="w-9 h-9 sm:w-10 sm:h-10 shrink-0" />
-              <div>
-                <span className="font-heading font-extrabold text-base sm:text-lg text-white tracking-tight block">
-                  {club.name}
-                </span>
-                <span className="text-[10px] sm:text-[11px] font-semibold text-leo-cyan tracking-wider uppercase">
-                  {club.district} • Sri Lanka
-                </span>
-              </div>
+            <div>
+              <UwuLeoOfficialLogo
+                className="h-11 sm:h-12 w-auto"
+                theme="light"
+              />
             </div>
 
             <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-md">

@@ -86,7 +86,7 @@ export default function HeroSection() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-leo-cyan opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-leo-cyan"></span>
               </span>
-              <span>UWU Leos • District 306 C2</span>
+              <span>UWU Leos • District 306 D10</span>
             </div>
 
             {/* Headline */}
@@ -125,7 +125,7 @@ export default function HeroSection() {
               <div className="flex flex-wrap items-center gap-3 sm:gap-6 lg:gap-8 text-xs text-slate-600">
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <ShieldCheck className="w-4 h-4 text-[#003B99] shrink-0" />
-                  <span className="font-semibold text-slate-800">District 306 C2</span>
+                  <span className="font-semibold text-slate-800">District 306 D10</span>
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <GraduationCap className="w-4 h-4 text-leo-cyan shrink-0" />

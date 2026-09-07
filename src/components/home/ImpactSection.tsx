@@ -71,7 +71,7 @@ export default function ImpactSection() {
       suffix: "",
       label: "University Club",
       tagline: "Chartered Chapter",
-      detail: "District 306 C2 Flagship",
+      detail: "District 306 D10 Flagship",
       icon: <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-[#003B99]" />,
     },
     {
@@ -184,7 +184,7 @@ export default function ImpactSection() {
         <div className="pt-6 sm:pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-600">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <ShieldCheck className="w-4 h-4 text-[#003B99] shrink-0" />
-            <span className="font-semibold text-slate-800">Leo District 306 C2, Sri Lanka</span>
+            <span className="font-semibold text-slate-800">Leo District 306 D10, Sri Lanka</span>
             <span className="text-slate-400 hidden sm:inline">•</span>
             <span className="text-slate-500">Sponsoring Lions Club of Badulla</span>
           </div>

@@ -82,7 +82,7 @@ export default function JoinPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2.5">
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-100 text-[11px] font-medium text-slate-600">
             <span className="w-1.5 h-1.5 rounded-full bg-[#003B99]" />
-            <span>District 306 C2 • Uva Wellassa University</span>
+            <span>District 306 D10 • Uva Wellassa University</span>
           </div>
           
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 font-heading">

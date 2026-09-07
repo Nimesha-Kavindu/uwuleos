@@ -1,6 +1,6 @@
 {
   "leisticYear": "2024/2025",
-  "district": "District 306 C2",
+  "district": "District 306 D10",
   "sponsoringClub": "Lions Club of Badulla",
   "stats": [
     { "label": "Advisory Mentors", "value": "02", "desc": "Academic & Lions Governance" },
@@ -29,9 +29,9 @@
       "title": "Leo Club Advisor (Guiding Lion)",
       "name": "Club Advisor — Lions Club of Badulla",
       "designation": "Guiding Lion & Past District Officer",
-      "institution": "Lions Club of Badulla • Leo District 306 C2",
+      "institution": "Lions Club of Badulla • Leo District 306 D10",
       "scope": "Ensures adherence to the Lions Clubs International Constitution, mentors club officers on youth leadership stewardship, and coordinates district funding pipelines.",
-      "email": "advisor.badulla@lions306c2.org",
+      "email": "advisor.badulla@lions306d10.org",
       "initials": "CA",
       "image": ""
     }
@@ -44,7 +44,7 @@
     "faculty": "Faculty of Applied Sciences",
     "institution": "Uva Wellassa University",
     "term": "Leistic Year 2024/2025",
-    "responsibilities": "Presides over all executive and general assemblies, directs overall strategic vision, represents UWU Leos at District 306 C2 conventions, and stewards inter-faculty service initiatives.",
+    "responsibilities": "Presides over all executive and general assemblies, directs overall strategic vision, represents UWU Leos at District 306 D10 conventions, and stewards inter-faculty service initiatives.",
     "email": "president.uwuleos@gmail.com",
     "motto": "“Leading with passion, serving with purpose for Uva Wellassa and beyond.”",
     "initials": "CP",
@@ -81,7 +81,7 @@
       "designation": "Club Treasurer",
       "name": "Leo Treasurer",
       "faculty": "Faculty of Management",
-      "scope": "Manages treasury accounts, oversees project funding allocations, financial auditing, and ensures fiscal accountability to Lions District 306 C2.",
+      "scope": "Manages treasury accounts, oversees project funding allocations, financial auditing, and ensures fiscal accountability to Lions District 306 D10.",
       "email": "treasurer.uwuleos@gmail.com",
       "initials": "CT",
       "color": "emerald",
@@ -208,7 +208,7 @@
   ],
   "governance": {
     "title": "Constitution & Standard Leo Club By-Laws",
-    "description": "Operating under the official Charter of Lions Clubs International, sponsored by the Lions Club of Badulla within Leo District 306 C2, Sri Lanka.",
-    "districtTag": "District 306 C2 • Sri Lanka"
+    "description": "Operating under the official Charter of Lions Clubs International, sponsored by the Lions Club of Badulla within Leo District 306 D10, Sri Lanka.",
+    "districtTag": "District 306 D10 • Sri Lanka"
   }
 }

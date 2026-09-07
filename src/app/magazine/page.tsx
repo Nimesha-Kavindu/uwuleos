@@ -49,7 +49,7 @@ export default function MagazinePage() {
             <div className="space-y-3 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-100 text-[11px] font-medium text-slate-600">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#003B99]" />
-                <span>District 306 C2 • Publications &amp; Editorial</span>
+                <span>District 306 D10 • Publications &amp; Editorial</span>
               </div>
               
               <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 font-heading">

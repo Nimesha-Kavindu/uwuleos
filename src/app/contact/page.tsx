@@ -37,7 +37,7 @@ export default function ContactPage() {
   const FAQS = [
     {
       q: "How can corporations or sponsors collaborate with UWU Leos for CSR?",
-      a: "We collaborate with companies, NGOs, and foundations on impactful community initiatives. We offer end-to-end project planning, student volunteer mobilization across 4 faculties, transparent accounting, and media coverage across Leo District 306 C2.",
+      a: "We collaborate with companies, NGOs, and foundations on impactful community initiatives. We offer end-to-end project planning, student volunteer mobilization across 4 faculties, transparent accounting, and media coverage across Leo District 306 D10.",
     },
     {
       q: "How quickly does the Secretariat respond to messages?",

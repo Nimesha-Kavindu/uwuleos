@@ -11,9 +11,17 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Leo Club of Uva Wellassa University • District 306 C2",
+  title: "Leo Club of Uva Wellassa University • District 306 D10",
   description:
-    "Official website of the Leo Club of Uva Wellassa University, Leo District 306 C2, Sri Lanka. Empowering youth through leadership, fellowship, and service.",
+    "Official website of the Leo Club of Uva Wellassa University, Leo District 306 D10, Sri Lanka. Empowering youth through leadership, fellowship, and service.",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

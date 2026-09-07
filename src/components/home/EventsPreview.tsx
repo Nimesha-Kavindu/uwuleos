@@ -14,7 +14,7 @@ const NOTICES = [
     tag: "Governance & Induction",
     title: "UWU Leos Annual Induction & Executive Leadership Summit 2025",
     summary: "Convening of the Annual General Assembly and Executive Council Installation at the UWU Management Auditorium, ratifying new undergraduate director appointments across all four faculties.",
-    issuer: "Club Secretariat • District 306 C2",
+    issuer: "Club Secretariat • District 306 D10",
     link: "/events",
   },
   {
@@ -42,7 +42,7 @@ const NOTICES = [
     ref: "UWU/LEO/2025-04",
     date: "June 2025",
     tag: "Official Publications",
-    title: "Publication of Leo District 306 C2 Quarterly E-Magazine (Q1)",
+    title: "Publication of Leo District 306 D10 Quarterly E-Magazine (Q1)",
     summary: "Comprehensive quarterly gazette featuring UWU undergraduate project achievements, provincial leadership milestones, and message from the District President.",
     issuer: "Editorial & Media Cabinet",
     link: "/events#bulletins",

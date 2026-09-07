@@ -114,7 +114,7 @@ export const CLUBS_DATA: Record<string, ClubConfig> = {
     name: "Leo Club of Uva Wellassa University",
     shortName: "UWU Leos",
     type: "club",
-    district: "District 306 C2",
+    district: "District 306 D10",
     multipleDistrict: "Multiple District 306",
     country: "Sri Lanka",
     charterYear: 2018,
@@ -122,11 +122,11 @@ export const CLUBS_DATA: Record<string, ClubConfig> = {
     tagline: "Value Addition • Youth Leadership • Community Service",
     motto: "Leadership, Experience, Opportunity",
     description:
-      "The premier youth service organization of Uva Wellassa University of Sri Lanka (District 306 C2), empowering undergraduates to lead meaningful humanitarian projects, foster fellowship, and uplift communities across Uva Province and beyond.",
+      "The premier youth service organization of Uva Wellassa University of Sri Lanka (District 306 D10), empowering undergraduates to lead meaningful humanitarian projects, foster fellowship, and uplift communities across Uva Province and beyond.",
     logos: {
-      main: "/logos/leo-uwu.png",
+      main: "/logos/uwu-leo-logo.png",
       lion: "/logos/lions-international.png",
-      leo: "/logos/leo-emblem.png",
+      leo: "/logos/uwu-leo-seal.png",
       district: "/logos/district-306c2.png",
     },
     contact: {
@@ -152,7 +152,7 @@ export const CLUBS_DATA: Record<string, ClubConfig> = {
     affiliationDetails: {
       lciTitle: "Lions Clubs International",
       lciDescription:
-        "Sponsored by the Lions Club of Badulla under Leo District 306 C2, our club unites undergraduates from Uva Wellassa University in global humanitarian service, fostering leadership and community development.",
+        "Sponsored by the Lions Club of Badulla under Leo District 306 D10, our club unites undergraduates from Uva Wellassa University in global humanitarian service, fostering leadership and community development.",
       card1: {
         title: "Lions International",
         subtitle: "Since 1917. 1.4M+ members worldwide serving communities.",
@@ -164,8 +164,8 @@ export const CLUBS_DATA: Record<string, ClubConfig> = {
         subtitle: "Leadership. Experience. Opportunity. Empowering university youth since 1957.",
       },
       card3: {
-        title: "District 306 C2",
-        subtitle: "Uva Wellassa University Leos serving under District 306 C2, Sri Lanka.",
+        title: "District 306 D10",
+        subtitle: "Uva Wellassa University Leos serving under District 306 D10, Sri Lanka.",
       },
     },
     pillars: [
@@ -348,7 +348,7 @@ export const CLUBS_DATA: Record<string, ClubConfig> = {
         quote: "The undergraduate Leos of Uva Wellassa University consistently demonstrate exceptional discipline, creativity, and community spirit. Their service initiatives across Badulla reflect true Lions excellence.",
         author: "Lion Dr. Sunil Wickramasinghe PMJF",
         role: "Guiding Lion & Sponsoring Advisor",
-        faculty: "Lions Club of Badulla • District 306 C2",
+        faculty: "Lions Club of Badulla • District 306 D10",
         tag: "Lions Mentorship",
         avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80",
       },

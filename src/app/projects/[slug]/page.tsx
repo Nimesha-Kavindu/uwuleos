@@ -169,7 +169,7 @@ export default function SingleProjectPage() {
 
               <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                 <span>Organized by Uva Wellassa University Leos</span>
-                <span className="font-medium text-[#003B99]">District 306 C2</span>
+                <span className="font-medium text-[#003B99]">District 306 D10</span>
               </div>
 
             </div>
@@ -197,7 +197,7 @@ export default function SingleProjectPage() {
                   </div>
                   <div className="flex justify-between py-1.5">
                     <span className="text-slate-500">Parent District</span>
-                    <strong className="text-slate-800">Leo District 306 C2</strong>
+                    <strong className="text-slate-800">Leo District 306 D10</strong>
                   </div>
                 </div>
 
