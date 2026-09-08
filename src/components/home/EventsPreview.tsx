@@ -45,7 +45,7 @@ const NOTICES = [
     title: "Publication of Leo District 306 D10 Quarterly E-Magazine (Q1)",
     summary: "Comprehensive quarterly gazette featuring UWU undergraduate project achievements, provincial leadership milestones, and message from the District President.",
     issuer: "Editorial & Media Cabinet",
-    link: "/events#bulletins",
+    link: "/magazine",
   },
 ];
 
