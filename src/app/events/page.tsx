@@ -2,11 +2,10 @@
 
 import React, { useState } from "react";
 import { useClub } from "@/context/ClubContext";
-import { Calendar, Clock, MapPin, Check, CalendarPlus } from "lucide-react";
+import { Calendar, Clock, MapPin, CalendarPlus } from "lucide-react";
 
 export default function EventsPage() {
   const { club } = useClub();
-  const [registeredEvents, setRegisteredEvents] = useState<string[]>([]);
 
   const events = [
     {
@@ -71,12 +70,6 @@ export default function EventsPage() {
     },
   ];
 
-  const toggleRegister = (id: string) => {
-    setRegisteredEvents((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
-
   const getGoogleCalendarUrl = (ev: (typeof events)[0]) => {
     const title = encodeURIComponent(`${ev.title} - Leo Club of UWU`);
     const details = encodeURIComponent(
@@ -113,8 +106,6 @@ export default function EventsPage() {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         <div className="space-y-4">
           {events.map((event) => {
-            const isRegistered = registeredEvents.includes(event.id);
-
             return (
               <div
                 key={event.id}
@@ -167,35 +158,16 @@ export default function EventsPage() {
 
                 </div>
 
-                {/* Right: Actions */}
+                {/* Right: Calendar Action */}
                 <div className="flex items-center sm:self-center shrink-0 gap-2.5 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
-                  <button
-                    type="button"
-                    onClick={() => toggleRegister(event.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-150 flex items-center gap-1.5 ${
-                      isRegistered
-                        ? "bg-emerald-50 border border-emerald-200 text-emerald-700"
-                        : "bg-slate-900 hover:bg-slate-800 text-white shadow-2xs"
-                    }`}
-                  >
-                    {isRegistered ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Registered</span>
-                      </>
-                    ) : (
-                      <span>RSVP / Register</span>
-                    )}
-                  </button>
-
                   <a
                     href={getGoogleCalendarUrl(event)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title="Add to Google Calendar"
-                    className="p-2 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-[#003B99] text-xs font-semibold transition-all duration-150 shadow-2xs"
                   >
-                    <CalendarPlus className="w-4 h-4" />
+                    <CalendarPlus className="w-3.5 h-3.5 text-[#003B99]" />
+                    <span>Add to Calendar</span>
                   </a>
                 </div>
 

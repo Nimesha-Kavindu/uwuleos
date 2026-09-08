@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
+import initialDocumentsData from "@/data/documents.json";
 import {
   Download,
   FileText,
@@ -15,6 +15,7 @@ import {
   Scroll,
   Image as ImageIcon,
   Sparkles,
+  HardDrive,
 } from "lucide-react";
 import {
   UwuLeoOfficialLogo,
@@ -23,8 +24,37 @@ import {
   DistrictEmblemSvg,
 } from "@/components/ui/BrandingLogos";
 
+interface DocumentItem {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  format: string;
+  size: string;
+  driveUrl: string;
+  updatedAt: string;
+}
+
 export default function BrandAndFormsPage() {
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
+  const [documents, setDocuments] = useState<DocumentItem[]>(initialDocumentsData);
+
+  useEffect(() => {
+    // Load documents from localStorage if admin customized them
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("uwu_leos_documents");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setDocuments(parsed);
+          }
+        } catch (e) {
+          console.error("Error loading stored documents:", e);
+        }
+      }
+    }
+  }, []);
 
   const copyHex = (hex: string) => {
     if (navigator.clipboard) {
@@ -107,58 +137,22 @@ export default function BrandAndFormsPage() {
     },
   ];
 
-  const officialForms = [
-    {
-      id: "form-1",
-      title: "Leo Club of UWU Constitution & By-Laws",
-      category: "Governance & Statutes",
-      description: "Official club constitution, governance framework, election procedures, and membership duties accredited by District 306 D10.",
-      format: "PDF Document",
-      size: "1.4 MB",
-      icon: <Scroll className="w-6 h-6 text-[#003B99]" />,
-      url: "#",
-    },
-    {
-      id: "form-2",
-      title: "Undergraduate Membership Application Form",
-      category: "Membership & Induction",
-      description: "Official application form for prospective undergraduate members to join the Leo Club of Uva Wellassa University.",
-      format: "PDF / DOCX",
-      size: "450 KB",
-      icon: <FileCheck2 className="w-6 h-6 text-[#00A3E0]" />,
-      url: "#",
-    },
-    {
-      id: "form-3",
-      title: "Project Proposal & Budget Approval Template",
-      category: "Project Management",
-      description: "Standardized project proposal blueprint including executive summary, committee roster, action timeline, and itemized budget estimates.",
-      format: "DOCX Document",
-      size: "380 KB",
-      icon: <FileSpreadsheet className="w-6 h-6 text-[#F5A800]" />,
-      url: "#",
-    },
-    {
-      id: "form-4",
-      title: "Post-Project Evaluation & Accountability Report",
-      category: "Reporting & Auditing",
-      description: "Mandatory project completion reporting template detailing community impact metrics, verified expenditure, and photo documentation.",
-      format: "DOCX Document",
-      size: "320 KB",
-      icon: <FileText className="w-6 h-6 text-emerald-600" />,
-      url: "#",
-    },
-    {
-      id: "form-5",
-      title: "Fieldwork & Volunteer Activity Consent Form",
-      category: "Safety & Compliance",
-      description: "Standard volunteer participation and travel consent form for university field trips, disaster relief, and outstation medical drives.",
-      format: "PDF Document",
-      size: "210 KB",
-      icon: <ShieldCheck className="w-6 h-6 text-indigo-600" />,
-      url: "#",
-    },
-  ];
+  const getCategoryIcon = (category: string) => {
+    switch (category.toLowerCase()) {
+      case "governance & statutes":
+      case "governance":
+        return <Scroll className="w-6 h-6 text-[#003B99]" />;
+      case "membership & induction":
+      case "membership":
+        return <FileCheck2 className="w-6 h-6 text-[#00A3E0]" />;
+      case "project management":
+        return <FileSpreadsheet className="w-6 h-6 text-[#F5A800]" />;
+      case "safety & compliance":
+        return <ShieldCheck className="w-6 h-6 text-indigo-600" />;
+      default:
+        return <FileText className="w-6 h-6 text-emerald-600" />;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FAFAFC] text-slate-900 pb-20">
@@ -177,7 +171,7 @@ export default function BrandAndFormsPage() {
             </h1>
 
             <p className="text-slate-500 text-sm sm:text-base leading-relaxed font-normal">
-              Download high-resolution official logos, visual identity assets, club constitution guidelines, and project administration templates.
+              Download high-resolution official logos, visual identity assets, club constitution guidelines, and project administration templates directly via verified Google Drive links.
             </p>
           </div>
         </div>
@@ -294,18 +288,18 @@ export default function BrandAndFormsPage() {
                 Administrative Documents &amp; Forms
               </h2>
             </div>
-            <span className="text-xs text-slate-500 font-medium">Standard UWU Leos Templates</span>
+            <span className="text-xs text-slate-500 font-medium">{documents.length} Available Documents</span>
           </div>
 
           <div className="space-y-3 sm:space-y-4">
-            {officialForms.map((form) => (
+            {documents.map((form) => (
               <div
                 key={form.id}
                 className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 hover:border-slate-300 hover:shadow-xs transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
-                    {form.icon}
+                    {getCategoryIcon(form.category)}
                   </div>
 
                   <div className="space-y-1">
@@ -331,11 +325,14 @@ export default function BrandAndFormsPage() {
 
                 <div className="shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                   <a
-                    href={form.url}
+                    href={form.driveUrl || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-900 hover:bg-[#003B99] text-white text-xs font-semibold shadow-2xs transition-all duration-150"
                   >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download Form</span>
+                    <HardDrive className="w-3.5 h-3.5 text-[#00A3E0]" />
+                    <span>Download via Google Drive</span>
+                    <ExternalLink className="w-3 h-3 opacity-60" />
                   </a>
                 </div>
               </div>
