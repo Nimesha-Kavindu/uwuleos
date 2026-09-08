@@ -42,10 +42,13 @@ import {
   Download,
   Save,
   FileText,
-  FileSpreadsheet,
-  FileCheck2,
-  Scroll,
 } from "lucide-react";
+import {
+  isFirebaseConfigured,
+  getFirestoreCollection,
+  saveFirestoreDoc,
+  deleteFirestoreDoc,
+} from "@/lib/firebase";
 
 // Types
 interface Announcement {
@@ -285,7 +288,7 @@ export default function AdminPage() {
   const [driveUrlEdits, setDriveUrlEdits] = useState<Record<string, string>>({});
   const [driveUrlDocEdits, setDriveUrlDocEdits] = useState<Record<string, string>>({});
 
-  // Check saved session & stored documents on mount
+  // Check saved session, stored documents, and fetch Firestore cloud data on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = sessionStorage.getItem("uwu_leo_admin_auth");
@@ -304,6 +307,28 @@ export default function AdminPage() {
         } catch (e) {
           console.error("Error loading stored documents:", e);
         }
+      }
+
+      // If Firebase environment variables are provided (on Vercel or locally), fetch live cloud data
+      if (isFirebaseConfigured()) {
+        getFirestoreCollection<Announcement>("announcements", INITIAL_ANNOUNCEMENTS).then((data) => {
+          if (data && data.length > 0) setAnnouncements(data);
+        });
+        getFirestoreCollection<ProjectItem>("projects", projectsData).then((data) => {
+          if (data && data.length > 0) setProjects(data);
+        });
+        getFirestoreCollection<MagazineItem>("magazines", magazinesData).then((data) => {
+          if (data && data.length > 0) setMagazines(data);
+        });
+        getFirestoreCollection<DocumentItem>("documents", initialDocumentsData).then((docs) => {
+          if (docs && docs.length > 0) {
+            setDocuments(docs);
+            localStorage.setItem("uwu_leos_documents", JSON.stringify(docs));
+          }
+        });
+        getFirestoreCollection<MemberApplicant>("membership_applicants", INITIAL_MEMBERS).then((data) => {
+          if (data && data.length > 0) setMembers(data);
+        });
       }
     }
   }, []);
@@ -354,21 +379,19 @@ export default function AdminPage() {
     if (!newDocTitle || !newDocDriveUrl) return;
 
     if (editingDoc) {
-      const updated = documents.map((doc) =>
-        doc.id === editingDoc.id
-          ? {
-              ...doc,
-              title: newDocTitle,
-              category: newDocCategory,
-              format: newDocFormat,
-              size: newDocSize || "1.0 MB",
-              driveUrl: newDocDriveUrl,
-              description: newDocDescription,
-              updatedAt: "Updated Just Now",
-            }
-          : doc
-      );
+      const updatedDoc = {
+        ...editingDoc,
+        title: newDocTitle,
+        category: newDocCategory,
+        format: newDocFormat,
+        size: newDocSize || "1.0 MB",
+        driveUrl: newDocDriveUrl,
+        description: newDocDescription,
+        updatedAt: "Updated Just Now",
+      };
+      const updated = documents.map((doc) => (doc.id === editingDoc.id ? updatedDoc : doc));
       saveDocuments(updated);
+      saveFirestoreDoc("documents", editingDoc.id, updatedDoc);
       showToast("Official document updated successfully!");
     } else {
       const newEntry: DocumentItem = {
@@ -382,6 +405,7 @@ export default function AdminPage() {
         updatedAt: new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
       };
       saveDocuments([newEntry, ...documents]);
+      saveFirestoreDoc("documents", newEntry.id, newEntry);
       showToast("New official document published with Google Drive link!");
     }
 
@@ -409,6 +433,7 @@ export default function AdminPage() {
   const handleDeleteDocument = (id: string) => {
     const filtered = documents.filter((d) => d.id !== id);
     saveDocuments(filtered);
+    deleteFirestoreDoc("documents", id);
     showToast("Official document removed.");
   };
 
@@ -418,6 +443,7 @@ export default function AdminPage() {
 
     const updated = documents.map((d) => (d.id === docId ? { ...d, driveUrl: updatedUrl } : d));
     saveDocuments(updated);
+    saveFirestoreDoc("documents", docId, { driveUrl: updatedUrl });
     showToast("Document Google Drive link updated!");
   };
 
@@ -429,6 +455,7 @@ export default function AdminPage() {
     setMagazines(
       magazines.map((m) => (m.id === magId ? { ...m, driveUrl: updatedUrl } : m))
     );
+    saveFirestoreDoc("magazines", magId, { driveUrl: updatedUrl });
     showToast("Google Drive link updated successfully!");
   };
 
@@ -449,6 +476,7 @@ export default function AdminPage() {
     };
 
     setAnnouncements([newEntry, ...announcements]);
+    saveFirestoreDoc("announcements", newEntry.id, newEntry);
     setIsAnnouncementModalOpen(false);
     setNewAnnTitle("");
     setNewAnnSummary("");
@@ -477,6 +505,7 @@ export default function AdminPage() {
     };
 
     setProjects([newEntry, ...projects]);
+    saveFirestoreDoc("projects", newEntry.id, newEntry);
     setIsProjectModalOpen(false);
     setNewProjTitle("");
     setNewProjSummary("");
@@ -505,6 +534,7 @@ export default function AdminPage() {
     };
 
     setMagazines([newEntry, ...magazines]);
+    saveFirestoreDoc("magazines", newEntry.id, newEntry);
     setIsMagazineModalOpen(false);
     setNewMagTitle("");
     setNewMagEdition("");
@@ -516,6 +546,7 @@ export default function AdminPage() {
 
   const handleDeleteMagazine = (id: string) => {
     setMagazines(magazines.filter((m) => m.id !== id));
+    deleteFirestoreDoc("magazines", id);
     showToast("Magazine issue removed.");
   };
 
@@ -545,6 +576,7 @@ export default function AdminPage() {
     };
 
     setMembers([newEntry, ...members]);
+    saveFirestoreDoc("membership_applicants", newEntry.id, newEntry);
     setIsMemberModalOpen(false);
     setNewMemName("");
     setNewMemEmail("");
@@ -556,16 +588,19 @@ export default function AdminPage() {
 
   const handleUpdateMemberStatus = (id: string, newStatus: MemberApplicant["status"]) => {
     setMembers(members.map((m) => (m.id === id ? { ...m, status: newStatus } : m)));
+    saveFirestoreDoc("membership_applicants", id, { status: newStatus });
     showToast(`Applicant status updated to ${newStatus.toUpperCase()}`);
   };
 
   const handleDeleteAnnouncement = (id: string) => {
     setAnnouncements(announcements.filter((a) => a.id !== id));
+    deleteFirestoreDoc("announcements", id);
     showToast("Announcement removed.");
   };
 
   const handleDeleteProject = (id: string) => {
     setProjects(projects.filter((p) => p.id !== id));
+    deleteFirestoreDoc("projects", id);
     showToast("Project removed.");
   };
 
@@ -782,6 +817,25 @@ export default function AdminPage() {
 
             {/* Officer Profile & Sign Out Button */}
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Firebase Cloud Status Indicator */}
+              {isFirebaseConfigured() ? (
+                <div
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold"
+                  title="Firebase cloud database is connected and active"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <span>Firebase Cloud Active</span>
+                </div>
+              ) : (
+                <div
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold"
+                  title="Local storage mode. Add Firebase environment variables in Vercel to sync cloud."
+                >
+                  <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                  <span>Local Mode (Connect Firebase in Vercel)</span>
+                </div>
+              )}
+
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-xs">
                 <UserCheck className="w-3.5 h-3.5 text-[#003B99]" />
                 <span className="font-bold text-slate-700">Officer Admin</span>

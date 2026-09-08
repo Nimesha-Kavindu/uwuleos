@@ -23,6 +23,7 @@ import {
   LionsEmblemSvg,
   DistrictEmblemSvg,
 } from "@/components/ui/BrandingLogos";
+import { isFirebaseConfigured, getFirestoreCollection } from "@/lib/firebase";
 
 interface DocumentItem {
   id: string;
@@ -40,7 +41,7 @@ export default function BrandAndFormsPage() {
   const [documents, setDocuments] = useState<DocumentItem[]>(initialDocumentsData);
 
   useEffect(() => {
-    // Load documents from localStorage if admin customized them
+    // Load documents from localStorage and Firestore
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("uwu_leos_documents");
       if (stored) {
@@ -52,6 +53,15 @@ export default function BrandAndFormsPage() {
         } catch (e) {
           console.error("Error loading stored documents:", e);
         }
+      }
+
+      if (isFirebaseConfigured()) {
+        getFirestoreCollection<DocumentItem>("documents", initialDocumentsData).then((docs) => {
+          if (docs && docs.length > 0) {
+            setDocuments(docs);
+            localStorage.setItem("uwu_leos_documents", JSON.stringify(docs));
+          }
+        });
       }
     }
   }, []);
