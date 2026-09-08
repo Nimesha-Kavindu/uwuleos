@@ -177,20 +177,7 @@ export default function Navbar() {
                   </Link>
 
                   <Link
-                    href="/magazine#bulletins"
-                    className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 text-slate-800 hover:text-[#003B99] transition-colors group/item"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-cyan-50 text-cyan-700 flex items-center justify-center shrink-0 mt-0.5 group-hover/item:bg-cyan-600 group-hover/item:text-white transition-colors">
-                      <FileText className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm leading-tight">E-Bulletins &amp; Gazettes</div>
-                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">Quarterly project reports</div>
-                    </div>
-                  </Link>
-
-                  <Link
-                    href="/magazine#resources"
+                    href="/brand-and-forms"
                     className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-50 text-slate-800 hover:text-[#003B99] transition-colors group/item"
                   >
                     <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 mt-0.5 group-hover/item:bg-amber-600 group-hover/item:text-white transition-colors">
@@ -198,7 +185,7 @@ export default function Navbar() {
                     </div>
                     <div>
                       <div className="font-semibold text-sm leading-tight">Official Brand &amp; Forms</div>
-                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">Logos, guidelines &amp; assets</div>
+                      <div className="text-[11px] text-slate-500 font-normal mt-0.5">Logos, guidelines &amp; templates</div>
                     </div>
                   </Link>
                 </div>
@@ -346,17 +333,7 @@ export default function Navbar() {
                     Leo Magazine
                   </Link>
                   <Link
-                    href="/magazine#bulletins"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      setMobileDownloadsOpen(false);
-                    }}
-                    className="block py-2 text-xs font-semibold text-slate-700 hover:text-[#003B99] transition-colors"
-                  >
-                    E-Bulletins &amp; Gazettes
-                  </Link>
-                  <Link
-                    href="/magazine#resources"
+                    href="/brand-and-forms"
                     onClick={() => {
                       setMobileMenuOpen(false);
                       setMobileDownloadsOpen(false);
