@@ -4,7 +4,10 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import projectsData from "@/data/projects.json";
-import { isFirebaseConfigured, getFirestoreCollection } from "@/lib/firebase";
+import {
+  isFirebaseConfigured,
+  subscribeFirestoreCollection,
+} from "@/lib/firebase";
 import {
   ArrowLeft,
   Calendar,
@@ -73,11 +76,18 @@ export default function SingleProjectPage() {
 
   useEffect(() => {
     if (isFirebaseConfigured()) {
-      getFirestoreCollection<ProjectItem>("projects", projectsData).then((data) => {
-        if (data && data.length > 0) {
-          setProjectsList(data);
+      const unsubscribe = subscribeFirestoreCollection<ProjectItem>(
+        "projects",
+        projectsData,
+        (data) => {
+          if (data && data.length > 0) {
+            setProjectsList(data);
+          }
         }
-      });
+      );
+      return () => {
+        if (typeof unsubscribe === "function") unsubscribe();
+      };
     }
   }, []);
 

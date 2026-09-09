@@ -4,7 +4,10 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import CyanBar from "@/components/ui/CyanBar";
 import projectsData from "@/data/projects.json";
-import { isFirebaseConfigured, getFirestoreCollection } from "@/lib/firebase";
+import {
+  isFirebaseConfigured,
+  subscribeFirestoreCollection,
+} from "@/lib/firebase";
 import {
   ArrowRight,
   MapPin,
@@ -62,11 +65,18 @@ export default function FeaturedProjects() {
 
   useEffect(() => {
     if (isFirebaseConfigured()) {
-      getFirestoreCollection<ProjectItem>("projects", projectsData).then((data) => {
-        if (data && data.length > 0) {
-          setProjectsList(data);
+      const unsubscribe = subscribeFirestoreCollection<ProjectItem>(
+        "projects",
+        projectsData,
+        (data) => {
+          if (data && data.length > 0) {
+            setProjectsList(data);
+          }
         }
-      });
+      );
+      return () => {
+        if (typeof unsubscribe === "function") unsubscribe();
+      };
     }
   }, []);
 

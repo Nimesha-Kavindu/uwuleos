@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import leadershipData from "@/data/leadership.json";
+import React, { useState, useEffect } from "react";
+import initialLeadershipData from "@/data/leadership.json";
 import {
   Mail,
   GraduationCap,
@@ -10,6 +10,10 @@ import {
   ArrowUpRight,
   Sparkles,
 } from "lucide-react";
+import {
+  isFirebaseConfigured,
+  getFirestoreDoc,
+} from "@/lib/firebase";
 
 // Minimal Clean Avatar (Neutral, refined, and automatically renders image when provided)
 function MinimalAvatar({
@@ -49,17 +53,26 @@ function MinimalAvatar({
 
 export default function BoardPage() {
   const [activeTab, setActiveTab] = useState<"all" | "advisory" | "exco" | "directors">("all");
+  const [leadership, setLeadership] = useState<any>(initialLeadershipData);
 
-  const {
-    advisoryCouncil: ADVISORY_MEMBERS,
-    president: PRESIDENT_DATA,
-    excoOfficers: EXCO_OFFICERS,
-    directors: DIRECTORS,
-    governance: GOVERNANCE,
-    leisticYear,
-    district,
-    sponsoringClub,
-  } = leadershipData;
+  useEffect(() => {
+    if (isFirebaseConfigured()) {
+      getFirestoreDoc<any>("leadership", "current", initialLeadershipData).then((doc) => {
+        if (doc && (doc.president || doc.excoOfficers)) {
+          setLeadership(doc);
+        }
+      });
+    }
+  }, []);
+
+  const ADVISORY_MEMBERS = leadership.advisoryCouncil || initialLeadershipData.advisoryCouncil;
+  const PRESIDENT_DATA = leadership.president || initialLeadershipData.president;
+  const EXCO_OFFICERS = leadership.excoOfficers || initialLeadershipData.excoOfficers;
+  const DIRECTORS = leadership.directors || initialLeadershipData.directors;
+  const GOVERNANCE = leadership.governance || initialLeadershipData.governance;
+  const leisticYear = leadership.leisticYear || initialLeadershipData.leisticYear;
+  const district = leadership.district || initialLeadershipData.district;
+  const sponsoringClub = leadership.sponsoringClub || initialLeadershipData.sponsoringClub;
 
   const totalCount = ADVISORY_MEMBERS.length + 1 + EXCO_OFFICERS.length + DIRECTORS.length;
 
@@ -161,7 +174,7 @@ export default function BoardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {ADVISORY_MEMBERS.map((adv) => (
+              {ADVISORY_MEMBERS.map((adv: any) => (
                 <div
                   key={adv.id}
                   className="bg-white rounded-xl border border-slate-200/80 p-6 shadow-xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group"
@@ -273,7 +286,7 @@ export default function BoardPage() {
 
             {/* B. 4 EXCO Officers Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {EXCO_OFFICERS.map((officer) => (
+              {EXCO_OFFICERS.map((officer: any) => (
                 <div
                   key={officer.id}
                   className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group"
@@ -338,7 +351,7 @@ export default function BoardPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {DIRECTORS.map((dir) => (
+              {DIRECTORS.map((dir: any) => (
                 <div
                   key={dir.id}
                   className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between group"
@@ -393,7 +406,7 @@ export default function BoardPage() {
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-4 h-4 text-[#003B99] shrink-0" />
             <span className="font-medium text-slate-700">
-              {GOVERNANCE.title} • Sponsored by {sponsoringClub}
+              {GOVERNANCE?.title || "Leo District 306 D10 Accreditation"} • Sponsored by {sponsoringClub}
             </span>
           </div>
           <span className="text-slate-500 text-[11px]">

@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import projectsData from "@/data/projects.json";
-import magazinesData from "@/data/magazines.json";
-import leadershipData from "@/data/leadership.json";
+import initialProjectsData from "@/data/projects.json";
+import initialMagazinesData from "@/data/magazines.json";
+import initialLeadershipData from "@/data/leadership.json";
 import initialDocumentsData from "@/data/documents.json";
 import {
   Layers,
@@ -42,12 +42,24 @@ import {
   Download,
   Save,
   FileText,
+  Image as ImageIcon,
+  MessageSquare,
+  RefreshCw,
+  Sliders,
+  Database,
+  Check,
 } from "lucide-react";
 import {
   isFirebaseConfigured,
   getFirestoreCollection,
+  getFirestoreDoc,
   saveFirestoreDoc,
   deleteFirestoreDoc,
+  seedFirestoreData,
+  INITIAL_ANNOUNCEMENTS,
+  INITIAL_EVENTS,
+  INITIAL_GALLERY_PHOTOS,
+  INITIAL_IMPACT_STATS,
 } from "@/lib/firebase";
 
 // Types
@@ -60,6 +72,18 @@ interface Announcement {
   summary: string;
   linkUrl?: string;
   scope: string;
+}
+
+interface EventItem {
+  id: string;
+  title: string;
+  date: string;
+  day?: string;
+  month?: string;
+  time?: string;
+  venue?: string;
+  category?: string;
+  description?: string;
 }
 
 interface ProjectItem {
@@ -76,6 +100,7 @@ interface ProjectItem {
   volunteers?: string;
   beneficiaries?: string;
   highlights?: string[];
+  image?: string;
 }
 
 interface MagazineItem {
@@ -104,6 +129,14 @@ interface DocumentItem {
   updatedAt: string;
 }
 
+interface GalleryPhotoItem {
+  id: string;
+  category: string;
+  title: string;
+  url: string;
+  date?: string;
+}
+
 interface MemberApplicant {
   id: string;
   name: string;
@@ -117,89 +150,15 @@ interface MemberApplicant {
   status: "pending" | "approved" | "inducted" | "rejected";
 }
 
-// Initial Sample Data for Announcements
-const INITIAL_ANNOUNCEMENTS: Announcement[] = [
-  {
-    id: "ann-1",
-    title: "Official Call for Project Sipnana Phase III Volunteers",
-    category: "Youth & STEM",
-    priority: "urgent",
-    date: "Dec 12, 2024",
-    summary: "Registration is open for undergraduates to participate in rural educational aid delivery across Passara secondary schools.",
-    linkUrl: "https://forms.gle/sample-link",
-    scope: "All UWU Undergraduates",
-  },
-  {
-    id: "ann-2",
-    title: "Executive Board Monthly Review Assembly (January 2025)",
-    category: "Administration",
-    priority: "high",
-    date: "Jan 05, 2025",
-    summary: "Quarterly review of project directorates, financial audit reports, and Multiple District 306 conference delegations.",
-    scope: "Executive Board & Directors",
-  },
-  {
-    id: "ann-3",
-    title: "Central Highlands Tree Planting Phase II Scheduling",
-    category: "Environment",
-    priority: "normal",
-    date: "Jan 18, 2025",
-    summary: "Partnering with the Forest Conservation Department for planting 1,000 indigenous saplings along the Namunukula ridge.",
-    scope: "Public & Leo Members",
-  },
-];
-
-// Initial Sample Data for Member Applicants
-const INITIAL_MEMBERS: MemberApplicant[] = [
-  {
-    id: "mem-1",
-    name: "Kavindu Dilshan",
-    regNo: "UWU/CST/22/045",
-    faculty: "Faculty of Science & Technology",
-    academicYear: "2nd Year",
-    email: "kavindu.d@uwu.ac.lk",
-    phone: "+94 77 123 4567",
-    interests: "IT Directorates, Web Portal Development, Photography",
-    appliedDate: "Dec 10, 2024",
-    status: "pending",
-  },
-  {
-    id: "mem-2",
-    name: "Sanduni Perera",
-    regNo: "UWU/ANS/23/018",
-    faculty: "Faculty of Animal Science & Export Agriculture",
-    academicYear: "1st Year",
-    email: "sanduni.p@uwu.ac.lk",
-    phone: "+94 71 987 6543",
-    interests: "Green Uva Environment, Tree Planting Drives",
-    appliedDate: "Dec 08, 2024",
-    status: "approved",
-  },
-  {
-    id: "mem-3",
-    name: "Nimesh Senanayake",
-    regNo: "UWU/MGT/21/089",
-    faculty: "Faculty of Management",
-    academicYear: "3rd Year",
-    email: "nimesh.s@uwu.ac.lk",
-    phone: "+94 76 555 1234",
-    interests: "Treasury Management, Public Relations & Event Planning",
-    appliedDate: "Dec 04, 2024",
-    status: "inducted",
-  },
-  {
-    id: "mem-4",
-    name: "Thisara Bandara",
-    regNo: "UWU/APS/23/102",
-    faculty: "Faculty of Applied Sciences",
-    academicYear: "1st Year",
-    email: "thisara.b@uwu.ac.lk",
-    phone: "+94 70 444 8899",
-    interests: "Blood Donation Camps, Community Welfare Drives",
-    appliedDate: "Dec 02, 2024",
-    status: "pending",
-  },
-];
+interface ContactInquiry {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status?: string;
+  receivedDate?: string;
+}
 
 export default function AdminPage() {
   // Authentication State
@@ -214,14 +173,31 @@ export default function AdminPage() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   // Navigation Tab State
-  const [activeTab, setActiveTab] = useState<"overview" | "announcements" | "projects" | "magazines" | "members" | "documents">("overview");
+  const [activeTab, setActiveTab] = useState<
+    | "overview"
+    | "announcements"
+    | "events"
+    | "projects"
+    | "magazines"
+    | "documents"
+    | "leadership"
+    | "gallery"
+    | "stats"
+    | "members"
+    | "inquiries"
+  >("overview");
 
   // App Data State
   const [announcements, setAnnouncements] = useState<Announcement[]>(INITIAL_ANNOUNCEMENTS);
-  const [projects, setProjects] = useState<ProjectItem[]>(projectsData);
-  const [magazines, setMagazines] = useState<MagazineItem[]>(magazinesData);
+  const [events, setEvents] = useState<EventItem[]>(INITIAL_EVENTS);
+  const [projects, setProjects] = useState<ProjectItem[]>(initialProjectsData);
+  const [magazines, setMagazines] = useState<MagazineItem[]>(initialMagazinesData);
   const [documents, setDocuments] = useState<DocumentItem[]>(initialDocumentsData);
-  const [members, setMembers] = useState<MemberApplicant[]>(INITIAL_MEMBERS);
+  const [gallery, setGallery] = useState<GalleryPhotoItem[]>(INITIAL_GALLERY_PHOTOS);
+  const [leadership, setLeadership] = useState<any>(initialLeadershipData);
+  const [impactStats, setImpactStats] = useState<any>(INITIAL_IMPACT_STATS);
+  const [members, setMembers] = useState<MemberApplicant[]>([]);
+  const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -234,17 +210,24 @@ export default function AdminPage() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
+  // Seeding State
+  const [isSeeding, setIsSeeding] = useState(false);
+
   // Modals State
   const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isMagazineModalOpen, setIsMagazineModalOpen] = useState(false);
   const [isDocumentModalOpen, setIsDocumentModalOpen] = useState(false);
-  const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  const [isLeaderModalOpen, setIsLeaderModalOpen] = useState(false);
 
-  // Editing state for documents
+  // Editing states
   const [editingDoc, setEditingDoc] = useState<DocumentItem | null>(null);
+  const [editingProj, setEditingProj] = useState<ProjectItem | null>(null);
+  const [editingLeader, setEditingLeader] = useState<any | null>(null);
 
-  // New Announcement Form State
+  // Form States - Announcement
   const [newAnnTitle, setNewAnnTitle] = useState("");
   const [newAnnCategory, setNewAnnCategory] = useState("Youth & STEM");
   const [newAnnPriority, setNewAnnPriority] = useState<"normal" | "high" | "urgent">("normal");
@@ -253,18 +236,31 @@ export default function AdminPage() {
   const [newAnnLink, setNewAnnLink] = useState("");
   const [newAnnScope, setNewAnnScope] = useState("All Undergraduates");
 
-  // New Project Form State
+  // Form States - Event
+  const [newEvTitle, setNewEvTitle] = useState("");
+  const [newEvCategory, setNewEvCategory] = useState("Leadership");
+  const [newEvDate, setNewEvDate] = useState("");
+  const [newEvDay, setNewEvDay] = useState("");
+  const [newEvMonth, setNewEvMonth] = useState("");
+  const [newEvTime, setNewEvTime] = useState("");
+  const [newEvVenue, setNewEvVenue] = useState("");
+  const [newEvDescription, setNewEvDescription] = useState("");
+
+  // Form States - Project
   const [newProjTitle, setNewProjTitle] = useState("");
   const [newProjCategory, setNewProjCategory] = useState("Education");
   const [newProjDirectorate, setNewProjDirectorate] = useState("Directorate of Education & STEM");
   const [newProjMetric, setNewProjMetric] = useState("");
   const [newProjDate, setNewProjDate] = useState("");
   const [newProjLocation, setNewProjLocation] = useState("");
-  const [newProjStatus, setNewProjStatus] = useState("Active");
+  const [newProjStatus, setNewProjStatus] = useState("Completed");
   const [newProjSummary, setNewProjSummary] = useState("");
   const [newProjHighlights, setNewProjHighlights] = useState("");
+  const [newProjVolunteers, setNewProjVolunteers] = useState("");
+  const [newProjBeneficiaries, setNewProjBeneficiaries] = useState("");
+  const [newProjImage, setNewProjImage] = useState("");
 
-  // New Magazine Form State
+  // Form States - Magazine
   const [newMagTitle, setNewMagTitle] = useState("");
   const [newMagEdition, setNewMagEdition] = useState("");
   const [newMagCategory, setNewMagCategory] = useState("Annual Flagship");
@@ -276,7 +272,7 @@ export default function AdminPage() {
   const [newMagSummary, setNewMagSummary] = useState("");
   const [newMagHighlights, setNewMagHighlights] = useState("");
 
-  // New Document / Form State
+  // Form States - Document
   const [newDocTitle, setNewDocTitle] = useState("");
   const [newDocCategory, setNewDocCategory] = useState("Governance & Statutes");
   const [newDocFormat, setNewDocFormat] = useState("PDF Document");
@@ -284,11 +280,27 @@ export default function AdminPage() {
   const [newDocDriveUrl, setNewDocDriveUrl] = useState("");
   const [newDocDescription, setNewDocDescription] = useState("");
 
+  // Form States - Gallery
+  const [newGalTitle, setNewGalTitle] = useState("");
+  const [newGalCategory, setNewGalCategory] = useState("community");
+  const [newGalUrl, setNewGalUrl] = useState("");
+  const [newGalDate, setNewGalDate] = useState("");
+
+  // Form States - Leader
+  const [newLeaderName, setNewLeaderName] = useState("");
+  const [newLeaderRole, setNewLeaderRole] = useState("Director");
+  const [newLeaderFaculty, setNewLeaderFaculty] = useState("Faculty of Applied Sciences");
+  const [newLeaderEmail, setNewLeaderEmail] = useState("");
+  const [newLeaderScope, setNewLeaderScope] = useState("");
+  const [newLeaderInitials, setNewLeaderInitials] = useState("");
+  const [newLeaderImage, setNewLeaderImage] = useState("");
+  const [newLeaderType, setNewLeaderType] = useState<"director" | "exco" | "advisory">("director");
+
   // Dynamic inline Google Drive URLs editor map
   const [driveUrlEdits, setDriveUrlEdits] = useState<Record<string, string>>({});
   const [driveUrlDocEdits, setDriveUrlDocEdits] = useState<Record<string, string>>({});
 
-  // Check saved session, stored documents, and fetch Firestore cloud data on mount
+  // Check saved session & fetch Firestore data
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = sessionStorage.getItem("uwu_leo_admin_auth");
@@ -297,46 +309,57 @@ export default function AdminPage() {
       }
       setIsCheckingAuth(false);
 
-      const storedDocs = localStorage.getItem("uwu_leos_documents");
-      if (storedDocs) {
-        try {
-          const parsed = JSON.parse(storedDocs);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setDocuments(parsed);
-          }
-        } catch (e) {
-          console.error("Error loading stored documents:", e);
-        }
-      }
-
-      // If Firebase environment variables are provided (on Vercel or locally), fetch live cloud data
-      if (isFirebaseConfigured()) {
-        getFirestoreCollection<Announcement>("announcements", INITIAL_ANNOUNCEMENTS).then((data) => {
-          if (data && data.length > 0) setAnnouncements(data);
-        });
-        getFirestoreCollection<ProjectItem>("projects", projectsData).then((data) => {
-          if (data && data.length > 0) setProjects(data);
-        });
-        getFirestoreCollection<MagazineItem>("magazines", magazinesData).then((data) => {
-          if (data && data.length > 0) setMagazines(data);
-        });
-        getFirestoreCollection<DocumentItem>("documents", initialDocumentsData).then((docs) => {
-          if (docs && docs.length > 0) {
-            setDocuments(docs);
-            localStorage.setItem("uwu_leos_documents", JSON.stringify(docs));
-          }
-        });
-        getFirestoreCollection<MemberApplicant>("membership_applicants", INITIAL_MEMBERS).then((data) => {
-          if (data && data.length > 0) setMembers(data);
-        });
-      }
+      // Fetch live cloud data
+      loadAllCloudData();
     }
   }, []);
 
-  const saveDocuments = (newDocs: DocumentItem[]) => {
-    setDocuments(newDocs);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("uwu_leos_documents", JSON.stringify(newDocs));
+  const loadAllCloudData = () => {
+    if (isFirebaseConfigured()) {
+      getFirestoreCollection<Announcement>("announcements", INITIAL_ANNOUNCEMENTS).then((data) => {
+        if (data && data.length > 0) setAnnouncements(data);
+      });
+      getFirestoreCollection<EventItem>("events", INITIAL_EVENTS).then((data) => {
+        if (data && data.length > 0) setEvents(data);
+      });
+      getFirestoreCollection<ProjectItem>("projects", initialProjectsData).then((data) => {
+        if (data && data.length > 0) setProjects(data);
+      });
+      getFirestoreCollection<MagazineItem>("magazines", initialMagazinesData).then((data) => {
+        if (data && data.length > 0) setMagazines(data);
+      });
+      getFirestoreCollection<DocumentItem>("documents", initialDocumentsData).then((docs) => {
+        if (docs && docs.length > 0) setDocuments(docs);
+      });
+      getFirestoreCollection<GalleryPhotoItem>("gallery", INITIAL_GALLERY_PHOTOS).then((data) => {
+        if (data && data.length > 0) setGallery(data);
+      });
+      getFirestoreDoc<any>("leadership", "current", initialLeadershipData).then((data) => {
+        if (data && (data.president || data.excoOfficers)) setLeadership(data);
+      });
+      getFirestoreDoc<any>("settings", "impact_stats", INITIAL_IMPACT_STATS).then((data) => {
+        if (data && (data.stat1 || data.stat2)) setImpactStats(data);
+      });
+      getFirestoreCollection<MemberApplicant>("membership_applicants", []).then((data) => {
+        setMembers(data || []);
+      });
+      getFirestoreCollection<ContactInquiry>("contact_inquiries", []).then((data) => {
+        setInquiries(data || []);
+      });
+    }
+  };
+
+  // One-click Seed Firebase
+  const handleSeedDatabase = async () => {
+    setIsSeeding(true);
+    const res = await seedFirestoreData();
+    setIsSeeding(false);
+
+    if (res.success) {
+      showToast(res.message);
+      loadAllCloudData();
+    } else {
+      showToast(res.message);
     }
   };
 
@@ -348,7 +371,7 @@ export default function AdminPage() {
 
     setTimeout(() => {
       const validEmails = ["admin@uwuleos.org", "admin", "president.uwuleos@gmail.com"];
-      const validPasswords = ["uwuleos2024", "admin123", "leo306c2"];
+      const validPasswords = ["uwuleos2024", "admin123", "leo306c2", "admin"];
 
       const inputUser = loginEmail.trim().toLowerCase();
       const inputPass = loginPassword.trim();
@@ -358,7 +381,7 @@ export default function AdminPage() {
         sessionStorage.setItem("uwu_leo_admin_auth", "true");
         showToast("Welcome back, Officer Admin!");
       } else {
-        setLoginError("Invalid email or password. Use demo login: admin@uwuleos.org / uwuleos2024");
+        setLoginError("Invalid credentials. Demo login: admin@uwuleos.org / uwuleos2024");
       }
       setIsLoggingIn(false);
     }, 400);
@@ -373,93 +396,11 @@ export default function AdminPage() {
     showToast("Logged out of Admin Portal.");
   };
 
-  // Document Handlers
-  const handleCreateOrUpdateDocument = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newDocTitle || !newDocDriveUrl) return;
+  // ==============================================================================
+  // CRUD HANDLERS
+  // ==============================================================================
 
-    if (editingDoc) {
-      const updatedDoc = {
-        ...editingDoc,
-        title: newDocTitle,
-        category: newDocCategory,
-        format: newDocFormat,
-        size: newDocSize || "1.0 MB",
-        driveUrl: newDocDriveUrl,
-        description: newDocDescription,
-        updatedAt: "Updated Just Now",
-      };
-      const updated = documents.map((doc) => (doc.id === editingDoc.id ? updatedDoc : doc));
-      saveDocuments(updated);
-      saveFirestoreDoc("documents", editingDoc.id, updatedDoc);
-      showToast("Official document updated successfully!");
-    } else {
-      const newEntry: DocumentItem = {
-        id: `doc-${Date.now()}`,
-        title: newDocTitle,
-        category: newDocCategory,
-        format: newDocFormat,
-        size: newDocSize || "1.0 MB",
-        driveUrl: newDocDriveUrl,
-        description: newDocDescription,
-        updatedAt: new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
-      };
-      saveDocuments([newEntry, ...documents]);
-      saveFirestoreDoc("documents", newEntry.id, newEntry);
-      showToast("New official document published with Google Drive link!");
-    }
-
-    setIsDocumentModalOpen(false);
-    setEditingDoc(null);
-    setNewDocTitle("");
-    setNewDocCategory("Governance & Statutes");
-    setNewDocFormat("PDF Document");
-    setNewDocSize("");
-    setNewDocDriveUrl("");
-    setNewDocDescription("");
-  };
-
-  const handleOpenEditDoc = (doc: DocumentItem) => {
-    setEditingDoc(doc);
-    setNewDocTitle(doc.title);
-    setNewDocCategory(doc.category);
-    setNewDocFormat(doc.format);
-    setNewDocSize(doc.size);
-    setNewDocDriveUrl(doc.driveUrl);
-    setNewDocDescription(doc.description);
-    setIsDocumentModalOpen(true);
-  };
-
-  const handleDeleteDocument = (id: string) => {
-    const filtered = documents.filter((d) => d.id !== id);
-    saveDocuments(filtered);
-    deleteFirestoreDoc("documents", id);
-    showToast("Official document removed.");
-  };
-
-  const handleUpdateDocDriveUrl = (docId: string) => {
-    const updatedUrl = driveUrlDocEdits[docId];
-    if (!updatedUrl) return;
-
-    const updated = documents.map((d) => (d.id === docId ? { ...d, driveUrl: updatedUrl } : d));
-    saveDocuments(updated);
-    saveFirestoreDoc("documents", docId, { driveUrl: updatedUrl });
-    showToast("Document Google Drive link updated!");
-  };
-
-  // Update Magazine Google Drive URL
-  const handleUpdateDriveUrl = (magId: string) => {
-    const updatedUrl = driveUrlEdits[magId];
-    if (!updatedUrl) return;
-
-    setMagazines(
-      magazines.map((m) => (m.id === magId ? { ...m, driveUrl: updatedUrl } : m))
-    );
-    saveFirestoreDoc("magazines", magId, { driveUrl: updatedUrl });
-    showToast("Google Drive link updated successfully!");
-  };
-
-  // Submit Handlers
+  // 1. Announcements
   const handleCreateAnnouncement = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newAnnTitle || !newAnnSummary) return;
@@ -484,36 +425,135 @@ export default function AdminPage() {
     showToast("Announcement published successfully!");
   };
 
-  const handleCreateProject = (e: React.FormEvent) => {
+  const handleDeleteAnnouncement = (id: string) => {
+    setAnnouncements(announcements.filter((a) => a.id !== id));
+    deleteFirestoreDoc("announcements", id);
+    showToast("Announcement removed.");
+  };
+
+  // 2. Events
+  const handleCreateEvent = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEvTitle || !newEvDate) return;
+
+    const dateParts = newEvDate.split(" ");
+    const month = newEvMonth || (dateParts[0] ? dateParts[0].substring(0, 3).toUpperCase() : "EVENT");
+    const day = newEvDay || (dateParts[1] ? dateParts[1].replace(",", "") : "15");
+
+    const newEntry: EventItem = {
+      id: `ev-${Date.now()}`,
+      title: newEvTitle,
+      date: newEvDate,
+      day: day,
+      month: month,
+      time: newEvTime || "03:30 PM",
+      venue: newEvVenue || "UWU Campus, Badulla",
+      category: newEvCategory,
+      description: newEvDescription || newEvTitle,
+    };
+
+    setEvents([newEntry, ...events]);
+    saveFirestoreDoc("events", newEntry.id, newEntry);
+    setIsEventModalOpen(false);
+    setNewEvTitle("");
+    setNewEvDate("");
+    setNewEvTime("");
+    setNewEvVenue("");
+    setNewEvDescription("");
+    showToast("New event added to calendar!");
+  };
+
+  const handleDeleteEvent = (id: string) => {
+    setEvents(events.filter((e) => e.id !== id));
+    deleteFirestoreDoc("events", id);
+    showToast("Event removed from calendar.");
+  };
+
+  // 3. Projects
+  const handleCreateOrUpdateProject = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProjTitle || !newProjSummary) return;
 
     const slug = newProjTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-    const newEntry: ProjectItem = {
-      id: `proj-${Date.now()}`,
-      slug: slug || `project-${Date.now()}`,
-      title: newProjTitle,
-      category: newProjCategory,
-      directorate: newProjDirectorate,
-      impactMetric: newProjMetric || "Impact Underway",
-      date: newProjDate || "2025",
-      location: newProjLocation || "UWU Campus, Badulla",
-      status: newProjStatus,
-      summary: newProjSummary,
-      highlights: newProjHighlights ? newProjHighlights.split("\n").filter((h) => h.trim().length > 0) : [],
-    };
+    if (editingProj) {
+      const updatedProj: ProjectItem = {
+        ...editingProj,
+        title: newProjTitle,
+        category: newProjCategory,
+        directorate: newProjDirectorate,
+        impactMetric: newProjMetric || "Impact Underway",
+        date: newProjDate || editingProj.date,
+        location: newProjLocation || editingProj.location,
+        status: newProjStatus,
+        summary: newProjSummary,
+        volunteers: newProjVolunteers || editingProj.volunteers,
+        beneficiaries: newProjBeneficiaries || editingProj.beneficiaries,
+        image: newProjImage || editingProj.image,
+        highlights: newProjHighlights ? newProjHighlights.split("\n").filter((h) => h.trim().length > 0) : editingProj.highlights,
+      };
 
-    setProjects([newEntry, ...projects]);
-    saveFirestoreDoc("projects", newEntry.id, newEntry);
+      setProjects(projects.map((p) => (p.id === editingProj.id ? updatedProj : p)));
+      saveFirestoreDoc("projects", editingProj.id, updatedProj);
+      showToast("Project updated successfully!");
+    } else {
+      const newEntry: ProjectItem = {
+        id: `proj-${Date.now()}`,
+        slug: slug || `project-${Date.now()}`,
+        title: newProjTitle,
+        category: newProjCategory,
+        directorate: newProjDirectorate,
+        impactMetric: newProjMetric || "Impact Underway",
+        date: newProjDate || "2025",
+        location: newProjLocation || "UWU Campus, Badulla",
+        status: newProjStatus,
+        summary: newProjSummary,
+        volunteers: newProjVolunteers || "30+ Volunteers",
+        beneficiaries: newProjBeneficiaries || "Local Community",
+        image: newProjImage || "",
+        highlights: newProjHighlights ? newProjHighlights.split("\n").filter((h) => h.trim().length > 0) : [],
+      };
+
+      setProjects([newEntry, ...projects]);
+      saveFirestoreDoc("projects", newEntry.id, newEntry);
+      showToast("New project registered successfully!");
+    }
+
     setIsProjectModalOpen(false);
+    setEditingProj(null);
     setNewProjTitle("");
     setNewProjSummary("");
     setNewProjMetric("");
     setNewProjHighlights("");
-    showToast("New project registered successfully!");
+    setNewProjVolunteers("");
+    setNewProjBeneficiaries("");
+    setNewProjImage("");
   };
 
+  const handleOpenEditProject = (proj: ProjectItem) => {
+    setEditingProj(proj);
+    setNewProjTitle(proj.title);
+    setNewProjCategory(proj.category);
+    setNewProjDirectorate(proj.directorate);
+    setNewProjMetric(proj.impactMetric);
+    setNewProjDate(proj.date);
+    setNewProjLocation(proj.location);
+    setNewProjStatus(proj.status);
+    setNewProjSummary(proj.summary);
+    setNewProjHighlights(proj.highlights ? proj.highlights.join("\n") : "");
+    setNewProjVolunteers(proj.volunteers || "");
+    setNewProjBeneficiaries(proj.beneficiaries || "");
+    setNewProjImage(proj.image || "");
+    setIsProjectModalOpen(true);
+  };
+
+  const handleDeleteProject = (id: string) => {
+    setProjects(projects.filter((p) => p.id !== id));
+    deleteFirestoreDoc("projects", id);
+    showToast("Project removed.");
+  };
+
+  // 4. Magazines
   const handleCreateMagazine = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMagTitle || !newMagSummary) return;
@@ -550,66 +590,215 @@ export default function AdminPage() {
     showToast("Magazine issue removed.");
   };
 
-  const [newMemName, setNewMemName] = useState("");
-  const [newMemRegNo, setNewMemRegNo] = useState("");
-  const [newMemFaculty, setNewMemFaculty] = useState("Faculty of Science & Technology");
-  const [newMemYear, setNewMemYear] = useState("1st Year");
-  const [newMemEmail, setNewMemEmail] = useState("");
-  const [newMemPhone, setNewMemPhone] = useState("");
-  const [newMemInterests, setNewMemInterests] = useState("");
+  const handleUpdateDriveUrl = (magId: string) => {
+    const updatedUrl = driveUrlEdits[magId];
+    if (!updatedUrl) return;
 
-  const handleCreateMember = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMemName || !newMemEmail) return;
-
-    const newEntry: MemberApplicant = {
-      id: `mem-${Date.now()}`,
-      name: newMemName,
-      regNo: newMemRegNo || "UWU/GEN/24/000",
-      faculty: newMemFaculty,
-      academicYear: newMemYear,
-      email: newMemEmail,
-      phone: newMemPhone || "—",
-      interests: newMemInterests || "Community Service & Youth Leadership",
-      appliedDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-      status: "pending",
-    };
-
-    setMembers([newEntry, ...members]);
-    saveFirestoreDoc("membership_applicants", newEntry.id, newEntry);
-    setIsMemberModalOpen(false);
-    setNewMemName("");
-    setNewMemEmail("");
-    setNewMemRegNo("");
-    setNewMemPhone("");
-    setNewMemInterests("");
-    showToast("New member application added!");
+    setMagazines(magazines.map((m) => (m.id === magId ? { ...m, driveUrl: updatedUrl } : m)));
+    saveFirestoreDoc("magazines", magId, { driveUrl: updatedUrl });
+    showToast("Google Drive link updated successfully!");
   };
 
+  // 5. Documents
+  const handleCreateOrUpdateDocument = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDocTitle || !newDocDriveUrl) return;
+
+    if (editingDoc) {
+      const updatedDoc: DocumentItem = {
+        ...editingDoc,
+        title: newDocTitle,
+        category: newDocCategory,
+        format: newDocFormat,
+        size: newDocSize || "1.0 MB",
+        driveUrl: newDocDriveUrl,
+        description: newDocDescription,
+        updatedAt: "Updated Just Now",
+      };
+      setDocuments(documents.map((d) => (d.id === editingDoc.id ? updatedDoc : d)));
+      saveFirestoreDoc("documents", editingDoc.id, updatedDoc);
+      showToast("Official document updated successfully!");
+    } else {
+      const newEntry: DocumentItem = {
+        id: `doc-${Date.now()}`,
+        title: newDocTitle,
+        category: newDocCategory,
+        format: newDocFormat,
+        size: newDocSize || "1.0 MB",
+        driveUrl: newDocDriveUrl,
+        description: newDocDescription,
+        updatedAt: new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }),
+      };
+      setDocuments([newEntry, ...documents]);
+      saveFirestoreDoc("documents", newEntry.id, newEntry);
+      showToast("New official document published with Google Drive link!");
+    }
+
+    setIsDocumentModalOpen(false);
+    setEditingDoc(null);
+    setNewDocTitle("");
+    setNewDocCategory("Governance & Statutes");
+    setNewDocFormat("PDF Document");
+    setNewDocSize("");
+    setNewDocDriveUrl("");
+    setNewDocDescription("");
+  };
+
+  const handleOpenEditDoc = (docItem: DocumentItem) => {
+    setEditingDoc(docItem);
+    setNewDocTitle(docItem.title);
+    setNewDocCategory(docItem.category);
+    setNewDocFormat(docItem.format);
+    setNewDocSize(docItem.size);
+    setNewDocDriveUrl(docItem.driveUrl);
+    setNewDocDescription(docItem.description);
+    setIsDocumentModalOpen(true);
+  };
+
+  const handleDeleteDocument = (id: string) => {
+    setDocuments(documents.filter((d) => d.id !== id));
+    deleteFirestoreDoc("documents", id);
+    showToast("Official document removed.");
+  };
+
+  const handleUpdateDocDriveUrl = (docId: string) => {
+    const updatedUrl = driveUrlDocEdits[docId];
+    if (!updatedUrl) return;
+
+    setDocuments(documents.map((d) => (d.id === docId ? { ...d, driveUrl: updatedUrl } : d)));
+    saveFirestoreDoc("documents", docId, { driveUrl: updatedUrl });
+    showToast("Document Google Drive link updated!");
+  };
+
+  // 6. Gallery
+  const handleCreateGalleryPhoto = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newGalTitle || !newGalUrl) return;
+
+    const newEntry: GalleryPhotoItem = {
+      id: `gal-${Date.now()}`,
+      title: newGalTitle,
+      category: newGalCategory,
+      url: newGalUrl,
+      date: newGalDate || "Recent Highlight",
+    };
+
+    setGallery([newEntry, ...gallery]);
+    saveFirestoreDoc("gallery", newEntry.id, newEntry);
+    setIsGalleryModalOpen(false);
+    setNewGalTitle("");
+    setNewGalUrl("");
+    showToast("New photo added to Media Gallery!");
+  };
+
+  const handleDeleteGalleryPhoto = (id: string) => {
+    setGallery(gallery.filter((g) => g.id !== id));
+    deleteFirestoreDoc("gallery", id);
+    showToast("Gallery photo removed.");
+  };
+
+  // 7. Leadership / Board
+  const handleSaveLeader = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newLeaderName || !newLeaderRole) return;
+
+    const currentData = { ...leadership };
+    const newMember = {
+      id: editingLeader?.id || `leader-${Date.now()}`,
+      name: newLeaderName,
+      designation: newLeaderRole,
+      faculty: newLeaderFaculty,
+      email: newLeaderEmail,
+      scope: newLeaderScope,
+      initials: newLeaderInitials || newLeaderName.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase(),
+      image: newLeaderImage || "",
+      portfolio: newLeaderRole,
+      category: "Portfolio Directorate",
+      roleBadge: "DIRECTORATE",
+    };
+
+    if (newLeaderType === "director") {
+      const dirs = currentData.directors || [];
+      if (editingLeader) {
+        currentData.directors = dirs.map((d: any) => (d.id === editingLeader.id ? newMember : d));
+      } else {
+        currentData.directors = [...dirs, newMember];
+      }
+    } else if (newLeaderType === "exco") {
+      const exco = currentData.excoOfficers || [];
+      if (editingLeader) {
+        currentData.excoOfficers = exco.map((o: any) => (o.id === editingLeader.id ? newMember : o));
+      } else {
+        currentData.excoOfficers = [...exco, newMember];
+      }
+    }
+
+    setLeadership(currentData);
+    saveFirestoreDoc("leadership", "current", currentData);
+    setIsLeaderModalOpen(false);
+    setEditingLeader(null);
+    setNewLeaderName("");
+    setNewLeaderRole("");
+    setNewLeaderEmail("");
+    setNewLeaderScope("");
+    setNewLeaderImage("");
+    showToast("Leadership directory updated!");
+  };
+
+  const handleDeleteLeader = (type: "director" | "exco", id: string) => {
+    const currentData = { ...leadership };
+    if (type === "director") {
+      currentData.directors = (currentData.directors || []).filter((d: any) => d.id !== id);
+    } else {
+      currentData.excoOfficers = (currentData.excoOfficers || []).filter((o: any) => o.id !== id);
+    }
+    setLeadership(currentData);
+    saveFirestoreDoc("leadership", "current", currentData);
+    showToast("Leader profile removed.");
+  };
+
+  // 8. Impact Stats
+  const handleSaveImpactStats = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveFirestoreDoc("settings", "impact_stats", impactStats);
+    showToast("Impact statistics updated in Firestore!");
+  };
+
+  // 9. Members
   const handleUpdateMemberStatus = (id: string, newStatus: MemberApplicant["status"]) => {
     setMembers(members.map((m) => (m.id === id ? { ...m, status: newStatus } : m)));
     saveFirestoreDoc("membership_applicants", id, { status: newStatus });
     showToast(`Applicant status updated to ${newStatus.toUpperCase()}`);
   };
 
-  const handleDeleteAnnouncement = (id: string) => {
-    setAnnouncements(announcements.filter((a) => a.id !== id));
-    deleteFirestoreDoc("announcements", id);
-    showToast("Announcement removed.");
+  const handleDeleteMember = (id: string) => {
+    setMembers(members.filter((m) => m.id !== id));
+    deleteFirestoreDoc("membership_applicants", id);
+    showToast("Applicant record removed.");
   };
 
-  const handleDeleteProject = (id: string) => {
-    setProjects(projects.filter((p) => p.id !== id));
-    deleteFirestoreDoc("projects", id);
-    showToast("Project removed.");
+  // 10. Contact Inquiries
+  const handleDeleteInquiry = (id: string) => {
+    setInquiries(inquiries.filter((i) => i.id !== id));
+    deleteFirestoreDoc("contact_inquiries", id);
+    showToast("Inquiry removed.");
   };
 
-  // Filtered lists
+  // ==============================================================================
+  // SEARCH FILTERING
+  // ==============================================================================
   const filteredAnnouncements = announcements.filter(
     (a) =>
       a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       a.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
       a.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredEvents = events.filter(
+    (e) =>
+      e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (e.description && e.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (e.venue && e.venue.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const filteredProjectsList = projects.filter(
@@ -649,612 +838,347 @@ export default function AdminPage() {
   // If checking session on initial load, show minimal spinner
   if (isCheckingAuth) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#003B99]" />
+      <div className="min-h-screen bg-[#07132B] flex items-center justify-center text-white">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 border-2 border-leo-cyan border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-medium text-slate-300">Checking secure admin session...</span>
+        </div>
       </div>
     );
   }
 
-  // =========================================================================
-  // VIEW 1: OFFICER LOGIN SCREEN (If not authenticated)
-  // =========================================================================
+  // ==============================================================================
+  // LOGIN SCREEN
+  // ==============================================================================
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-[#061838] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden text-slate-900">
         
-        {/* Toast Notification */}
-        {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5 text-xs font-semibold animate-in fade-in duration-200">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>{toastMessage}</span>
-          </div>
-        )}
+        {/* Background glow effects */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-leo-cyan/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-72 h-72 bg-[#003B99]/20 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="flex justify-center">
-            <div className="w-12 h-12 rounded-2xl bg-[#003B99] text-white flex items-center justify-center font-heading font-extrabold text-xl shadow-md">
-              U
+        <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200/80 p-8 sm:p-10 space-y-8 animate-in fade-in zoom-in-95 duration-200">
+          
+          {/* Logo & Header */}
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#003B99] to-[#00A3E0] flex items-center justify-center mx-auto shadow-md">
+              <ShieldCheck className="w-8 h-8 text-white" />
+            </div>
+            
+            <div className="space-y-1">
+              <h1 className="font-heading font-extrabold text-2xl text-slate-900 tracking-tight">
+                Officer Admin Portal
+              </h1>
+              <p className="text-xs text-slate-500 font-medium">
+                Leo Club of Uva Wellassa University • District 306 D10
+              </p>
             </div>
           </div>
-          
-          <h2 className="mt-4 text-center text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading tracking-tight">
-            Officer Admin Portal
-          </h2>
-          <p className="mt-1.5 text-center text-xs text-slate-500 max-w-sm mx-auto">
-            Leo Club of Uva Wellassa University • District 306 D10
-          </p>
-        </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
-          <div className="bg-white py-8 px-6 sm:px-8 shadow-xs rounded-2xl border border-slate-200/80 space-y-6">
-            
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-5">
             {loginError && (
-              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2.5 animate-in fade-in">
+              <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700 flex items-start gap-2.5 animate-in fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                 <span>{loginError}</span>
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1.5">
-                  Officer Email / Username
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    required
-                    placeholder="admin@uwuleos.org"
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#003B99] focus:bg-white text-slate-900 placeholder:text-slate-400 font-medium"
-                  />
-                </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                Admin Username / Email
+              </label>
+              <div className="relative">
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  required
+                  placeholder="admin@uwuleos.org"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 text-xs bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#003B99] focus:bg-white text-slate-900 font-medium transition-all"
+                />
               </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1.5">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    placeholder="••••••••••••"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    className="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#003B99] focus:bg-white text-slate-900 placeholder:text-slate-400 font-medium"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Sample Credentials Card for ease of use */}
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-600 text-[11px] space-y-1">
-                <div className="font-bold text-slate-700 flex items-center gap-1">
-                  <KeyRound className="w-3.5 h-3.5 text-[#003B99]" />
-                  <span>Demo Access Credentials</span>
-                </div>
-                <div className="font-mono text-slate-500">Email: <strong className="text-slate-800">admin@uwuleos.org</strong></div>
-                <div className="font-mono text-slate-500">Password: <strong className="text-slate-800">uwuleos2024</strong></div>
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoggingIn}
-                  className="w-full py-2.5 px-4 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
-                >
-                  {isLoggingIn ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                  ) : (
-                    <>
-                      <span>Sign In to Admin Workspace</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-
-            <div className="pt-4 border-t border-slate-100 text-center">
-              <Link
-                href="/"
-                className="text-xs text-slate-500 hover:text-[#003B99] transition-colors font-medium inline-flex items-center gap-1"
-              >
-                <span>← Back to Public Website</span>
-              </Link>
             </div>
 
-          </div>
-        </div>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                  Password Key
+                </label>
+                <span className="text-[10px] text-slate-400">Default: uwuleos2024</span>
+              </div>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  className="w-full pl-10 pr-10 py-3 text-xs bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#003B99] focus:bg-white text-slate-900 font-medium transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
 
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full py-3.5 bg-gradient-to-r from-[#003B99] to-[#00A3E0] hover:from-[#002D7A] hover:to-[#0092C7] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-all duration-200 flex items-center justify-center gap-2 transform active:scale-[0.99] disabled:opacity-75"
+            >
+              {isLoggingIn ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <KeyRound className="w-4 h-4" />
+                  <span>Access Admin Control Panel</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer note */}
+          <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+            <Link href="/" className="hover:text-[#003B99] transition-colors flex items-center gap-1 font-semibold">
+              <span>← Back to Public Website</span>
+            </Link>
+            <span>District 306 D10</span>
+          </div>
+
+        </div>
       </div>
     );
   }
 
-  // =========================================================================
-  // VIEW 2: AUTHENTICATED ADMIN DASHBOARD
-  // =========================================================================
+  // ==============================================================================
+  // AUTHENTICATED ADMIN DASHBOARD
+  // ==============================================================================
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 pb-24">
       
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5 text-xs font-semibold animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-xl border border-slate-700 flex items-center gap-3 text-xs font-semibold animate-in slide-in-from-bottom-3 duration-200">
+          <CheckCircle2 className="w-4 h-4 text-leo-cyan shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Admin Top Navigation Bar */}
-      <header className="bg-white border-b border-slate-200/90 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            
-            {/* Brand Logo & Portal Tag */}
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#003B99] text-white flex items-center justify-center font-heading font-extrabold text-sm shadow-xs">
-                U
-              </div>
-              <div>
-                <div className="font-heading font-bold text-sm text-slate-900 leading-tight">
-                  Leo Club of UWU
-                </div>
-                <div className="text-[10px] font-mono text-[#003B99] font-semibold">
-                  Executive Admin Workspace • 2024/2025
-                </div>
-              </div>
+      {/* Top Admin Header Bar */}
+      <header className="bg-[#050E21] text-white border-b border-white/10 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#003B99] to-[#00A3E0] flex items-center justify-center font-bold text-white shadow-xs">
+              <ShieldCheck className="w-5 h-5" />
             </div>
-
-            {/* Officer Profile & Sign Out Button */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Firebase Cloud Status Indicator */}
-              {isFirebaseConfigured() ? (
-                <div
-                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold"
-                  title="Firebase cloud database is connected and active"
-                >
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  <span>Firebase Cloud Active</span>
-                </div>
-              ) : (
-                <div
-                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold"
-                  title="Local storage mode. Add Firebase environment variables in Vercel to sync cloud."
-                >
-                  <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                  <span>Local Mode (Connect Firebase in Vercel)</span>
-                </div>
-              )}
-
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-xs">
-                <UserCheck className="w-3.5 h-3.5 text-[#003B99]" />
-                <span className="font-bold text-slate-700">Officer Admin</span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-heading font-extrabold text-sm sm:text-base tracking-tight text-white">
+                  UWU Leos Admin Hub
+                </span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${
+                  isFirebaseConfigured()
+                    ? "bg-emerald-900/80 text-emerald-300 border border-emerald-500/40"
+                    : "bg-amber-900/80 text-amber-300 border border-amber-500/40"
+                }`}>
+                  {isFirebaseConfigured() ? "Firebase Live" : "Local Mock"}
+                </span>
               </div>
-
-              <Link
-                href="/"
-                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:text-[#003B99] hover:bg-slate-50 transition-colors"
-                target="_blank"
-              >
-                <span>Live Site</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
-
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition-colors"
-                title="Sign out of admin"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Sign Out</span>
-              </button>
+              <p className="text-[10px] text-slate-400 hidden sm:block">
+                District 306 D10 • Content &amp; Membership Management
+              </p>
             </div>
-
           </div>
-        </div>
 
-        {/* Tab Navigation Bar */}
-        <div className="border-t border-slate-100 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex space-x-1 sm:space-x-3 overflow-x-auto no-scrollbar py-2">
-              <button
-                onClick={() => { setActiveTab("overview"); setSearchQuery(""); }}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                  activeTab === "overview"
-                    ? "bg-[#003B99] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5" />
-                <span>Overview</span>
-              </button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Seed Database Button */}
+            <button
+              onClick={handleSeedDatabase}
+              disabled={isSeeding}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/10 transition-colors"
+              title="Seed all initial datasets to Firebase Firestore"
+            >
+              <Database className={`w-3.5 h-3.5 text-leo-cyan ${isSeeding ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">{isSeeding ? "Seeding..." : "Seed Firebase"}</span>
+            </button>
 
-              <button
-                onClick={() => { setActiveTab("announcements"); setSearchQuery(""); }}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                  activeTab === "announcements"
-                    ? "bg-[#003B99] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
-                }`}
-              >
-                <Megaphone className="w-3.5 h-3.5" />
-                <span>Announcements ({announcements.length})</span>
-              </button>
+            <Link
+              href="/"
+              target="_blank"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">View Site</span>
+            </Link>
 
-              <button
-                onClick={() => { setActiveTab("projects"); setSearchQuery(""); }}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                  activeTab === "projects"
-                    ? "bg-[#003B99] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
-                }`}
-              >
-                <FolderKanban className="w-3.5 h-3.5" />
-                <span>Projects ({projects.length})</span>
-              </button>
-
-              <button
-                onClick={() => { setActiveTab("magazines"); setSearchQuery(""); }}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                  activeTab === "magazines"
-                    ? "bg-[#003B99] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>Magazines &amp; Google Drive ({magazines.length})</span>
-              </button>
-
-              <button
-                onClick={() => { setActiveTab("members"); setSearchQuery(""); }}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                  activeTab === "members"
-                    ? "bg-[#003B99] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
-                }`}
-              >
-                <Users className="w-3.5 h-3.5" />
-                <span>Membership Applicants ({members.length})</span>
-              </button>
-
-              <button
-                onClick={() => { setActiveTab("documents"); setSearchQuery(""); }}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                  activeTab === "documents"
-                    ? "bg-[#003B99] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Documents &amp; Forms ({documents.length})</span>
-              </button>
-            </nav>
+            <button
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-xs font-semibold border border-rose-500/30 transition-colors"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Logout</span>
+            </button>
           </div>
+
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+      {/* Navigation Tabs Header */}
+      <div className="bg-white border-b border-slate-200 shadow-xs sticky top-16 z-30 overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1 py-2 text-xs font-semibold">
+          {[
+            { id: "overview", label: "Overview", icon: Layers },
+            { id: "announcements", label: `Announcements (${announcements.length})`, icon: Megaphone },
+            { id: "events", label: `Events (${events.length})`, icon: Calendar },
+            { id: "projects", label: `Projects (${projects.length})`, icon: FolderKanban },
+            { id: "magazines", label: `Magazines (${magazines.length})`, icon: BookOpen },
+            { id: "documents", label: `Brand & Forms (${documents.length})`, icon: FileText },
+            { id: "leadership", label: "Leadership Board", icon: Users },
+            { id: "gallery", label: `Gallery (${gallery.length})`, icon: ImageIcon },
+            { id: "stats", label: "Impact Stats", icon: Sliders },
+            { id: "members", label: `Applicants (${members.length})`, icon: UserCheck },
+            { id: "inquiries", label: `Inquiries (${inquiries.length})`, icon: MessageSquare },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition-all ${
+                  isActive
+                    ? "bg-[#003B99] text-white shadow-xs font-bold"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-400"}`} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
-        {/* ===================================================================== */}
-        {/* 1. OVERVIEW DASHBOARD TAB                                             */}
-        {/* ===================================================================== */}
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        {/* ============================================================================== */}
+        {/* TAB 1: OVERVIEW DASHBOARD                                                      */}
+        {/* ============================================================================== */}
         {activeTab === "overview" && (
-          <div className="space-y-8">
+          <div className="space-y-8 animate-in fade-in duration-200">
             
-            {/* Welcome Banner */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-1.5 max-w-xl">
-                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#003B99]">
-                  District 306 D10 • Administrative Portal
+            {/* Banner */}
+            <div className="bg-gradient-to-r from-[#003B99] to-[#00A3E0] rounded-2xl p-6 sm:p-8 text-white shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider bg-white/20 px-2.5 py-1 rounded-md">
+                  Leistic Administration 2024/2025
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">
-                  Officer Management Hub
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Manage club circulars, add new community projects, update magazine Google Drive links, review undergraduate membership applicants, and manage official forms.
+                <h2 className="text-2xl sm:text-3xl font-extrabold font-heading">
+                  Welcome to UWU Leos Content Control
+                </h2>
+                <p className="text-xs sm:text-sm text-blue-100 leading-relaxed font-normal">
+                  All updates made in this portal are synchronized directly with Google Firebase Firestore, reflecting instantly on the public website.
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2.5">
+              <div className="shrink-0 flex flex-wrap items-center gap-3">
                 <button
-                  onClick={() => setIsAnnouncementModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors"
+                  onClick={handleSeedDatabase}
+                  disabled={isSeeding}
+                  className="px-4 py-2.5 rounded-xl bg-white text-[#003B99] hover:bg-blue-50 font-bold text-xs shadow-xs transition-colors flex items-center gap-2"
                 >
-                  <Megaphone className="w-3.5 h-3.5 text-[#003B99]" />
-                  <span>+ Announcement</span>
-                </button>
-                <button
-                  onClick={() => setIsProjectModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors"
-                >
-                  <FolderKanban className="w-3.5 h-3.5 text-[#00A3E0]" />
-                  <span>+ Project</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setEditingDoc(null);
-                    setNewDocTitle("");
-                    setNewDocCategory("Governance & Statutes");
-                    setNewDocFormat("PDF Document");
-                    setNewDocSize("");
-                    setNewDocDriveUrl("");
-                    setNewDocDescription("");
-                    setIsDocumentModalOpen(true);
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors"
-                >
-                  <FileText className="w-3.5 h-3.5 text-[#F5A800]" />
-                  <span>+ Document Form</span>
-                </button>
-                <button
-                  onClick={() => setIsMagazineModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#003B99] hover:bg-[#002D7A] text-white text-xs font-bold shadow-xs transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>+ Magazine Drive Link</span>
+                  <Database className="w-4 h-4" />
+                  <span>{isSeeding ? "Seeding Database..." : "Seed All Data into Firebase"}</span>
                 </button>
               </div>
             </div>
 
-            {/* Key Metrics Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              <div
-                onClick={() => setActiveTab("announcements")}
-                className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-xs transition-all cursor-pointer group"
-              >
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-                  <span className="font-semibold">Active Announcements</span>
-                  <Megaphone className="w-4 h-4 text-[#003B99]" />
-                </div>
-                <div className="text-3xl font-extrabold text-slate-900 font-heading">
-                  {announcements.length}
-                </div>
-                <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
-                  <span>Manage Dispatches</span>
-                  <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </div>
-
-              <div
-                onClick={() => setActiveTab("projects")}
-                className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-xs transition-all cursor-pointer group"
-              >
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-                  <span className="font-semibold">Published Projects</span>
-                  <FolderKanban className="w-4 h-4 text-[#00A3E0]" />
-                </div>
-                <div className="text-3xl font-extrabold text-slate-900 font-heading">
-                  {projects.length}
-                </div>
-                <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
-                  <span>Across 5 Directorates</span>
-                  <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </div>
-
-              <div
-                onClick={() => setActiveTab("magazines")}
-                className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-xs transition-all cursor-pointer group"
-              >
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-                  <span className="font-semibold">Magazine Editions</span>
-                  <BookOpen className="w-4 h-4 text-[#003B99]" />
-                </div>
-                <div className="text-3xl font-extrabold text-slate-900 font-heading">
-                  {magazines.length}
-                </div>
-                <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
-                  <span>Manage Drive Links</span>
-                  <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </div>
-
-              <div
-                onClick={() => setActiveTab("documents")}
-                className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-xs transition-all cursor-pointer group"
-              >
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-                  <span className="font-semibold">Official Documents</span>
-                  <FileText className="w-4 h-4 text-[#F5A800]" />
-                </div>
-                <div className="text-3xl font-extrabold text-slate-900 font-heading">
-                  {documents.length}
-                </div>
-                <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
-                  <span>Google Drive Links</span>
-                  <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                </div>
-              </div>
-
-              <div
-                onClick={() => setActiveTab("members")}
-                className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-xs transition-all cursor-pointer group"
-              >
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-                  <span className="font-semibold">Membership Applicants</span>
-                  <Users className="w-4 h-4 text-emerald-600" />
-                </div>
-                <div className="text-3xl font-extrabold text-slate-900 font-heading">
-                  {members.length}
-                </div>
-                <div className="text-[11px] text-amber-600 font-semibold mt-1 flex items-center gap-1">
-                  <span>{members.filter((m) => m.status === "pending").length} Pending Review</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Overview Columns */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              
-              {/* Recent Announcements */}
-              <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <div className="font-bold text-sm text-slate-900 font-heading flex items-center gap-2">
-                    <Megaphone className="w-4 h-4 text-[#003B99]" />
-                    <span>Recent Dispatches &amp; Circulars</span>
-                  </div>
-                  <button
-                    onClick={() => setActiveTab("announcements")}
-                    className="text-xs font-semibold text-[#003B99] hover:underline"
+            {/* Quick Metrics Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+              {[
+                { label: "Active Projects", count: projects.length, tab: "projects", icon: FolderKanban, color: "text-blue-600", bg: "bg-blue-50" },
+                { label: "Announcements", count: announcements.length, tab: "announcements", icon: Megaphone, color: "text-purple-600", bg: "bg-purple-50" },
+                { label: "Events Scheduled", count: events.length, tab: "events", icon: Calendar, color: "text-amber-600", bg: "bg-amber-50" },
+                { label: "Publications", count: magazines.length, tab: "magazines", icon: BookOpen, color: "text-emerald-600", bg: "bg-emerald-50" },
+                { label: "Brand Documents", count: documents.length, tab: "documents", icon: FileText, color: "text-indigo-600", bg: "bg-indigo-50" },
+                { label: "Gallery Photos", count: gallery.length, tab: "gallery", icon: ImageIcon, color: "text-pink-600", bg: "bg-pink-50" },
+                { label: "Member Applicants", count: members.length, tab: "members", icon: UserCheck, color: "text-cyan-600", bg: "bg-cyan-50" },
+                { label: "Contact Inquiries", count: inquiries.length, tab: "inquiries", icon: MessageSquare, color: "text-rose-600", bg: "bg-rose-50" },
+              ].map((card) => {
+                const Icon = card.icon;
+                return (
+                  <div
+                    key={card.label}
+                    onClick={() => setActiveTab(card.tab as any)}
+                    className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md hover:border-slate-300 transition-all cursor-pointer flex flex-col justify-between"
                   >
-                    View All →
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {announcements.slice(0, 3).map((ann) => (
-                    <div key={ann.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-bold text-[#003B99] uppercase tracking-wider">
-                          {ann.category}
-                        </span>
-                        <span className="text-[10px] text-slate-400">{ann.date}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-slate-500">{card.label}</span>
+                      <div className={`w-8 h-8 rounded-lg ${card.bg} ${card.color} flex items-center justify-center shrink-0`}>
+                        <Icon className="w-4 h-4" />
                       </div>
-                      <h4 className="font-bold text-xs text-slate-900 line-clamp-1">{ann.title}</h4>
-                      <p className="text-[11px] text-slate-500 line-clamp-2">{ann.summary}</p>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Magazines Drive Links Quick Overview */}
-              <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <div className="font-bold text-sm text-slate-900 font-heading flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-[#003B99]" />
-                    <span>Magazine Google Drive Links</span>
+                    <div className="text-2xl font-extrabold text-slate-900 font-heading mt-3">
+                      {card.count}
+                    </div>
                   </div>
-                  <button
-                    onClick={() => setActiveTab("magazines")}
-                    className="text-xs font-semibold text-[#003B99] hover:underline"
-                  >
-                    Edit Drive Links →
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {magazines.slice(0, 3).map((mag) => (
-                    <div key={mag.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3">
-                      <div className="min-w-0 flex-1">
-                        <div className="font-bold text-xs text-slate-900 truncate">{mag.title}</div>
-                        <div className="text-[10px] text-slate-500 truncate">{mag.edition}</div>
-                      </div>
-                      <a
-                        href={mag.driveUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#003B99] hover:underline shrink-0"
-                      >
-                        <HardDrive className="w-3.5 h-3.5" />
-                        <span>Drive Link</span>
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
+                );
+              })}
             </div>
 
           </div>
         )}
 
-        {/* ===================================================================== */}
-        {/* 2. ANNOUNCEMENTS TAB                                                  */}
-        {/* ===================================================================== */}
+        {/* ============================================================================== */}
+        {/* TAB 2: ANNOUNCEMENTS MANAGER                                                   */}
+        {/* ============================================================================== */}
         {activeTab === "announcements" && (
-          <div className="space-y-6">
-            
-            {/* Toolbar */}
+          <div className="space-y-6 animate-in fade-in duration-200">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="text-xl font-extrabold text-slate-900 font-heading">
-                  Announcements &amp; Circulars
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Publish meeting circulars, volunteer calls, and district notices.
-                </p>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Campus Announcements</h2>
+                <p className="text-xs text-slate-500">Manage official circulars and broadcasts displayed across the site.</p>
               </div>
-
-              <div className="flex items-center gap-3">
-                <div className="relative w-full sm:w-64">
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    placeholder="Search announcements..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-[#003B99]"
-                  />
-                </div>
-
-                <button
-                  onClick={() => setIsAnnouncementModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#003B99] hover:bg-[#002D7A] text-white text-xs font-bold shadow-xs whitespace-nowrap transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>New Announcement</span>
-                </button>
-              </div>
+              <button
+                onClick={() => setIsAnnouncementModalOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Publish Announcement</span>
+              </button>
             </div>
 
-            {/* List */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filteredAnnouncements.map((ann) => (
-                <div
-                  key={ann.id}
-                  className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between group space-y-4"
-                >
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-50 text-[#003B99] border border-blue-100">
+                <div key={ann.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono font-bold uppercase text-[#003B99] bg-blue-50 px-2 py-0.5 rounded">
                         {ann.category}
                       </span>
                       <span className="text-xs text-slate-400">{ann.date}</span>
                     </div>
-
-                    <h3 className="font-bold text-base text-slate-900 leading-snug font-heading">
-                      {ann.title}
-                    </h3>
-
-                    <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                      {ann.summary}
-                    </p>
-
-                    <div className="text-[11px] text-slate-400 pt-1">
-                      Audience: <strong className="text-slate-600">{ann.scope}</strong>
-                    </div>
+                    <h3 className="text-base font-bold text-slate-900">{ann.title}</h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">{ann.summary}</p>
                   </div>
-
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                    {ann.linkUrl ? (
-                      <a
-                        href={ann.linkUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 text-[#003B99] hover:underline font-semibold text-xs"
-                      >
-                        <span>Document / Form Link</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ) : (
-                      <span className="text-slate-400 text-[11px]">Internal Circular</span>
-                    )}
-
+                  <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span className="text-slate-400 truncate max-w-[200px]">{ann.scope}</span>
                     <button
                       onClick={() => handleDeleteAnnouncement(ann.id)}
-                      className="text-slate-400 hover:text-rose-600 p-1 rounded transition-colors"
-                      title="Delete Announcement"
+                      className="text-rose-500 hover:text-rose-700 p-1 rounded hover:bg-rose-50"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1262,89 +1186,113 @@ export default function AdminPage() {
                 </div>
               ))}
             </div>
-
           </div>
         )}
 
-        {/* ===================================================================== */}
-        {/* 3. PROJECTS TAB                                                       */}
-        {/* ===================================================================== */}
-        {activeTab === "projects" && (
-          <div className="space-y-6">
-            
-            {/* Toolbar */}
+        {/* ============================================================================== */}
+        {/* TAB 3: EVENTS MANAGER                                                          */}
+        {/* ============================================================================== */}
+        {activeTab === "events" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="text-xl font-extrabold text-slate-900 font-heading">
-                  Project Initiatives Directory
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Manage signature projects, impact metrics, and directorate assignments.
-                </p>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Events &amp; Timeline Calendar</h2>
+                <p className="text-xs text-slate-500">Upcoming leadership summits, installations, and field missions.</p>
               </div>
-
-              <div className="flex items-center gap-3">
-                <div className="relative w-full sm:w-64">
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    placeholder="Search projects..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-[#003B99]"
-                  />
-                </div>
-
-                <button
-                  onClick={() => setIsProjectModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#003B99] hover:bg-[#002D7A] text-white text-xs font-bold shadow-xs whitespace-nowrap transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Register Project</span>
-                </button>
-              </div>
+              <button
+                onClick={() => setIsEventModalOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Event</span>
+              </button>
             </div>
 
-            {/* Projects Table / Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredProjectsList.map((p) => (
-                <div
-                  key={p.id}
-                  className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between group space-y-4"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-slate-100 text-slate-700">
-                        {p.category}
-                      </span>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700">
-                        {p.status}
-                      </span>
+            <div className="space-y-3">
+              {filteredEvents.map((ev) => (
+                <div key={ev.id} className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-xl bg-blue-50 text-[#003B99] border border-blue-100 flex flex-col items-center justify-center shrink-0">
+                      <span className="text-[10px] font-mono font-bold uppercase">{ev.month || "EV"}</span>
+                      <span className="text-lg font-bold font-heading leading-none">{ev.day || "15"}</span>
                     </div>
-
-                    <h3 className="font-bold text-base text-slate-900 font-heading leading-snug">
-                      {p.title}
-                    </h3>
-
-                    <div className="text-[11px] text-slate-500 font-medium">
-                      {p.directorate}
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-[#003B99] bg-blue-50 px-2 py-0.5 rounded">
+                          {ev.category || "General"}
+                        </span>
+                        <span className="text-xs text-slate-400">{ev.date}</span>
+                      </div>
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900 mt-1">{ev.title}</h3>
+                      <p className="text-xs text-slate-500 mt-0.5">{ev.venue} • {ev.time}</p>
                     </div>
-
-                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed font-normal">
-                      {p.summary}
-                    </p>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-50 text-[#003B99] font-bold text-[11px]">
-                      <Award className="w-3.5 h-3.5" />
-                      <span>{p.impactMetric}</span>
+                  <button
+                    onClick={() => handleDeleteEvent(ev.id)}
+                    className="self-end sm:self-center text-rose-500 hover:text-rose-700 p-2 rounded hover:bg-rose-50 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB 4: PROJECTS MANAGER                                                        */}
+        {/* ============================================================================== */}
+        {activeTab === "projects" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Humanitarian Projects</h2>
+                <p className="text-xs text-slate-500">Service initiatives, metrics, and case studies.</p>
+              </div>
+              <button
+                onClick={() => {
+                  setEditingProj(null);
+                  setNewProjTitle("");
+                  setNewProjSummary("");
+                  setIsProjectModalOpen(true);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Project</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredProjectsList.map((proj) => (
+                <div key={proj.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono font-bold uppercase text-[#003B99] bg-blue-50 px-2 py-0.5 rounded">
+                        {proj.category}
+                      </span>
+                      <span className="text-xs font-semibold text-emerald-600">{proj.status}</span>
                     </div>
+                    <h3 className="text-base font-bold text-slate-900 leading-snug">{proj.title}</h3>
+                    <p className="text-xs text-slate-600 line-clamp-3">{proj.summary}</p>
+                    <div className="text-[11px] font-semibold text-[#003B99] bg-slate-50 p-2 rounded-lg">
+                      📊 {proj.impactMetric}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 mt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <button
+                      onClick={() => handleOpenEditProject(proj)}
+                      className="text-[#003B99] hover:underline font-semibold flex items-center gap-1"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                      <span>Edit</span>
+                    </button>
 
                     <button
-                      onClick={() => handleDeleteProject(p.id)}
-                      className="text-slate-400 hover:text-rose-600 p-1 rounded transition-colors"
-                      title="Delete Project"
+                      onClick={() => handleDeleteProject(proj.id)}
+                      className="text-rose-500 hover:text-rose-700 p-1"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1352,622 +1300,574 @@ export default function AdminPage() {
                 </div>
               ))}
             </div>
-
           </div>
         )}
 
-        {/* ===================================================================== */}
-        {/* 4. MAGAZINES & GOOGLE DRIVE MANAGER TAB                               */}
-        {/* ===================================================================== */}
+        {/* ============================================================================== */}
+        {/* TAB 5: MAGAZINES & PUBLICATIONS                                                */}
+        {/* ============================================================================== */}
         {activeTab === "magazines" && (
-          <div className="space-y-6">
-            
-            {/* Toolbar */}
+          <div className="space-y-6 animate-in fade-in duration-200">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="text-xl font-extrabold text-slate-900 font-heading">
-                  Leo Magazine Publications &amp; Google Drive Links
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Update Google Drive download links, add new periodicals, and manage publication archives.
-                </p>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">ROAR Magazines &amp; Gazettes</h2>
+                <p className="text-xs text-slate-500">Manage issue releases and Google Drive PDF download links.</p>
               </div>
-
-              <div className="flex items-center gap-3">
-                <div className="relative w-full sm:w-64">
-                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    placeholder="Search magazines..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-1 focus:ring-[#003B99]"
-                  />
-                </div>
-
-                <button
-                  onClick={() => setIsMagazineModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#003B99] hover:bg-[#002D7A] text-white text-xs font-bold shadow-xs whitespace-nowrap transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>+ New Magazine Issue</span>
-                </button>
-              </div>
+              <button
+                onClick={() => setIsMagazineModalOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Issue</span>
+              </button>
             </div>
 
-            {/* Magazines List with Editable Google Drive Links */}
             <div className="space-y-4">
-              {filteredMagazinesList.map((mag) => {
-                const currentEditValue = driveUrlEdits[mag.id] !== undefined ? driveUrlEdits[mag.id] : mag.driveUrl;
-
-                return (
-                  <div
-                    key={mag.id}
-                    className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-6"
-                  >
-                    <div className="space-y-2 max-w-xl min-w-0 flex-1">
+              {filteredMagazinesList.map((mag) => (
+                <div key={mag.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#003B99] border border-blue-100 flex items-center justify-center shrink-0">
+                      <BookOpen className="w-6 h-6" />
+                    </div>
+                    <div className="space-y-1 min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-50 text-[#003B99] border border-blue-100">
+                        <span className="text-[10px] font-bold text-[#003B99] bg-blue-50 px-2 py-0.5 rounded uppercase">
                           {mag.category}
                         </span>
-                        <span className="text-xs text-slate-400">
-                          {mag.date} • {mag.pages}
-                        </span>
+                        <span className="text-xs text-slate-400">{mag.date} • {mag.pages}</span>
                       </div>
-
-                      <h3 className="font-bold text-base text-slate-900 font-heading leading-snug">
-                        {mag.title}
-                      </h3>
-
-                      <div className="text-[11px] text-slate-500">
-                        {mag.edition} • {mag.editor}
-                      </div>
-
-                      <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                        {mag.summary}
-                      </p>
+                      <h3 className="text-base font-bold text-slate-900">{mag.title}</h3>
+                      <p className="text-xs text-slate-500">{mag.edition} • {mag.editor}</p>
                     </div>
-
-                    {/* Google Drive Link Input & Action Bar */}
-                    <div className="lg:w-96 space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200/80 shrink-0">
-                      <label className="block text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
-                        <HardDrive className="w-3.5 h-3.5 text-[#003B99]" />
-                        <span>Google Drive PDF Download URL:</span>
-                      </label>
-
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="url"
-                          value={currentEditValue}
-                          onChange={(e) => setDriveUrlEdits({ ...driveUrlEdits, [mag.id]: e.target.value })}
-                          placeholder="https://drive.google.com/file/d/..."
-                          className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#003B99] text-slate-800 font-mono text-[11px]"
-                        />
-
-                        <button
-                          onClick={() => handleUpdateDriveUrl(mag.id)}
-                          className="px-3 py-1.5 bg-[#003B99] hover:bg-[#002D7A] text-white rounded-lg text-xs font-bold shrink-0 transition-colors inline-flex items-center gap-1 shadow-xs"
-                          title="Save Google Drive URL"
-                        >
-                          <Save className="w-3.5 h-3.5" />
-                          <span>Save</span>
-                        </button>
-                      </div>
-
-                      <div className="flex items-center justify-between text-[11px] pt-1 text-slate-500">
-                        <a
-                          href={mag.driveUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-[#003B99] hover:underline font-semibold"
-                        >
-                          <span>Test Drive Link</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-
-                        <button
-                          onClick={() => handleDeleteMagazine(mag.id)}
-                          className="text-slate-400 hover:text-rose-600 inline-flex items-center gap-1 transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          <span>Remove</span>
-                        </button>
-                      </div>
-                    </div>
-
                   </div>
-                );
-              })}
-            </div>
 
-          </div>
-        )}
-
-        {/* ===================================================================== */}
-        {/* 5. MEMBERSHIP APPLICANTS TAB                                          */}
-        {/* ===================================================================== */}
-        {activeTab === "members" && (
-          <div className="space-y-6">
-            
-            {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="text-xl font-extrabold text-slate-900 font-heading">
-                  Membership Applications &amp; Onboarding
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Review student membership forms, approve applications, and mark for induction.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
-                  {["all", "pending", "approved", "inducted"].map((st) => (
+                  {/* Drive URL update inline */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
+                    <input
+                      type="text"
+                      placeholder="Google Drive URL"
+                      defaultValue={mag.driveUrl}
+                      onChange={(e) => setDriveUrlEdits({ ...driveUrlEdits, [mag.id]: e.target.value })}
+                      className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg w-full sm:w-60 focus:bg-white focus:outline-none"
+                    />
                     <button
-                      key={st}
-                      onClick={() => setMemberStatusFilter(st)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold capitalize transition-all ${
-                        memberStatusFilter === st
-                          ? "bg-white text-slate-900 shadow-xs"
-                          : "text-slate-500 hover:text-slate-900"
-                      }`}
+                      onClick={() => handleUpdateDriveUrl(mag.id)}
+                      className="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-slate-800"
                     >
-                      {st}
+                      Save Link
                     </button>
-                  ))}
+                    <button
+                      onClick={() => handleDeleteMagazine(mag.id)}
+                      className="text-rose-500 hover:text-rose-700 p-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-
-                <button
-                  onClick={() => setIsMemberModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#003B99] hover:bg-[#002D7A] text-white text-xs font-bold shadow-xs whitespace-nowrap transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add Member Record</span>
-                </button>
-              </div>
+              ))}
             </div>
-
-            {/* Table */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-mono text-[10px]">
-                    <tr>
-                      <th className="py-3.5 px-4 font-bold">Applicant Name</th>
-                      <th className="py-3.5 px-4 font-bold">Faculty &amp; Reg No</th>
-                      <th className="py-3.5 px-4 font-bold">Contact</th>
-                      <th className="py-3.5 px-4 font-bold">Interests / Motivation</th>
-                      <th className="py-3.5 px-4 font-bold">Status</th>
-                      <th className="py-3.5 px-4 font-bold text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {filteredMembersList.map((m) => (
-                      <tr key={m.id} className="hover:bg-slate-50/70 transition-colors">
-                        <td className="py-3.5 px-4">
-                          <div className="font-bold text-slate-900 text-xs">{m.name}</div>
-                          <div className="text-[10px] text-slate-400">Applied: {m.appliedDate}</div>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <div className="font-medium text-slate-800">{m.faculty}</div>
-                          <div className="text-[11px] text-slate-400 font-mono">{m.regNo} • {m.academicYear}</div>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <div className="text-slate-700 font-medium">{m.email}</div>
-                          <div className="text-[11px] text-slate-400">{m.phone}</div>
-                        </td>
-                        <td className="py-3.5 px-4 max-w-xs text-slate-600">
-                          <span className="line-clamp-2">{m.interests}</span>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span
-                            className={`inline-block px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-                              m.status === "approved"
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                : m.status === "inducted"
-                                ? "bg-blue-50 text-[#003B99] border border-blue-200"
-                                : "bg-amber-50 text-amber-700 border border-amber-200"
-                            }`}
-                          >
-                            {m.status}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <div className="inline-flex items-center gap-1.5 justify-end">
-                            {m.status === "pending" && (
-                              <button
-                                onClick={() => handleUpdateMemberStatus(m.id, "approved")}
-                                className="px-2.5 py-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] font-bold transition-colors"
-                              >
-                                Approve
-                              </button>
-                            )}
-                            {m.status === "approved" && (
-                              <button
-                                onClick={() => handleUpdateMemberStatus(m.id, "inducted")}
-                                className="px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 text-[#003B99] text-[11px] font-bold transition-colors"
-                              >
-                                Mark Inducted
-                              </button>
-                            )}
-                            <button
-                              onClick={() => setMembers(members.filter((item) => item.id !== m.id))}
-                              className="p-1 rounded text-slate-400 hover:text-rose-600 transition-colors"
-                              title="Delete Record"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
           </div>
         )}
 
-        {/* ===================================================================== */}
-        {/* 6. DOCUMENTS & FORMS MANAGEMENT TAB                                  */}
-        {/* ===================================================================== */}
+        {/* ============================================================================== */}
+        {/* TAB 6: DOCUMENTS & BRAND FORMS                                                 */}
+        {/* ============================================================================== */}
         {activeTab === "documents" && (
-          <div className="space-y-6">
-            
-            {/* Toolbar */}
+          <div className="space-y-6 animate-in fade-in duration-200">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="text-xl font-extrabold text-slate-900 font-heading">
-                  Administrative Documents &amp; Official Forms
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Manage official templates, club constitution, and administrative guidelines with Google Drive links synced to /brand-and-forms.
-                </p>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Brand Forms &amp; Governance Documents</h2>
+                <p className="text-xs text-slate-500">Official downloadable constitutions, project proposals, and induction forms.</p>
               </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  onClick={() => {
-                    setEditingDoc(null);
-                    setNewDocTitle("");
-                    setNewDocCategory("Governance & Statutes");
-                    setNewDocFormat("PDF Document");
-                    setNewDocSize("");
-                    setNewDocDriveUrl("");
-                    setNewDocDescription("");
-                    setIsDocumentModalOpen(true);
-                  }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#003B99] hover:bg-[#002D7A] text-white text-xs font-bold shadow-xs whitespace-nowrap transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add Official Document</span>
-                </button>
-              </div>
+              <button
+                onClick={() => {
+                  setEditingDoc(null);
+                  setNewDocTitle("");
+                  setIsDocumentModalOpen(true);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Upload / Add Form</span>
+              </button>
             </div>
 
-            {/* Document Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {filteredDocumentsList.map((doc) => {
-                const currentEditUrl = driveUrlDocEdits[doc.id] !== undefined ? driveUrlDocEdits[doc.id] : doc.driveUrl;
-
-                return (
-                  <div
-                    key={doc.id}
-                    className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex flex-col justify-between space-y-4 hover:border-slate-300 transition-all"
-                  >
-                    <div className="space-y-3">
-                      
-                      {/* Top Badges */}
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-[#003B99] border border-blue-200">
-                          {doc.category}
-                        </span>
-                        <div className="flex items-center gap-1 text-[11px] text-slate-400 font-medium">
-                          <span>{doc.format}</span>
-                          <span>•</span>
-                          <span>{doc.size}</span>
-                        </div>
-                      </div>
-
-                      {/* Title & Description */}
-                      <div>
-                        <h3 className="font-heading font-extrabold text-base text-slate-900 leading-snug">
-                          {doc.title}
-                        </h3>
-                        <p className="text-xs text-slate-500 font-normal leading-relaxed mt-1.5 line-clamp-3">
-                          {doc.description}
-                        </p>
-                      </div>
-
-                      {/* Google Drive Link Manager */}
-                      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
-                        <div className="flex items-center justify-between text-[11px]">
-                          <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                            <HardDrive className="w-3.5 h-3.5 text-[#003B99]" />
-                            <span>Google Drive Link</span>
-                          </span>
-                          <span className="text-slate-400 text-[10px]">{doc.updatedAt}</span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="url"
-                            value={currentEditUrl}
-                            onChange={(e) =>
-                              setDriveUrlDocEdits({
-                                ...driveUrlDocEdits,
-                                [doc.id]: e.target.value,
-                              })
-                            }
-                            placeholder="https://drive.google.com/file/d/..."
-                            className="flex-1 px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#003B99]"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateDocDriveUrl(doc.id)}
-                            className="px-3 py-1.5 bg-[#003B99] hover:bg-[#002D7A] text-white text-xs font-bold rounded-lg transition-colors shrink-0 shadow-2xs"
-                          >
-                            Save
-                          </button>
-                        </div>
-                      </div>
-
+            <div className="space-y-3">
+              {filteredDocumentsList.map((docItem) => (
+                <div key={docItem.id} className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5" />
                     </div>
-
-                    {/* Bottom Actions */}
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                      <a
-                        href={doc.driveUrl || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-[#003B99] hover:underline font-bold text-xs"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        <span>Open Drive URL</span>
-                      </a>
-
+                    <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleOpenEditDoc(doc)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-colors inline-flex items-center gap-1"
-                        >
-                          <Edit className="w-3 h-3" />
-                          <span>Edit</span>
-                        </button>
-
-                        <button
-                          onClick={() => handleDeleteDocument(doc.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                          title="Delete Document"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase">{docItem.category}</span>
+                        <span className="text-[11px] text-slate-400">• {docItem.format} ({docItem.size})</span>
                       </div>
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900">{docItem.title}</h3>
+                      <p className="text-xs text-slate-500">{docItem.description}</p>
                     </div>
-
                   </div>
-                );
-              })}
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <input
+                      type="text"
+                      placeholder="Google Drive Download URL"
+                      defaultValue={docItem.driveUrl}
+                      onChange={(e) => setDriveUrlDocEdits({ ...driveUrlDocEdits, [docItem.id]: e.target.value })}
+                      className="px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg w-full sm:w-56 focus:bg-white focus:outline-none"
+                    />
+                    <button
+                      onClick={() => handleUpdateDocDriveUrl(docItem.id)}
+                      className="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-slate-800"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => handleOpenEditDoc(docItem)}
+                      className="text-[#003B99] p-2 hover:bg-slate-50 rounded"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteDocument(docItem.id)}
+                      className="text-rose-500 p-2 hover:bg-rose-50 rounded"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB 7: LEADERSHIP & BOARD DIRECTORY                                            */}
+        {/* ============================================================================== */}
+        {activeTab === "leadership" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Executive Committee &amp; Directors</h2>
+                <p className="text-xs text-slate-500">Manage board appointments, advisor profiles, and leadership portfolios.</p>
+              </div>
+              <button
+                onClick={() => {
+                  setEditingLeader(null);
+                  setNewLeaderName("");
+                  setNewLeaderRole("");
+                  setIsLeaderModalOpen(true);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Leader / Director</span>
+              </button>
             </div>
 
+            {/* ExCo Officers */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Top Table Executive Officers</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {(leadership?.excoOfficers || []).map((officer: any) => (
+                  <div key={officer.id} className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold text-[#003B99] uppercase">{officer.roleBadge || "EXCO"}</span>
+                      <h4 className="text-sm font-bold text-slate-900 mt-1">{officer.designation}</h4>
+                      <p className="text-xs text-[#003B99] font-medium">{officer.name}</p>
+                      <p className="text-[11px] text-slate-500 mt-1">{officer.faculty}</p>
+                    </div>
+                    <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                      <span className="text-slate-400">{officer.email}</span>
+                      <button
+                        onClick={() => handleDeleteLeader("exco", officer.id)}
+                        className="text-rose-500 hover:text-rose-700"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Portfolio Directors */}
+            <div className="space-y-3 pt-4">
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Portfolio Directors</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {(leadership?.directors || []).map((dir: any) => (
+                  <div key={dir.id} className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">{dir.category || "Directorate"}</span>
+                      <h4 className="text-sm font-bold text-slate-900 mt-1">{dir.portfolio}</h4>
+                      <p className="text-xs text-[#003B99] font-medium">{dir.name}</p>
+                      <p className="text-[11px] text-slate-500 mt-1">{dir.faculty}</p>
+                    </div>
+                    <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                      <span className="text-slate-400 truncate max-w-[140px]">{dir.email}</span>
+                      <button
+                        onClick={() => handleDeleteLeader("director", dir.id)}
+                        className="text-rose-500 hover:text-rose-700"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB 8: MEDIA GALLERY MANAGER                                                   */}
+        {/* ============================================================================== */}
+        {activeTab === "gallery" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Media Photo Highlights</h2>
+                <p className="text-xs text-slate-500">Service photos, fellowship trips, and installation ceremonies.</p>
+              </div>
+              <button
+                onClick={() => setIsGalleryModalOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Gallery Photo</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {gallery.map((photo) => (
+                <div key={photo.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs flex flex-col justify-between">
+                  <div className="h-44 bg-slate-100 relative">
+                    <img src={photo.url} alt={photo.title} className="w-full h-full object-cover" />
+                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-900/80 text-white backdrop-blur-xs">
+                      {photo.category}
+                    </span>
+                  </div>
+                  <div className="p-4 flex items-center justify-between gap-2">
+                    <h4 className="text-xs font-bold text-slate-900 truncate">{photo.title}</h4>
+                    <button
+                      onClick={() => handleDeleteGalleryPhoto(photo.id)}
+                      className="text-rose-500 hover:text-rose-700 p-1"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB 9: IMPACT STATS MANAGER                                                    */}
+        {/* ============================================================================== */}
+        {activeTab === "stats" && (
+          <div className="max-w-2xl bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6 animate-in fade-in duration-200">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 font-heading">Home Page Impact Statistics</h2>
+              <p className="text-xs text-slate-500">Live numerical figures displayed on the home page impact counter matrix.</p>
+            </div>
+
+            <form onSubmit={handleSaveImpactStats} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Stat 1 Value (e.g. 1)</label>
+                  <input
+                    type="text"
+                    value={impactStats?.stat1?.value || ""}
+                    onChange={(e) => setImpactStats({
+                      ...impactStats,
+                      stat1: { ...impactStats.stat1, value: e.target.value }
+                    })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Stat 2 Value (e.g. 150+)</label>
+                  <input
+                    type="text"
+                    value={impactStats?.stat2?.value || ""}
+                    onChange={(e) => setImpactStats({
+                      ...impactStats,
+                      stat2: { ...impactStats.stat2, value: e.target.value }
+                    })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Stat 3 Value (e.g. 6,500+)</label>
+                  <input
+                    type="text"
+                    value={impactStats?.stat3?.value || ""}
+                    onChange={(e) => setImpactStats({
+                      ...impactStats,
+                      stat3: { ...impactStats.stat3, value: e.target.value }
+                    })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Stat 4 Value (e.g. 60+)</label>
+                  <input
+                    type="text"
+                    value={impactStats?.stat4?.value || ""}
+                    onChange={(e) => setImpactStats({
+                      ...impactStats,
+                      stat4: { ...impactStats.stat4, value: e.target.value }
+                    })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700">Impact Narrative Description</label>
+                <textarea
+                  rows={3}
+                  value={impactStats?.description || ""}
+                  onChange={(e) => setImpactStats({
+                    ...impactStats,
+                    description: e.target.value
+                  })}
+                  className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="px-5 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors"
+              >
+                Save Impact Stats
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB 10: MEMBER APPLICANTS MANAGER                                              */}
+        {/* ============================================================================== */}
+        {activeTab === "members" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Undergraduate Member Applications</h2>
+                <p className="text-xs text-slate-500">Registrations submitted from the public /join recruitment form.</p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {["all", "pending", "approved", "inducted"].map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => setMemberStatusFilter(status)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase ${
+                      memberStatusFilter === status
+                        ? "bg-[#003B99] text-white"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {filteredMembersList.map((mem) => (
+                <div key={mem.id} className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
+                        mem.status === "approved" ? "bg-emerald-50 text-emerald-700" :
+                        mem.status === "inducted" ? "bg-purple-50 text-purple-700" :
+                        "bg-amber-50 text-amber-700"
+                      }`}>
+                        {mem.status}
+                      </span>
+                      <span className="text-xs text-slate-400">{mem.regNo} • Applied {mem.appliedDate}</span>
+                    </div>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">{mem.name}</h3>
+                    <p className="text-xs text-slate-600">{mem.faculty} • {mem.academicYear}</p>
+                    <p className="text-xs text-slate-500">📧 {mem.email} | 📞 {mem.phone}</p>
+                    <p className="text-xs text-slate-600 italic">Interests: {mem.interests}</p>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0 self-start md:self-center">
+                    <button
+                      onClick={() => handleUpdateMemberStatus(mem.id, "approved")}
+                      className="px-2.5 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-semibold hover:bg-emerald-100"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleUpdateMemberStatus(mem.id, "inducted")}
+                      className="px-2.5 py-1.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg text-xs font-semibold hover:bg-purple-100"
+                    >
+                      Induct
+                    </button>
+                    <button
+                      onClick={() => handleDeleteMember(mem.id)}
+                      className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB 11: CONTACT INQUIRIES                                                      */}
+        {/* ============================================================================== */}
+        {activeTab === "inquiries" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 font-heading">Public &amp; Sponsor Contact Inquiries</h2>
+              <p className="text-xs text-slate-500">Messages sent via the public Secretariat contact form.</p>
+            </div>
+
+            {inquiries.length === 0 ? (
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500 text-xs">
+                No new contact messages received yet.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {inquiries.map((inq) => (
+                  <div key={inq.id} className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-bold text-slate-900">{inq.subject}</h3>
+                      <button
+                        onClick={() => handleDeleteInquiry(inq.id)}
+                        className="text-rose-500 hover:text-rose-700 p-1"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl">{inq.message}</p>
+                    <div className="text-[11px] text-slate-400 flex items-center gap-3">
+                      <span>From: <strong>{inq.name}</strong> ({inq.email})</span>
+                      <span>•</span>
+                      <span>{inq.receivedDate ? new Date(inq.receivedDate).toLocaleDateString() : "Recent"}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
       </main>
 
-      {/* ======================================================================= */}
-      {/* MODAL 1: NEW ANNOUNCEMENT                                               */}
-      {/* ======================================================================= */}
-      {isAnnouncementModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-xl space-y-5 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-bold text-base text-slate-900 font-heading">
-                Publish New Announcement
-              </h3>
-              <button onClick={() => setIsAnnouncementModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {/* ============================================================================== */}
+      {/* MODALS FOR CREATING / EDITING DATA                                             */}
+      {/* ============================================================================== */}
 
-            <form onSubmit={handleCreateAnnouncement} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Title *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Call for Volunteers - Project Sipnana Phase III"
-                  value={newAnnTitle}
-                  onChange={(e) => setNewAnnTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99] focus:bg-white"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Category</label>
-                  <select
-                    value={newAnnCategory}
-                    onChange={(e) => setNewAnnCategory(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99]"
-                  >
-                    <option>Youth &amp; STEM</option>
-                    <option>Healthcare</option>
-                    <option>Environment</option>
-                    <option>Administration</option>
-                    <option>General Assembly</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Target Audience</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. All UWU Undergraduates"
-                    value={newAnnScope}
-                    onChange={(e) => setNewAnnScope(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Announcement Body / Summary *</label>
-                <textarea
-                  rows={3}
-                  required
-                  placeholder="Provide key details, dates, and instructions for undergraduates..."
-                  value={newAnnSummary}
-                  onChange={(e) => setNewAnnSummary(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99] focus:bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Attachment / Registration Link (Optional)</label>
-                <input
-                  type="url"
-                  placeholder="https://forms.gle/..."
-                  value={newAnnLink}
-                  onChange={(e) => setNewAnnLink(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99]"
-                />
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsAnnouncementModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#003B99] text-white font-bold hover:bg-[#002D7A] shadow-xs"
-                >
-                  Publish Announcement
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ======================================================================= */}
-      {/* MODAL 2: NEW PROJECT REGISTRATION                                       */}
-      {/* ======================================================================= */}
+      {/* 1. Project Modal */}
       {isProjectModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-xl space-y-5 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-bold text-base text-slate-900 font-heading">
-                Register New Club Project
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold font-heading text-slate-900">
+                {editingProj ? "Edit Humanitarian Project" : "Add Humanitarian Project"}
               </h3>
               <button onClick={() => setIsProjectModalOpen(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateProject} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Project Title *</label>
+            <form onSubmit={handleCreateOrUpdateProject} className="space-y-3.5 text-xs">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700">Project Title</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Project Sipnana: School Library Renovation"
+                  placeholder="e.g. Project Sipnana Phase III"
                   value={newProjTitle}
                   onChange={(e) => setNewProjTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99]"
+                  className="w-full p-2.5 bg-slate-50 border rounded-xl"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Category</label>
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700">Category</label>
                   <select
                     value={newProjCategory}
                     onChange={(e) => setNewProjCategory(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                    className="w-full p-2.5 bg-slate-50 border rounded-xl"
                   >
-                    <option>Education</option>
-                    <option>Healthcare</option>
-                    <option>Environment</option>
-                    <option>Community</option>
-                    <option>Youth Development</option>
+                    <option value="Education">Education</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Environment">Environment</option>
+                    <option value="Community">Community</option>
+                    <option value="Youth Development">Youth Development</option>
                   </select>
                 </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Directorate</label>
-                  <input
-                    type="text"
-                    value={newProjDirectorate}
-                    onChange={(e) => setNewProjDirectorate(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700">Status</label>
+                  <select
+                    value={newProjStatus}
+                    onChange={(e) => setNewProjStatus(e.target.value)}
+                    className="w-full p-2.5 bg-slate-50 border rounded-xl"
+                  >
+                    <option value="Completed">Completed</option>
+                    <option value="Ongoing">Ongoing</option>
+                    <option value="Annual Flagship">Annual Flagship</option>
+                  </select>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Impact Metric</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 350+ Students Supported"
-                    value={newProjMetric}
-                    onChange={(e) => setNewProjMetric(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Location</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Passara, Badulla"
-                    value={newProjLocation}
-                    onChange={(e) => setNewProjLocation(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700">Key Impact Metric</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 500+ Students Supported"
+                  value={newProjMetric}
+                  onChange={(e) => setNewProjMetric(e.target.value)}
+                  className="w-full p-2.5 bg-slate-50 border rounded-xl"
+                />
               </div>
 
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Summary / Scope *</label>
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700">Summary Narrative</label>
                 <textarea
-                  rows={3}
                   required
-                  placeholder="Describe the initiative, beneficiaries, and objectives..."
+                  rows={3}
+                  placeholder="Project scope and details..."
                   value={newProjSummary}
                   onChange={(e) => setNewProjSummary(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                  className="w-full p-2.5 bg-slate-50 border rounded-xl"
                 />
               </div>
 
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Key Accomplishments (One per line)</label>
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700">Key Highlights (1 per line)</label>
                 <textarea
-                  rows={2}
-                  placeholder="Distributed 500+ books&#10;Renovated 2 classrooms"
+                  rows={3}
+                  placeholder="Highlight 1&#10;Highlight 2"
                   value={newProjHighlights}
                   onChange={(e) => setNewProjHighlights(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-[11px]"
+                  className="w-full p-2.5 bg-slate-50 border rounded-xl"
                 />
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+              <div className="flex items-center justify-end gap-2 pt-3">
                 <button
                   type="button"
                   onClick={() => setIsProjectModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100"
+                  className="px-4 py-2 bg-slate-100 rounded-xl font-semibold text-slate-600"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#003B99] text-white font-bold hover:bg-[#002D7A] shadow-xs"
+                  className="px-5 py-2 bg-[#003B99] hover:bg-[#002D7A] text-white rounded-xl font-bold"
                 >
                   Save Project
                 </button>
@@ -1977,133 +1877,167 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* ======================================================================= */}
-      {/* MODAL 3: NEW MAGAZINE / ISSUE REGISTRATION                              */}
-      {/* ======================================================================= */}
+      {/* 2. Announcement Modal */}
+      {isAnnouncementModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold font-heading text-slate-900">Publish Announcement</h3>
+              <button onClick={() => setIsAnnouncementModalOpen(false)}>
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateAnnouncement} className="space-y-3 text-xs">
+              <input
+                type="text"
+                required
+                placeholder="Announcement Title"
+                value={newAnnTitle}
+                onChange={(e) => setNewAnnTitle(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <textarea
+                required
+                rows={3}
+                placeholder="Summary description..."
+                value={newAnnSummary}
+                onChange={(e) => setNewAnnSummary(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <input
+                type="text"
+                placeholder="Registration / Form Link (Optional)"
+                value={newAnnLink}
+                onChange={(e) => setNewAnnLink(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setIsAnnouncementModalOpen(false)} className="px-3 py-2 bg-slate-100 rounded-xl font-semibold">
+                  Cancel
+                </button>
+                <button type="submit" className="px-4 py-2 bg-[#003B99] text-white font-bold rounded-xl">
+                  Publish
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Event Modal */}
+      {isEventModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold font-heading text-slate-900">Add Timeline Event</h3>
+              <button onClick={() => setIsEventModalOpen(false)}>
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateEvent} className="space-y-3 text-xs">
+              <input
+                type="text"
+                required
+                placeholder="Event Title"
+                value={newEvTitle}
+                onChange={(e) => setNewEvTitle(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  required
+                  placeholder="Date e.g. July 26, 2025"
+                  value={newEvDate}
+                  onChange={(e) => setNewEvDate(e.target.value)}
+                  className="p-2.5 bg-slate-50 border rounded-xl"
+                />
+                <input
+                  type="text"
+                  placeholder="Time e.g. 04:30 PM"
+                  value={newEvTime}
+                  onChange={(e) => setNewEvTime(e.target.value)}
+                  className="p-2.5 bg-slate-50 border rounded-xl"
+                />
+              </div>
+              <input
+                type="text"
+                placeholder="Venue e.g. UWU Main Auditorium"
+                value={newEvVenue}
+                onChange={(e) => setNewEvVenue(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <textarea
+                rows={2}
+                placeholder="Description..."
+                value={newEvDescription}
+                onChange={(e) => setNewEvDescription(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setIsEventModalOpen(false)} className="px-3 py-2 bg-slate-100 rounded-xl font-semibold">
+                  Cancel
+                </button>
+                <button type="submit" className="px-4 py-2 bg-[#003B99] text-white font-bold rounded-xl">
+                  Save Event
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Magazine Modal */}
       {isMagazineModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-xl space-y-5 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-bold text-base text-slate-900 font-heading">
-                Add Magazine Edition &amp; Google Drive Link
-              </h3>
-              <button onClick={() => setIsMagazineModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                <X className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold font-heading text-slate-900">Add Magazine Issue</h3>
+              <button onClick={() => setIsMagazineModalOpen(false)}>
+                <X className="w-5 h-5 text-slate-400" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateMagazine} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Magazine Title *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. ROAR: Volume 07 (2025 Special Edition)"
-                  value={newMagTitle}
-                  onChange={(e) => setNewMagTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Volume / Edition</label>
-                  <input
-                    type="text"
-                    placeholder="Volume 07 • 2025"
-                    value={newMagEdition}
-                    onChange={(e) => setNewMagEdition(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Category</label>
-                  <select
-                    value={newMagCategory}
-                    onChange={(e) => setNewMagCategory(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  >
-                    <option>Annual Flagship</option>
-                    <option>Special Issue</option>
-                    <option>Environment</option>
-                    <option>Quarterly Bulletin</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Google Drive PDF / Download URL *</label>
-                <input
-                  type="url"
-                  required
-                  placeholder="https://drive.google.com/file/d/..."
-                  value={newMagDriveUrl}
-                  onChange={(e) => setNewMagDriveUrl(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99] font-mono text-[11px]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Publication Date</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. January 2025"
-                    value={newMagDate}
-                    onChange={(e) => setNewMagDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Page Count</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 48"
-                    value={newMagPages}
-                    onChange={(e) => setNewMagPages(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Magazine Summary *</label>
-                <textarea
-                  rows={3}
-                  required
-                  placeholder="Brief synopsis of this edition's articles and themes..."
-                  value={newMagSummary}
-                  onChange={(e) => setNewMagSummary(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Featured Article Highlights (One per line)</label>
-                <textarea
-                  rows={2}
-                  placeholder="Presidential Address&#10;Passara Field Trip Photos"
-                  value={newMagHighlights}
-                  onChange={(e) => setNewMagHighlights(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-[11px]"
-                />
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsMagazineModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100"
-                >
+            <form onSubmit={handleCreateMagazine} className="space-y-3 text-xs">
+              <input
+                type="text"
+                required
+                placeholder="Magazine Title e.g. ROAR Vol 07"
+                value={newMagTitle}
+                onChange={(e) => setNewMagTitle(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <input
+                type="text"
+                placeholder="Edition e.g. Leistic Year 2024/2025"
+                value={newMagEdition}
+                onChange={(e) => setNewMagEdition(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <input
+                type="text"
+                required
+                placeholder="Google Drive PDF Shareable Link"
+                value={newMagDriveUrl}
+                onChange={(e) => setNewMagDriveUrl(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <textarea
+                required
+                rows={3}
+                placeholder="Issue Summary & Highlights..."
+                value={newMagSummary}
+                onChange={(e) => setNewMagSummary(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setIsMagazineModalOpen(false)} className="px-3 py-2 bg-slate-100 rounded-xl font-semibold">
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#003B99] text-white font-bold hover:bg-[#002D7A] shadow-xs"
-                >
-                  Save Publication
+                <button type="submit" className="px-4 py-2 bg-[#003B99] text-white font-bold rounded-xl">
+                  Publish Issue
                 </button>
               </div>
             </form>
@@ -2111,263 +2045,161 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* ======================================================================= */}
-      {/* MODAL 4: ADD NEW MEMBER RECORD                                          */}
-      {/* ======================================================================= */}
-      {isMemberModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-xl space-y-5 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-bold text-base text-slate-900 font-heading">
-                Add Member / Applicant Record
-              </h3>
-              <button onClick={() => setIsMemberModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateMember} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Full Student Name *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Kasun Jayawardena"
-                  value={newMemName}
-                  onChange={(e) => setNewMemName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Registration No</label>
-                  <input
-                    type="text"
-                    placeholder="UWU/CST/23/001"
-                    value={newMemRegNo}
-                    onChange={(e) => setNewMemRegNo(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-[11px]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Academic Year</label>
-                  <select
-                    value={newMemYear}
-                    onChange={(e) => setNewMemYear(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  >
-                    <option>1st Year</option>
-                    <option>2nd Year</option>
-                    <option>3rd Year</option>
-                    <option>4th Year</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Faculty</label>
-                <select
-                  value={newMemFaculty}
-                  onChange={(e) => setNewMemFaculty(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                >
-                  <option>Faculty of Science &amp; Technology</option>
-                  <option>Faculty of Applied Sciences</option>
-                  <option>Faculty of Management</option>
-                  <option>Faculty of Animal Science &amp; Export Agriculture</option>
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Email *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="student@uwu.ac.lk"
-                    value={newMemEmail}
-                    onChange={(e) => setNewMemEmail(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Phone</label>
-                  <input
-                    type="tel"
-                    placeholder="+94 77 000 0000"
-                    value={newMemPhone}
-                    onChange={(e) => setNewMemPhone(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Interests / Directorates</label>
-                <input
-                  type="text"
-                  placeholder="e.g. IT, Education &amp; STEM, Blood Aid"
-                  value={newMemInterests}
-                  onChange={(e) => setNewMemInterests(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                />
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsMemberModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#003B99] text-white font-bold hover:bg-[#002D7A] shadow-xs"
-                >
-                  Add Record
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ======================================================================= */}
-      {/* MODAL 5: ADD / EDIT OFFICIAL DOCUMENT & DRIVE LINK                      */}
-      {/* ======================================================================= */}
+      {/* 5. Document Modal */}
       {isDocumentModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-xl space-y-5 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-bold text-base text-slate-900 font-heading">
-                {editingDoc ? "Edit Official Document & Drive Link" : "Publish Official Document & Drive Link"}
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold font-heading text-slate-900">
+                {editingDoc ? "Edit Official Document" : "Add Brand Form / Document"}
               </h3>
-              <button
-                onClick={() => {
-                  setIsDocumentModalOpen(false);
-                  setEditingDoc(null);
-                }}
-                className="text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-5 h-5" />
+              <button onClick={() => setIsDocumentModalOpen(false)}>
+                <X className="w-5 h-5 text-slate-400" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateOrUpdateDocument} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Document Title *</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Project Proposal & Budget Approval Template"
-                  value={newDocTitle}
-                  onChange={(e) => setNewDocTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Category</label>
-                  <select
-                    value={newDocCategory}
-                    onChange={(e) => setNewDocCategory(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  >
-                    <option>Governance &amp; Statutes</option>
-                    <option>Membership &amp; Induction</option>
-                    <option>Project Management</option>
-                    <option>Reporting &amp; Auditing</option>
-                    <option>Safety &amp; Compliance</option>
-                    <option>Official Templates</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Format</label>
-                  <select
-                    value={newDocFormat}
-                    onChange={(e) => setNewDocFormat(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  >
-                    <option>PDF Document</option>
-                    <option>DOCX Document</option>
-                    <option>PDF / DOCX</option>
-                    <option>Excel Spreadsheet</option>
-                    <option>ZIP Archive</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Approx. File Size</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 1.2 MB or 450 KB"
-                    value={newDocSize}
-                    onChange={(e) => setNewDocSize(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Status</label>
-                  <input
-                    type="text"
-                    disabled
-                    value="Synced to /brand-and-forms"
-                    className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 font-mono text-[11px]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Google Drive Direct Link *</label>
-                <input
-                  type="url"
-                  required
-                  placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
-                  value={newDocDriveUrl}
-                  onChange={(e) => setNewDocDriveUrl(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-1 focus:ring-[#003B99] font-mono text-[11px]"
-                />
-                <span className="text-[10px] text-slate-400 mt-1 block">
-                  Paste the shareable Google Drive link. Ensure permissions are set to &quot;Anyone with the link can view&quot;.
-                </span>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Document Description &amp; Instructions</label>
-                <textarea
-                  rows={3}
-                  placeholder="Explain who must fill this document and how to submit it to the Secretariat..."
-                  value={newDocDescription}
-                  onChange={(e) => setNewDocDescription(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
-                />
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsDocumentModalOpen(false);
-                    setEditingDoc(null);
-                  }}
-                  className="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100"
-                >
+            <form onSubmit={handleCreateOrUpdateDocument} className="space-y-3 text-xs">
+              <input
+                type="text"
+                required
+                placeholder="Document Title"
+                value={newDocTitle}
+                onChange={(e) => setNewDocTitle(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <input
+                type="text"
+                required
+                placeholder="Google Drive Shareable Link"
+                value={newDocDriveUrl}
+                onChange={(e) => setNewDocDriveUrl(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <textarea
+                rows={2}
+                placeholder="Brief description of usage..."
+                value={newDocDescription}
+                onChange={(e) => setNewDocDescription(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setIsDocumentModalOpen(false)} className="px-3 py-2 bg-slate-100 rounded-xl font-semibold">
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#003B99] text-white font-bold hover:bg-[#002D7A] shadow-xs"
-                >
-                  {editingDoc ? "Update Document" : "Publish Document"}
+                <button type="submit" className="px-4 py-2 bg-[#003B99] text-white font-bold rounded-xl">
+                  Save Document
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 6. Gallery Modal */}
+      {isGalleryModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold font-heading text-slate-900">Add Gallery Photo</h3>
+              <button onClick={() => setIsGalleryModalOpen(false)}>
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateGalleryPhoto} className="space-y-3 text-xs">
+              <input
+                type="text"
+                required
+                placeholder="Photo Title / Caption"
+                value={newGalTitle}
+                onChange={(e) => setNewGalTitle(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <input
+                type="text"
+                required
+                placeholder="Image URL (Unsplash or direct image URL)"
+                value={newGalUrl}
+                onChange={(e) => setNewGalUrl(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <select
+                value={newGalCategory}
+                onChange={(e) => setNewGalCategory(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              >
+                <option value="community">Community Service</option>
+                <option value="fellowship">Fellowship &amp; Camps</option>
+                <option value="ceremonies">Installations &amp; Awards</option>
+              </select>
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setIsGalleryModalOpen(false)} className="px-3 py-2 bg-slate-100 rounded-xl font-semibold">
+                  Cancel
+                </button>
+                <button type="submit" className="px-4 py-2 bg-[#003B99] text-white font-bold rounded-xl">
+                  Add to Gallery
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 7. Leader Modal */}
+      {isLeaderModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold font-heading text-slate-900">Add Leader / Director</h3>
+              <button onClick={() => setIsLeaderModalOpen(false)}>
+                <X className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveLeader} className="space-y-3 text-xs">
+              <input
+                type="text"
+                required
+                placeholder="Full Name (e.g. Leo Kavindu Dilshan)"
+                value={newLeaderName}
+                onChange={(e) => setNewLeaderName(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <input
+                type="text"
+                required
+                placeholder="Role / Portfolio Designation"
+                value={newLeaderRole}
+                onChange={(e) => setNewLeaderRole(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <input
+                type="text"
+                placeholder="Faculty e.g. Faculty of Science & Technology"
+                value={newLeaderFaculty}
+                onChange={(e) => setNewLeaderFaculty(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <input
+                type="email"
+                placeholder="Email Address"
+                value={newLeaderEmail}
+                onChange={(e) => setNewLeaderEmail(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <textarea
+                rows={2}
+                placeholder="Scope of responsibilities..."
+                value={newLeaderScope}
+                onChange={(e) => setNewLeaderScope(e.target.value)}
+                className="w-full p-2.5 bg-slate-50 border rounded-xl"
+              />
+              <div className="flex justify-end gap-2 pt-2">
+                <button type="button" onClick={() => setIsLeaderModalOpen(false)} className="px-3 py-2 bg-slate-100 rounded-xl font-semibold">
+                  Cancel
+                </button>
+                <button type="submit" className="px-4 py-2 bg-[#003B99] text-white font-bold rounded-xl">
+                  Save Leader
                 </button>
               </div>
             </form>
