@@ -1,5 +1,5 @@
 # 🦁 Leo Club Multi-Site Web Platform 
-
+ 
 Welcome to the **Leo Club Website Specification & Framework** repository.
 
 ## 📄 Main Specification Document
