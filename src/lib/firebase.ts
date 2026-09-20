@@ -1126,8 +1126,12 @@ export async function getFirestoreCollection<T extends { id: string }>(
     });
 
     return items;
-  } catch (err) {
-    console.warn(`Firestore read failed for collection "${collectionName}":`, err);
+  } catch (err: any) {
+    if (err?.code === "unavailable" || err?.message?.includes("offline")) {
+      // Graceful local fallback when Firestore database is offline or unseeded
+    } else {
+      console.warn(`Firestore read notice for collection "${collectionName}":`, err?.message || err);
+    }
     return fallbackData;
   }
 }
@@ -1151,8 +1155,12 @@ export async function getFirestoreDoc<T>(
       return fallbackData;
     }
     return { ...snap.data(), id: snap.id } as T;
-  } catch (err) {
-    console.warn(`Firestore read failed for document ${collectionName}/${docId}:`, err);
+  } catch (err: any) {
+    if (err?.code === "unavailable" || err?.message?.includes("offline")) {
+      // Graceful local fallback when Firestore database is offline or unseeded
+    } else {
+      console.warn(`Firestore read notice for document ${collectionName}/${docId}:`, err?.message || err);
+    }
     return fallbackData;
   }
 }
