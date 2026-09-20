@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import projectsData from "@/data/projects.json";
-import { isFirebaseConfigured, getFirestoreCollection } from "@/lib/firebase";
+import {
+  isFirebaseConfigured,
+  subscribeFirestoreCollection,
+  INITIAL_PROJECTS,
+} from "@/lib/firebase";
 import {
   Search,
   MapPin,
@@ -60,17 +63,24 @@ interface ProjectItem {
 }
 
 export default function ProjectsPage() {
-  const [projectsList, setProjectsList] = useState<ProjectItem[]>(projectsData);
+  const [projectsList, setProjectsList] = useState<ProjectItem[]>(INITIAL_PROJECTS);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   useEffect(() => {
     if (isFirebaseConfigured()) {
-      getFirestoreCollection<ProjectItem>("projects", projectsData).then((data) => {
-        if (data && data.length > 0) {
-          setProjectsList(data);
+      const unsubscribe = subscribeFirestoreCollection<ProjectItem>(
+        "projects",
+        INITIAL_PROJECTS,
+        (data) => {
+          if (data && data.length > 0) {
+            setProjectsList(data);
+          }
         }
-      });
+      );
+      return () => {
+        if (typeof unsubscribe === "function") unsubscribe();
+      };
     }
   }, []);
 
@@ -127,7 +137,7 @@ export default function ProjectsPage() {
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
                   }`}
                 >
-                  {cat === "all" ? `All Projects (${projectsData.length})` : cat}
+                  {cat === "all" ? `All Projects (${projectsList.length})` : cat}
                 </button>
               ))}
             </div>

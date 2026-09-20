@@ -1,57 +1,50 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useClub } from "@/context/ClubContext";
 import CyanBar from "@/components/ui/CyanBar";
-import { Image as ImageIcon, X } from "lucide-react";
+import { Image as ImageIcon, X, Sparkles } from "lucide-react";
+import {
+  isFirebaseConfigured,
+  getFirestoreCollection,
+  subscribeFirestoreCollection,
+  INITIAL_GALLERY_PHOTOS,
+} from "@/lib/firebase";
 
-const GALLERY_PHOTOS = [
-  {
-    id: 1,
-    category: "community",
-    title: "Youth Mangrove Planting & Coastal Conservation",
-    url: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1000&q=80",
-  },
-  {
-    id: 2,
-    category: "fellowship",
-    title: "Multiple District Annual Youth Leadership Gala",
-    url: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1000&q=80",
-  },
-  {
-    id: 3,
-    category: "community",
-    title: "Sight For Youth School Screening Camp",
-    url: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1000&q=80",
-  },
-  {
-    id: 4,
-    category: "ceremonies",
-    title: "16th Annual Installation of Executive Officers",
-    url: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1000&q=80",
-  },
-  {
-    id: 5,
-    category: "community",
-    title: "Suwa Diviya Community Kitchens & Food Ration Drive",
-    url: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1000&q=80",
-  },
-  {
-    id: 6,
-    category: "fellowship",
-    title: "Inter-District Youth Sports & Leadership Camp",
-    url: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=1000&q=80",
-  },
-];
+interface GalleryPhotoItem {
+  id: string;
+  category: string;
+  title: string;
+  url: string;
+  date?: string;
+}
 
 export default function GalleryPage() {
   const { club } = useClub();
+  const [photos, setPhotos] = useState<GalleryPhotoItem[]>(INITIAL_GALLERY_PHOTOS);
   const [activeFilter, setActiveFilter] = useState("all");
   const [activeImage, setActiveImage] = useState<string | null>(null);
 
-  const filteredPhotos = GALLERY_PHOTOS.filter((p) => {
+  useEffect(() => {
+    if (isFirebaseConfigured()) {
+      const unsubscribe = subscribeFirestoreCollection<GalleryPhotoItem>(
+        "gallery",
+        INITIAL_GALLERY_PHOTOS,
+        (items) => {
+          if (items && items.length > 0) {
+            setPhotos(items);
+          }
+        }
+      );
+      return () => {
+        if (typeof unsubscribe === "function") unsubscribe();
+      };
+    }
+  }, []);
+
+  const filteredPhotos = photos.filter((p) => {
     if (activeFilter === "all") return true;
-    return p.category === activeFilter;
+    return p.category.toLowerCase() === activeFilter.toLowerCase();
   });
 
   return (
@@ -66,7 +59,7 @@ export default function GalleryPage() {
               MEMORIES IN ACTION
             </span>
             <h1 className="font-heading font-extrabold text-4xl sm:text-5xl text-leo-charcoal tracking-tight leading-tight mb-6">
-              Media Gallery & Photo Highlights
+              Media Gallery &amp; Photo Highlights
             </h1>
             <p className="text-lg text-leo-slate leading-relaxed">
               Capturing vibrant moments of service, fellowship, installations, and youth leadership across {club.name}.

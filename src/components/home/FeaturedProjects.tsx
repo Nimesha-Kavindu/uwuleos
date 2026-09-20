@@ -3,8 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import CyanBar from "@/components/ui/CyanBar";
-import projectsData from "@/data/projects.json";
-import { isFirebaseConfigured, getFirestoreCollection } from "@/lib/firebase";
+import {
+  isFirebaseConfigured,
+  subscribeFirestoreCollection,
+  INITIAL_PROJECTS,
+} from "@/lib/firebase";
 import {
   ArrowRight,
   MapPin,
@@ -58,15 +61,22 @@ interface ProjectItem {
 }
 
 export default function FeaturedProjects() {
-  const [projectsList, setProjectsList] = useState<ProjectItem[]>(projectsData);
+  const [projectsList, setProjectsList] = useState<ProjectItem[]>(INITIAL_PROJECTS);
 
   useEffect(() => {
     if (isFirebaseConfigured()) {
-      getFirestoreCollection<ProjectItem>("projects", projectsData).then((data) => {
-        if (data && data.length > 0) {
-          setProjectsList(data);
+      const unsubscribe = subscribeFirestoreCollection<ProjectItem>(
+        "projects",
+        INITIAL_PROJECTS,
+        (data) => {
+          if (data && data.length > 0) {
+            setProjectsList(data);
+          }
         }
-      });
+      );
+      return () => {
+        if (typeof unsubscribe === "function") unsubscribe();
+      };
     }
   }, []);
 

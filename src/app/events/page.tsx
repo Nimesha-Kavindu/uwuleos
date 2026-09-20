@@ -2,8 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { useClub } from "@/context/ClubContext";
-import { Calendar, Clock, MapPin, CalendarPlus } from "lucide-react";
-import { isFirebaseConfigured, getFirestoreCollection } from "@/lib/firebase";
+import { Calendar, Clock, MapPin, CalendarPlus, Sparkles } from "lucide-react";
+import {
+  isFirebaseConfigured,
+  getFirestoreCollection,
+  subscribeFirestoreCollection,
+  INITIAL_EVENTS,
+} from "@/lib/firebase";
 
 interface EventItem {
   id: string;
@@ -18,97 +23,49 @@ interface EventItem {
   description?: string;
 }
 
-const INITIAL_EVENTS: EventItem[] = [
-  {
-    id: "ev-1",
-    title: "UWU Leos Annual Leadership Training & Induction 2025",
-    date: "March 28, 2025",
-    day: "28",
-    month: "MAR",
-    time: "03:30 PM - 06:30 PM",
-    venue: "Management Auditorium, UWU Campus, Badulla",
-    category: "Leadership",
-    description:
-      "Induction of prospective undergraduate members, executive leadership training, and team-building workshops.",
-  },
-  {
-    id: "ev-2",
-    title: "Project Sipnana Phase II – Monaragala School Upliftment",
-    date: "April 19, 2025",
-    day: "19",
-    month: "APR",
-    time: "08:00 AM - 04:00 PM",
-    venue: "Monaragala Rural Primary School",
-    category: "Community",
-    description:
-      "Delivering essential school stationery, conducting interactive creative workshops, and renovating library facilities for rural students.",
-  },
-  {
-    id: "ev-3",
-    title: "Uva Youth Clean-Up & Environmental Trek",
-    date: "May 10, 2025",
-    day: "10",
-    month: "MAY",
-    time: "07:00 AM - 02:00 PM",
-    venue: "Ella & Dunhinda Conservation Area",
-    category: "Environment",
-    description:
-      "Promoting eco-tourism, removing plastic waste from natural catchment areas, and installing trail conservation signage.",
-  },
-  {
-    id: "ev-4",
-    title: "Leo District 306 D10 Mid-Year Youth Summit",
-    date: "June 14, 2025",
-    day: "14",
-    month: "JUN",
-    time: "09:00 AM - 05:00 PM",
-    venue: "Provincial Council Auditorium, Badulla",
-    category: "Leadership",
-    description:
-      "Regional youth leadership congress connecting undergraduates with provincial changemakers and community leaders.",
-  },
-  {
-    id: "ev-5",
-    title: "Annual Leistic Installation & Fellowship Gala",
-    date: "July 26, 2025",
-    day: "26",
-    month: "JUL",
-    time: "04:30 PM - 09:30 PM",
-    venue: "Heritage Grand Ballroom, Bandarawela",
-    category: "Fellowship",
-    description:
-      "Official installation ceremony of the incoming Executive Board and recognition of outstanding undergraduate project leaders.",
-  },
-];
-
 export default function EventsPage() {
   const { club } = useClub();
   const [events, setEvents] = useState<EventItem[]>(INITIAL_EVENTS);
 
   useEffect(() => {
     if (isFirebaseConfigured()) {
-      getFirestoreCollection<any>("announcements", []).then((announcements) => {
-        if (announcements && announcements.length > 0) {
-          const mapped: EventItem[] = announcements.map((a, idx) => {
-            const dateParts = a.date ? a.date.split(" ") : [];
-            const month = dateParts[0] ? dateParts[0].substring(0, 3).toUpperCase() : "EVENT";
-            const day = dateParts[1] ? dateParts[1].replace(",", "") : String(idx + 1);
+      const unsubscribe = subscribeFirestoreCollection<EventItem>(
+        "events",
+        INITIAL_EVENTS,
+        (items) => {
+          if (items && items.length > 0) {
+            setEvents(items);
+          } else {
+            // Fallback check on announcements
+            getFirestoreCollection<any>("announcements", []).then((announcements) => {
+              if (announcements && announcements.length > 0) {
+                const mapped: EventItem[] = announcements.map((a, idx) => {
+                  const dateParts = a.date ? a.date.split(" ") : [];
+                  const month = dateParts[0] ? dateParts[0].substring(0, 3).toUpperCase() : "EVENT";
+                  const day = dateParts[1] ? dateParts[1].replace(",", "") : String(idx + 1);
 
-            return {
-              id: a.id,
-              title: a.title,
-              date: a.date || "2025",
-              day: day || "28",
-              month: month || "MAR",
-              time: a.time || "03:30 PM - 06:30 PM",
-              venue: a.scope || "UWU Campus, Badulla",
-              category: a.category || "General",
-              description: a.summary || a.description || "Official club communique and event gathering.",
-            };
-          });
-          setEvents(mapped);
+                  return {
+                    id: a.id,
+                    title: a.title,
+                    date: a.date || "2025",
+                    day: day || "28",
+                    month: month || "MAR",
+                    time: a.time || "03:30 PM - 06:30 PM",
+                    venue: a.scope || "UWU Campus, Badulla",
+                    category: a.category || "General",
+                    description: a.summary || a.description || "Official club communique and event gathering.",
+                  };
+                });
+                setEvents(mapped);
+              }
+            });
+          }
         }
-      });
+      );
+
+      return () => {
+        if (typeof unsubscribe === "function") unsubscribe();
+      };
     }
   }, []);
 
@@ -138,86 +95,90 @@ export default function EventsPage() {
             </h1>
 
             <p className="text-slate-500 text-sm sm:text-base leading-relaxed font-normal">
-              Explore upcoming leadership workshops, community outreach initiatives, and university fellowship gatherings.
+              Official timeline of upcoming leadership workshops, environmental treks, school upliftment missions, and fellowship assemblies across Leo District 306 D10.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 2. Minimalist Events List */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
-        <div className="space-y-4">
-          {events.map((event) => {
-            return (
-              <div
-                key={event.id}
-                className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 hover:border-slate-300 hover:shadow-xs transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-6"
-              >
-                {/* Left: Date + Event Details */}
-                <div className="flex items-start gap-4 sm:gap-6">
-                  
-                  {/* Minimal Date Block */}
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-100 border border-slate-200/70 flex flex-col items-center justify-center shrink-0">
-                    <span className="text-lg sm:text-xl font-extrabold text-slate-900 leading-none">
-                      {event.day}
-                    </span>
-                    <span className="text-[10px] font-bold tracking-wider uppercase text-slate-500 mt-1">
-                      {event.month}
-                    </span>
-                  </div>
-
-                  {/* Text Details */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-[11px] font-semibold text-[#003B99] uppercase tracking-wider">
-                        {event.category}
-                      </span>
-                      <span className="text-slate-300">•</span>
-                      <span className="text-[11px] text-slate-400 font-medium">
-                        {event.date}
-                      </span>
-                    </div>
-
-                    <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-                      {event.title}
-                    </h2>
-
-                    <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-2xl">
-                      {event.description}
-                    </p>
-
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-1.5">
-                      <span className="inline-flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
-                        {event.time}
-                      </span>
-                      <span className="inline-flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                        {event.venue}
-                      </span>
-                    </div>
-                  </div>
-
+      {/* 2. Events Timeline Listing */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="space-y-4 sm:space-y-5">
+          {events.map((ev) => (
+            <article
+              key={ev.id}
+              className="bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-7 shadow-xs hover:border-slate-300 hover:shadow-md transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-6 group"
+            >
+              
+              {/* Left Column: Date Tile & Info */}
+              <div className="flex items-start gap-4 sm:gap-6 min-w-0 flex-1">
+                
+                {/* Minimalist Date Tile */}
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col items-center justify-center shrink-0 group-hover:bg-[#003B99] group-hover:border-[#003B99] transition-colors duration-200">
+                  <span className="text-[10px] sm:text-xs font-mono font-bold tracking-wider text-slate-400 group-hover:text-blue-100 transition-colors uppercase">
+                    {ev.month || "EVENT"}
+                  </span>
+                  <span className="text-xl sm:text-2xl font-extrabold text-slate-900 group-hover:text-white transition-colors font-heading leading-tight">
+                    {ev.day || "28"}
+                  </span>
                 </div>
 
-                {/* Right: Calendar Action */}
-                <div className="flex items-center sm:self-center shrink-0 gap-2.5 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">
-                  <a
-                    href={getGoogleCalendarUrl(event)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-[#003B99] text-xs font-semibold transition-all duration-150 shadow-2xs"
-                  >
-                    <CalendarPlus className="w-3.5 h-3.5 text-[#003B99]" />
-                    <span>Add to Calendar</span>
-                  </a>
+                {/* Details */}
+                <div className="space-y-2 min-w-0 flex-1">
+                  
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-50 text-[#003B99] border border-blue-100">
+                      {ev.category || "General Event"}
+                    </span>
+                    <span className="text-xs text-slate-500 font-medium">
+                      {ev.date}
+                    </span>
+                  </div>
+
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 font-heading leading-snug group-hover:text-[#003B99] transition-colors">
+                    {ev.title}
+                  </h2>
+
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl font-normal">
+                    {ev.description}
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-1 text-xs text-slate-500 font-medium">
+                    {ev.time && (
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span>{ev.time}</span>
+                      </div>
+                    )}
+                    {ev.venue && (
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <span className="truncate max-w-[280px] sm:max-w-md">{ev.venue}</span>
+                      </div>
+                    )}
+                  </div>
+
                 </div>
 
               </div>
-            );
-          })}
+
+              {/* Right Column: Google Calendar Button */}
+              <div className="shrink-0 self-start md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 w-full md:w-auto">
+                <a
+                  href={getGoogleCalendarUrl(ev)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-semibold shadow-xs transition-colors"
+                >
+                  <CalendarPlus className="w-4 h-4 text-[#003B99]" />
+                  <span>Add to Google Calendar</span>
+                </a>
+              </div>
+
+            </article>
+          ))}
         </div>
-      </section>
+      </div>
 
     </div>
   );

@@ -13,6 +13,11 @@ import {
   ShieldCheck,
   Award,
 } from "lucide-react";
+import {
+  isFirebaseConfigured,
+  getFirestoreDoc,
+  INITIAL_IMPACT_STATS,
+} from "@/lib/firebase";
 
 // Ultra-smooth easing counter hook
 function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
@@ -31,7 +36,6 @@ function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: str
           const animate = (currentTime: number) => {
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / duration, 1);
-            // Ease out expo for snappy, modern feel
             const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
             const current = Math.floor(easeOut * target);
             setCount(current);
@@ -63,40 +67,69 @@ function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: str
 
 export default function ImpactSection() {
   const { club } = useClub();
+  const [impactStats, setImpactStats] = useState<any>(INITIAL_IMPACT_STATS);
+
+  useEffect(() => {
+    if (isFirebaseConfigured()) {
+      getFirestoreDoc<any>("settings", "impact_stats", INITIAL_IMPACT_STATS).then((data) => {
+        if (data && (data.stat1 || data.stat2)) {
+          setImpactStats(data);
+        }
+      });
+    }
+  }, []);
+
+  const parseNumber = (val: string, fallback: number) => {
+    if (!val) return fallback;
+    const num = parseInt(val.replace(/[^0-9]/g, ""), 10);
+    return isNaN(num) ? fallback : num;
+  };
+
+  const parseSuffix = (val: string, fallback: string) => {
+    if (!val) return fallback;
+    if (val.includes("+")) return "+";
+    if (val.includes("%")) return "%";
+    return "";
+  };
+
+  const stat1Val = impactStats?.stat1?.value || "1";
+  const stat2Val = impactStats?.stat2?.value || "150+";
+  const stat3Val = impactStats?.stat3?.value || "6,500+";
+  const stat4Val = impactStats?.stat4?.value || "60+";
 
   const STATS = [
     {
       id: "stat-1",
-      target: 1,
-      suffix: "",
-      label: "University Club",
+      target: parseNumber(stat1Val, 1),
+      suffix: parseSuffix(stat1Val, ""),
+      label: impactStats?.stat1?.label || "University Club",
       tagline: "Chartered Chapter",
       detail: "District 306 D10 Flagship",
       icon: <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-[#003B99]" />,
     },
     {
       id: "stat-2",
-      target: 150,
-      suffix: "+",
-      label: "Active Undergrads",
+      target: parseNumber(stat2Val, 150),
+      suffix: parseSuffix(stat2Val, "+"),
+      label: impactStats?.stat2?.label || "Active Undergrads",
       tagline: "4 UWU Faculties",
       detail: "100% Student Volunteers",
       icon: <Users className="w-4 h-4 sm:w-5 sm:h-5 text-[#00A3E0]" />,
     },
     {
       id: "stat-3",
-      target: 6500,
-      suffix: "+",
-      label: "Volunteer Hours",
+      target: parseNumber(stat3Val, 6500),
+      suffix: parseSuffix(stat3Val, "+"),
+      label: impactStats?.stat3?.label || "Volunteer Hours",
       tagline: "Community Service",
       detail: "Fieldwork & Rural Relief",
       icon: <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />,
     },
     {
       id: "stat-4",
-      target: 60,
-      suffix: "+",
-      label: "Signature Projects",
+      target: parseNumber(stat4Val, 60),
+      suffix: parseSuffix(stat4Val, "+"),
+      label: impactStats?.stat4?.label || "Signature Projects",
       tagline: "Province Reach",
       detail: "Health, STEM & Green Uva",
       icon: <HeartHandshake className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />,
@@ -125,7 +158,7 @@ export default function ImpactSection() {
 
           <div className="lg:col-span-5 space-y-3 sm:space-y-4">
             <p className="text-slate-600 text-xs sm:text-base leading-relaxed font-normal">
-              Where the Leo Club of Uva Wellassa University stands today in our mission of youth empowerment, leadership development, and community impact.
+              {impactStats?.description || "Where the Leo Club of Uva Wellassa University stands today in our mission of youth empowerment, leadership development, and community impact."}
             </p>
             <div>
               <Link

@@ -5,7 +5,11 @@ import Link from "next/link";
 import CyanBar from "@/components/ui/CyanBar";
 import { ArrowRight, Calendar, ArrowUpRight } from "lucide-react";
 import { useClub } from "@/context/ClubContext";
-import { isFirebaseConfigured, getFirestoreCollection } from "@/lib/firebase";
+import {
+  isFirebaseConfigured,
+  subscribeFirestoreCollection,
+  INITIAL_ANNOUNCEMENTS,
+} from "@/lib/firebase";
 
 interface NoticeItem {
   id: string;
@@ -22,60 +26,24 @@ interface NoticeItem {
   linkUrl?: string;
 }
 
-const INITIAL_NOTICES: NoticeItem[] = [
-  {
-    id: "notice-1",
-    ref: "UWU/LEO/2025-01",
-    date: "March 28, 2025",
-    tag: "Governance & Induction",
-    title: "UWU Leos Annual Induction & Executive Leadership Summit 2025",
-    summary: "Convening of the Annual General Assembly and Executive Council Installation at the UWU Management Auditorium, ratifying new undergraduate director appointments across all four faculties.",
-    issuer: "Club Secretariat • District 306 D10",
-    link: "/events",
-  },
-  {
-    id: "notice-2",
-    ref: "UWU/LEO/2025-02",
-    date: "April 19, 2025",
-    tag: "Community Services",
-    title: "Project Sipnana Phase II: Monaragala School Educational Aid Schedule",
-    summary: "Volunteer deployment brief and donation collection drive for rural primary schools across Monaragala, providing comprehensive stationery sets and school library renovations.",
-    issuer: "Community Development Directorate",
-    link: "/projects/project-sipnana-badulla",
-  },
-  {
-    id: "notice-3",
-    ref: "UWU/LEO/2025-03",
-    date: "May 10, 2025",
-    tag: "Environment & Green Uva",
-    title: "Central Highlands Catchment Conservation & Eco-Trek Notice",
-    summary: "Joint reforestation and watershed preservation action in the Ella and Dunhinda conservation corridors, planting native forest saplings to safeguard regional biodiversity.",
-    issuer: "Green Uva Action Committee",
-    link: "/events",
-  },
-  {
-    id: "notice-4",
-    ref: "UWU/LEO/2025-04",
-    date: "July 26, 2025",
-    tag: "Fellowship & Awards",
-    title: "Annual Leistic Installation & Undergraduate Fellowship Gala 2025",
-    summary: "Official installation ceremony of incoming Executive Board officers and celebration of outstanding humanitarian service achievements across Uva Province.",
-    issuer: "Secretariat & Organizing Council",
-    link: "/events",
-  },
-];
-
 export default function EventsPreview() {
   const { club } = useClub();
-  const [notices, setNotices] = useState<NoticeItem[]>(INITIAL_NOTICES);
+  const [notices, setNotices] = useState<NoticeItem[]>(INITIAL_ANNOUNCEMENTS);
 
   useEffect(() => {
     if (isFirebaseConfigured()) {
-      getFirestoreCollection<NoticeItem>("announcements", INITIAL_NOTICES).then((items) => {
-        if (items && items.length > 0) {
-          setNotices(items.slice(0, 4));
+      const unsubscribe = subscribeFirestoreCollection<NoticeItem>(
+        "announcements",
+        INITIAL_ANNOUNCEMENTS,
+        (items) => {
+          if (items && items.length > 0) {
+            setNotices(items.slice(0, 4));
+          }
         }
-      });
+      );
+      return () => {
+        if (typeof unsubscribe === "function") unsubscribe();
+      };
     }
   }, []);
 
