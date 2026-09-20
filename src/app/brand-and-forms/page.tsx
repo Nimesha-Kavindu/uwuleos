@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import initialDocumentsData from "@/data/documents.json";
 import {
   Download,
   FileText,
@@ -27,6 +26,7 @@ import {
   isFirebaseConfigured,
   getFirestoreCollection,
   subscribeFirestoreCollection,
+  INITIAL_DOCUMENTS,
 } from "@/lib/firebase";
 
 interface DocumentItem {
@@ -42,7 +42,7 @@ interface DocumentItem {
 
 export default function BrandAndFormsPage() {
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
-  const [documents, setDocuments] = useState<DocumentItem[]>(initialDocumentsData);
+  const [documents, setDocuments] = useState<DocumentItem[]>(INITIAL_DOCUMENTS);
 
   useEffect(() => {
     // Load documents from localStorage and Firestore
@@ -62,7 +62,7 @@ export default function BrandAndFormsPage() {
       if (isFirebaseConfigured()) {
         const unsubscribe = subscribeFirestoreCollection<DocumentItem>(
           "documents",
-          initialDocumentsData,
+          INITIAL_DOCUMENTS,
           (docs) => {
             if (docs && docs.length > 0) {
               setDocuments(docs);

@@ -2,10 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import initialProjectsData from "@/data/projects.json";
-import initialMagazinesData from "@/data/magazines.json";
-import initialLeadershipData from "@/data/leadership.json";
-import initialDocumentsData from "@/data/documents.json";
 import {
   Layers,
   Megaphone,
@@ -60,6 +56,10 @@ import {
   INITIAL_EVENTS,
   INITIAL_GALLERY_PHOTOS,
   INITIAL_IMPACT_STATS,
+  INITIAL_PROJECTS,
+  INITIAL_MAGAZINES,
+  INITIAL_DOCUMENTS,
+  INITIAL_LEADERSHIP,
 } from "@/lib/firebase";
 
 // Types
@@ -190,11 +190,11 @@ export default function AdminPage() {
   // App Data State
   const [announcements, setAnnouncements] = useState<Announcement[]>(INITIAL_ANNOUNCEMENTS);
   const [events, setEvents] = useState<EventItem[]>(INITIAL_EVENTS);
-  const [projects, setProjects] = useState<ProjectItem[]>(initialProjectsData);
-  const [magazines, setMagazines] = useState<MagazineItem[]>(initialMagazinesData);
-  const [documents, setDocuments] = useState<DocumentItem[]>(initialDocumentsData);
+  const [projects, setProjects] = useState<ProjectItem[]>(INITIAL_PROJECTS);
+  const [magazines, setMagazines] = useState<MagazineItem[]>(INITIAL_MAGAZINES);
+  const [documents, setDocuments] = useState<DocumentItem[]>(INITIAL_DOCUMENTS);
   const [gallery, setGallery] = useState<GalleryPhotoItem[]>(INITIAL_GALLERY_PHOTOS);
-  const [leadership, setLeadership] = useState<any>(initialLeadershipData);
+  const [leadership, setLeadership] = useState<any>(INITIAL_LEADERSHIP);
   const [impactStats, setImpactStats] = useState<any>(INITIAL_IMPACT_STATS);
   const [members, setMembers] = useState<MemberApplicant[]>([]);
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
@@ -322,19 +322,19 @@ export default function AdminPage() {
       getFirestoreCollection<EventItem>("events", INITIAL_EVENTS).then((data) => {
         if (data && data.length > 0) setEvents(data);
       });
-      getFirestoreCollection<ProjectItem>("projects", initialProjectsData).then((data) => {
+      getFirestoreCollection<ProjectItem>("projects", INITIAL_PROJECTS).then((data) => {
         if (data && data.length > 0) setProjects(data);
       });
-      getFirestoreCollection<MagazineItem>("magazines", initialMagazinesData).then((data) => {
+      getFirestoreCollection<MagazineItem>("magazines", INITIAL_MAGAZINES).then((data) => {
         if (data && data.length > 0) setMagazines(data);
       });
-      getFirestoreCollection<DocumentItem>("documents", initialDocumentsData).then((docs) => {
+      getFirestoreCollection<DocumentItem>("documents", INITIAL_DOCUMENTS).then((docs) => {
         if (docs && docs.length > 0) setDocuments(docs);
       });
       getFirestoreCollection<GalleryPhotoItem>("gallery", INITIAL_GALLERY_PHOTOS).then((data) => {
         if (data && data.length > 0) setGallery(data);
       });
-      getFirestoreDoc<any>("leadership", "current", initialLeadershipData).then((data) => {
+      getFirestoreDoc<any>("leadership", "current", INITIAL_LEADERSHIP).then((data) => {
         if (data && (data.president || data.excoOfficers)) setLeadership(data);
       });
       getFirestoreDoc<any>("settings", "impact_stats", INITIAL_IMPACT_STATS).then((data) => {

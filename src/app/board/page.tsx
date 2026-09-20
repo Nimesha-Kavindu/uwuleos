@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import initialLeadershipData from "@/data/leadership.json";
 import {
   Mail,
   GraduationCap,
@@ -13,6 +12,7 @@ import {
 import {
   isFirebaseConfigured,
   getFirestoreDoc,
+  INITIAL_LEADERSHIP,
 } from "@/lib/firebase";
 
 // Minimal Clean Avatar (Neutral, refined, and automatically renders image when provided)
@@ -53,11 +53,11 @@ function MinimalAvatar({
 
 export default function BoardPage() {
   const [activeTab, setActiveTab] = useState<"all" | "advisory" | "exco" | "directors">("all");
-  const [leadership, setLeadership] = useState<any>(initialLeadershipData);
+  const [leadership, setLeadership] = useState<any>(INITIAL_LEADERSHIP);
 
   useEffect(() => {
     if (isFirebaseConfigured()) {
-      getFirestoreDoc<any>("leadership", "current", initialLeadershipData).then((doc) => {
+      getFirestoreDoc<any>("leadership", "current", INITIAL_LEADERSHIP).then((doc) => {
         if (doc && (doc.president || doc.excoOfficers)) {
           setLeadership(doc);
         }
@@ -65,14 +65,14 @@ export default function BoardPage() {
     }
   }, []);
 
-  const ADVISORY_MEMBERS = leadership.advisoryCouncil || initialLeadershipData.advisoryCouncil;
-  const PRESIDENT_DATA = leadership.president || initialLeadershipData.president;
-  const EXCO_OFFICERS = leadership.excoOfficers || initialLeadershipData.excoOfficers;
-  const DIRECTORS = leadership.directors || initialLeadershipData.directors;
-  const GOVERNANCE = leadership.governance || initialLeadershipData.governance;
-  const leisticYear = leadership.leisticYear || initialLeadershipData.leisticYear;
-  const district = leadership.district || initialLeadershipData.district;
-  const sponsoringClub = leadership.sponsoringClub || initialLeadershipData.sponsoringClub;
+  const ADVISORY_MEMBERS = leadership.advisoryCouncil || INITIAL_LEADERSHIP.advisoryCouncil;
+  const PRESIDENT_DATA = leadership.president || INITIAL_LEADERSHIP.president;
+  const EXCO_OFFICERS = leadership.excoOfficers || INITIAL_LEADERSHIP.excoOfficers;
+  const DIRECTORS = leadership.directors || INITIAL_LEADERSHIP.directors;
+  const GOVERNANCE = leadership.governance || INITIAL_LEADERSHIP.governance;
+  const leisticYear = leadership.leisticYear || INITIAL_LEADERSHIP.leisticYear;
+  const district = leadership.district || INITIAL_LEADERSHIP.district;
+  const sponsoringClub = leadership.sponsoringClub || INITIAL_LEADERSHIP.sponsoringClub;
 
   const totalCount = ADVISORY_MEMBERS.length + 1 + EXCO_OFFICERS.length + DIRECTORS.length;
 

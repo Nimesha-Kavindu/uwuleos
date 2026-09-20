@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import initialMagazinesData from "@/data/magazines.json";
 import {
   isFirebaseConfigured,
   subscribeFirestoreCollection,
+  INITIAL_MAGAZINES,
 } from "@/lib/firebase";
 import {
   BookOpen,
@@ -38,7 +38,7 @@ interface MagazineItem {
 }
 
 export default function MagazinePage() {
-  const [magazinesList, setMagazinesList] = useState<MagazineItem[]>(initialMagazinesData);
+  const [magazinesList, setMagazinesList] = useState<MagazineItem[]>(INITIAL_MAGAZINES);
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -46,7 +46,7 @@ export default function MagazinePage() {
     if (isFirebaseConfigured()) {
       const unsubscribe = subscribeFirestoreCollection<MagazineItem>(
         "magazines",
-        initialMagazinesData,
+        INITIAL_MAGAZINES,
         (data) => {
           if (data && data.length > 0) {
             setMagazinesList(data);

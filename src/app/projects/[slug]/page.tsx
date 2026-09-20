@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import projectsData from "@/data/projects.json";
 import {
   isFirebaseConfigured,
   subscribeFirestoreCollection,
+  INITIAL_PROJECTS,
 } from "@/lib/firebase";
 import {
   ArrowLeft,
@@ -72,13 +72,13 @@ interface ProjectItem {
 export default function SingleProjectPage() {
   const params = useParams();
   const slug = params?.slug as string;
-  const [projectsList, setProjectsList] = useState<ProjectItem[]>(projectsData);
+  const [projectsList, setProjectsList] = useState<ProjectItem[]>(INITIAL_PROJECTS);
 
   useEffect(() => {
     if (isFirebaseConfigured()) {
       const unsubscribe = subscribeFirestoreCollection<ProjectItem>(
         "projects",
-        projectsData,
+        INITIAL_PROJECTS,
         (data) => {
           if (data && data.length > 0) {
             setProjectsList(data);
@@ -91,7 +91,7 @@ export default function SingleProjectPage() {
     }
   }, []);
 
-  const project = projectsList.find((p) => p.slug === slug) || projectsData.find((p) => p.slug === slug) || projectsList[0];
+  const project = projectsList.find((p) => p.slug === slug) || INITIAL_PROJECTS.find((p) => p.slug === slug) || projectsList[0];
 
   return (
     <div className="min-h-screen bg-[#FAFAFC] text-slate-900">
@@ -260,7 +260,7 @@ export default function SingleProjectPage() {
               <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs text-xs space-y-3">
                 <div className="text-xs font-bold text-slate-700">Other Recent Initiatives</div>
                 <div className="space-y-2">
-                  {projectsData
+                  {projectsList
                     .filter((p) => p.slug !== project.slug)
                     .slice(0, 3)
                     .map((other) => (

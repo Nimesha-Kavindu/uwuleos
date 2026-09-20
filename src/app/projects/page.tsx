@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import projectsData from "@/data/projects.json";
 import {
   isFirebaseConfigured,
   subscribeFirestoreCollection,
+  INITIAL_PROJECTS,
 } from "@/lib/firebase";
 import {
   Search,
@@ -63,7 +63,7 @@ interface ProjectItem {
 }
 
 export default function ProjectsPage() {
-  const [projectsList, setProjectsList] = useState<ProjectItem[]>(projectsData);
+  const [projectsList, setProjectsList] = useState<ProjectItem[]>(INITIAL_PROJECTS);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -71,7 +71,7 @@ export default function ProjectsPage() {
     if (isFirebaseConfigured()) {
       const unsubscribe = subscribeFirestoreCollection<ProjectItem>(
         "projects",
-        projectsData,
+        INITIAL_PROJECTS,
         (data) => {
           if (data && data.length > 0) {
             setProjectsList(data);
@@ -137,7 +137,7 @@ export default function ProjectsPage() {
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
                   }`}
                 >
-                  {cat === "all" ? `All Projects (${projectsData.length})` : cat}
+                  {cat === "all" ? `All Projects (${projectsList.length})` : cat}
                 </button>
               ))}
             </div>
