@@ -276,84 +276,84 @@ export default function BoardPage() {
             </div>
           </div>
 
-          {/* Search & Filter Bar */}
-          <div className="pt-6 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Search & Filter Toolbar */}
+          <div className="pt-6 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             
-            {/* Minimal Filter Tabs */}
-            <div className="flex items-center gap-1 bg-slate-100/90 p-1 rounded-xl border border-slate-200/70 overflow-x-auto max-w-full">
+            {/* Clean Wrapping Category Pills */}
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => setActiveTab("all")}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs transition-all ${
                   activeTab === "all"
-                    ? "bg-white text-slate-900 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#003B99] text-white shadow-xs font-semibold ring-2 ring-blue-100"
+                    : "bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 border border-slate-200/60 font-medium"
                 }`}
               >
-                All ({totalCount})
+                All Leaders <span className={activeTab === "all" ? "text-blue-200 font-bold ml-1" : "text-slate-400 font-normal ml-1"}>({totalCount})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("advisory")}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs transition-all ${
                   activeTab === "advisory"
-                    ? "bg-white text-slate-900 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#003B99] text-white shadow-xs font-semibold ring-2 ring-blue-100"
+                    : "bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 border border-slate-200/60 font-medium"
                 }`}
               >
-                Advisors ({ADVISORY_MEMBERS.length})
+                Advisors <span className={activeTab === "advisory" ? "text-blue-200 font-bold ml-1" : "text-slate-400 font-normal ml-1"}>({ADVISORY_MEMBERS.length})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("exco")}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs transition-all ${
                   activeTab === "exco"
-                    ? "bg-white text-slate-900 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#003B99] text-white shadow-xs font-semibold ring-2 ring-blue-100"
+                    : "bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 border border-slate-200/60 font-medium"
                 }`}
               >
-                EXCO ({EXCO_OFFICERS.length + 1 + (IPP_DATA ? 1 : 0)})
+                EXCO Council <span className={activeTab === "exco" ? "text-blue-200 font-bold ml-1" : "text-slate-400 font-normal ml-1"}>({EXCO_OFFICERS.length + 1 + (IPP_DATA ? 1 : 0)})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("directors")}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs transition-all ${
                   activeTab === "directors"
-                    ? "bg-white text-slate-900 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#003B99] text-white shadow-xs font-semibold ring-2 ring-blue-100"
+                    : "bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 border border-slate-200/60 font-medium"
                 }`}
               >
-                Directors ({DIRECTORS.length})
+                Portfolio Directors <span className={activeTab === "directors" ? "text-blue-200 font-bold ml-1" : "text-slate-400 font-normal ml-1"}>({DIRECTORS.length})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("assistants")}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs transition-all ${
                   activeTab === "assistants"
-                    ? "bg-white text-slate-900 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#003B99] text-white shadow-xs font-semibold ring-2 ring-blue-100"
+                    : "bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 border border-slate-200/60 font-medium"
                 }`}
               >
-                Assistants &amp; Project ({ASSISTANT_DIRECTORS.length})
+                Assistants &amp; Project <span className={activeTab === "assistants" ? "text-blue-200 font-bold ml-1" : "text-slate-400 font-normal ml-1"}>({ASSISTANT_DIRECTORS.length})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("crew")}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs transition-all ${
                   activeTab === "crew"
-                    ? "bg-white text-slate-900 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#003B99] text-white shadow-xs font-semibold ring-2 ring-blue-100"
+                    : "bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 border border-slate-200/60 font-medium"
                 }`}
               >
-                Media &amp; Crew ({CREATIVE_CREW.length})
+                Creative Crew <span className={activeTab === "crew" ? "text-blue-200 font-bold ml-1" : "text-slate-400 font-normal ml-1"}>({CREATIVE_CREW.length})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("initiatives")}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs transition-all ${
                   activeTab === "initiatives"
-                    ? "bg-white text-slate-900 shadow-xs font-semibold"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#003B99] text-white shadow-xs font-semibold ring-2 ring-blue-100"
+                    : "bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 border border-slate-200/60 font-medium"
                 }`}
               >
                 Signature Projects
@@ -361,14 +361,14 @@ export default function BoardPage() {
             </div>
 
             {/* Live Search Input */}
-            <div className="relative w-full md:w-72">
+            <div className="relative w-full lg:w-72 shrink-0">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by name, role, faculty..."
-                className="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white text-xs rounded-xl border border-slate-200/80 focus:border-[#003B99] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all text-slate-900 placeholder:text-slate-400"
+                className="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white text-xs rounded-xl border border-slate-200 focus:border-[#003B99] focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all text-slate-900 placeholder:text-slate-400 shadow-2xs"
               />
               {searchQuery && (
                 <button
