@@ -1097,26 +1097,26 @@ export default function AdminPage() {
         </div>
       </header>
 
-      {/* Navigation Tabs Header (Clean scrollable bar without ugly scrollbar) */}
-      <div className="bg-[#F8FAFC] border-b border-slate-200/90 shadow-2xs sticky top-0 z-30">
+      {/* Navigation Tabs Header (Matching Main Website Styling) */}
+      <div className="bg-white/95 backdrop-blur-md border-b border-slate-200/90 sticky top-0 z-30 shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-1.5 py-2.5 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {[
-              { id: "overview", label: "Overview", icon: Layers },
-              { id: "club_profile", label: "Club Profile & Contact", icon: Building2 },
-              { id: "hero_slides", label: `Hero Slides (${heroSlidesList.length})`, icon: Sparkles },
-              { id: "pillars", label: `Pillars (${pillarsList.length})`, icon: Award },
-              { id: "testimonials", label: `Testimonials (${testimonialsList.length})`, icon: MessageSquare },
-              { id: "announcements", label: `Announcements (${announcements.length})`, icon: Megaphone },
-              { id: "events", label: `Events (${events.length})`, icon: Calendar },
-              { id: "projects", label: `Projects (${projects.length})`, icon: FolderKanban },
-              { id: "magazines", label: `Magazines (${magazines.length})`, icon: BookOpen },
-              { id: "documents", label: `Brand & Forms (${documents.length})`, icon: FileText },
-              { id: "leadership", label: "Leadership Board", icon: Users },
-              { id: "gallery", label: `Gallery (${gallery.length})`, icon: ImageIcon },
-              { id: "stats", label: "Impact Stats", icon: Sliders },
-              { id: "members", label: `Applicants (${members.length})`, icon: UserCheck },
-              { id: "inquiries", label: `Inquiries (${inquiries.length})`, icon: Mail },
+              { id: "overview", label: "Overview", icon: Layers, count: null },
+              { id: "club_profile", label: "Club Profile & Contact", icon: Building2, count: null },
+              { id: "hero_slides", label: "Hero Slides", icon: Sparkles, count: heroSlidesList.length },
+              { id: "pillars", label: "Pillars", icon: Award, count: pillarsList.length },
+              { id: "testimonials", label: "Testimonials", icon: MessageSquare, count: testimonialsList.length },
+              { id: "announcements", label: "Announcements", icon: Megaphone, count: announcements.length },
+              { id: "events", label: "Events", icon: Calendar, count: events.length },
+              { id: "projects", label: "Projects", icon: FolderKanban, count: projects.length },
+              { id: "magazines", label: "Magazines", icon: BookOpen, count: magazines.length },
+              { id: "documents", label: "Brand & Forms", icon: FileText, count: documents.length },
+              { id: "leadership", label: "Leadership Board", icon: Users, count: null },
+              { id: "gallery", label: "Gallery", icon: ImageIcon, count: gallery.length },
+              { id: "stats", label: "Impact Stats", icon: Sliders, count: null },
+              { id: "members", label: "Applicants", icon: UserCheck, count: members.length },
+              { id: "inquiries", label: "Inquiries", icon: Mail, count: inquiries.length },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -1124,7 +1124,7 @@ export default function AdminPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs whitespace-nowrap transition-all duration-150 shrink-0 ${
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs whitespace-nowrap transition-all duration-150 shrink-0 ${
                     isActive
                       ? "bg-[#003B99] text-white shadow-xs font-bold"
                       : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
@@ -1132,6 +1132,13 @@ export default function AdminPage() {
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-400"}`} />
                   <span>{tab.label}</span>
+                  {tab.count !== null && (
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                      isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600"
+                    }`}>
+                      {tab.count}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -1148,35 +1155,50 @@ export default function AdminPage() {
         {activeTab === "overview" && (
           <div className="space-y-8 animate-in fade-in duration-200">
             
-            {/* Executive Welcome Banner */}
-            <div className="relative overflow-hidden bg-gradient-to-r from-[#050E21] via-[#003B99] to-[#002266] rounded-2xl p-6 sm:p-10 text-white shadow-lg border border-slate-800">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-leo-cyan/15 rounded-full blur-3xl pointer-events-none" />
-              
+            {/* Executive Welcome Hero Banner (Clean Brand Pearl/White with Cyan/Navy accents matching website) */}
+            <div className="relative overflow-hidden bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-slate-200/90 shadow-xs">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-blue-50/70 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+              <div className="absolute bottom-0 right-1/3 w-64 h-64 bg-cyan-50/60 rounded-full blur-3xl pointer-events-none" />
+
               <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div className="space-y-2.5 max-w-2xl">
-                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-white/10 border border-white/15 text-[10px] font-mono font-bold tracking-wider text-leo-cyan uppercase">
-                    <Sparkles className="w-3 h-3 text-leo-cyan" />
-                    <span>UWU Leos Cloud Control • District 306 D10</span>
+                <div className="space-y-3 max-w-2xl">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-[11px] font-bold tracking-wide text-[#003B99] uppercase">
+                    <Sparkles className="w-3.5 h-3.5 text-[#00A3E0]" />
+                    <span>Officer CMS Hub • Leo District 306 D10</span>
                   </div>
                   
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white tracking-tight">
-                    Welcome to Content Control
+                  <h2 className="text-2xl sm:text-3xl lg:text-3xl font-extrabold font-heading text-slate-900 tracking-tight">
+                    Leo Club Content Control Hub
                   </h2>
                   
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                    All updates made in this portal synchronize in real-time with Google Firebase Firestore (<code className="font-mono text-leo-cyan">uwu-leo</code>), reflecting immediately on the public website.
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                    Manage and publish official website content in real time. Changes made here directly update the public landing page, projects showcase, announcements, and member systems.
                   </p>
                 </div>
 
                 <div className="shrink-0 flex flex-wrap items-center gap-3">
                   <button
-                    onClick={handleSeedDatabase}
-                    disabled={isSeeding}
-                    className="px-5 py-3 rounded-xl bg-white text-[#003B99] hover:bg-slate-50 font-bold text-xs shadow-md transition-all flex items-center gap-2 hover:scale-[1.02] active:scale-95"
+                    onClick={() => setActiveTab("projects")}
+                    className="px-4 py-2.5 rounded-xl bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs shadow-xs transition-all flex items-center gap-2"
                   >
-                    <Database className={`w-4 h-4 ${isSeeding ? "animate-spin" : ""}`} />
-                    <span>{isSeeding ? "Seeding Database..." : "Seed Initial Datasets into Firebase"}</span>
+                    <Plus className="w-4 h-4" />
+                    <span>New Project</span>
                   </button>
+                  <button
+                    onClick={() => setActiveTab("announcements")}
+                    className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-semibold text-xs border border-slate-200/80 transition-all flex items-center gap-2"
+                  >
+                    <Megaphone className="w-4 h-4 text-slate-500" />
+                    <span>Post News</span>
+                  </button>
+                  <Link
+                    href="/"
+                    target="_blank"
+                    className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-[#003B99] font-bold text-xs border border-blue-200 transition-all flex items-center gap-2 shadow-xs"
+                  >
+                    <ExternalLink className="w-4 h-4 text-[#003B99]" />
+                    <span>Open Live Site</span>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -1184,15 +1206,15 @@ export default function AdminPage() {
             {/* Quick Metrics Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
               {[
-                { label: "Active Projects", count: projects.length, tab: "projects", icon: FolderKanban, color: "text-blue-600", bg: "bg-blue-50" },
-                { label: "Hero Slides", count: heroSlidesList.length, tab: "hero_slides", icon: Sparkles, color: "text-amber-600", bg: "bg-amber-50" },
-                { label: "Service Pillars", count: pillarsList.length, tab: "pillars", icon: Award, color: "text-emerald-600", bg: "bg-emerald-50" },
-                { label: "Testimonials", count: testimonialsList.length, tab: "testimonials", icon: MessageSquare, color: "text-cyan-600", bg: "bg-cyan-50" },
-                { label: "Announcements", count: announcements.length, tab: "announcements", icon: Megaphone, color: "text-purple-600", bg: "bg-purple-50" },
+                { label: "Active Projects", count: projects.length, tab: "projects", icon: FolderKanban, color: "text-[#003B99]", bg: "bg-blue-50" },
+                { label: "Hero Slides", count: heroSlidesList.length, tab: "hero_slides", icon: Sparkles, color: "text-[#F5A800]", bg: "bg-amber-50" },
+                { label: "Service Pillars", count: pillarsList.length, tab: "pillars", icon: Award, color: "text-[#00A3E0]", bg: "bg-cyan-50" },
+                { label: "Testimonials", count: testimonialsList.length, tab: "testimonials", icon: MessageSquare, color: "text-[#003B99]", bg: "bg-blue-50" },
+                { label: "Announcements", count: announcements.length, tab: "announcements", icon: Megaphone, color: "text-[#00A3E0]", bg: "bg-cyan-50" },
                 { label: "Events Scheduled", count: events.length, tab: "events", icon: Calendar, color: "text-rose-600", bg: "bg-rose-50" },
-                { label: "Publications", count: magazines.length, tab: "magazines", icon: BookOpen, color: "text-blue-600", bg: "bg-blue-50" },
+                { label: "Publications", count: magazines.length, tab: "magazines", icon: BookOpen, color: "text-[#003B99]", bg: "bg-blue-50" },
                 { label: "Brand Documents", count: documents.length, tab: "documents", icon: FileText, color: "text-indigo-600", bg: "bg-indigo-50" },
-                { label: "Gallery Photos", count: gallery.length, tab: "gallery", icon: ImageIcon, color: "text-pink-600", bg: "bg-pink-50" },
+                { label: "Gallery Photos", count: gallery.length, tab: "gallery", icon: ImageIcon, color: "text-[#F5A800]", bg: "bg-amber-50" },
                 { label: "Member Applicants", count: members.length, tab: "members", icon: UserCheck, color: "text-emerald-600", bg: "bg-emerald-50" },
               ].map((card) => {
                 const Icon = card.icon;
@@ -1200,16 +1222,21 @@ export default function AdminPage() {
                   <div
                     key={card.label}
                     onClick={() => setActiveTab(card.tab as any)}
-                    className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md hover:border-[#003B99]/40 transition-all cursor-pointer flex flex-col justify-between group"
+                    className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md hover:border-[#003B99] transition-all cursor-pointer flex flex-col justify-between group"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-800 transition-colors">{card.label}</span>
+                      <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-900 transition-colors">{card.label}</span>
                       <div className={`w-8 h-8 rounded-lg ${card.bg} ${card.color} flex items-center justify-center shrink-0`}>
                         <Icon className="w-4 h-4" />
                       </div>
                     </div>
-                    <div className="text-2xl font-extrabold text-slate-900 font-heading mt-3">
-                      {card.count}
+                    <div className="mt-3 flex items-end justify-between">
+                      <span className="text-2xl sm:text-3xl font-extrabold text-[#003B99] font-heading">
+                        {card.count}
+                      </span>
+                      <span className="text-[11px] font-semibold text-slate-400 group-hover:text-[#003B99] flex items-center gap-0.5 transition-colors">
+                        Manage <ChevronRight className="w-3 h-3" />
+                      </span>
                     </div>
                   </div>
                 );
