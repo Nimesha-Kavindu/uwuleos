@@ -1097,6 +1097,181 @@ export const INITIAL_IMPACT_STATS = {
     "Where the Leo Club of Uva Wellassa University stands today in our mission of service and youth empowerment.",
 };
 
+export const INITIAL_HERO_SLIDES = [
+  {
+    id: 1,
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85",
+    tag: "UVA WELLASSA UNIVERSITY",
+    title: "Undergraduates Leading Through Service",
+    subtitle: "Fostering leadership, fellowship, and social responsibility",
+  },
+  {
+    id: 2,
+    image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=85",
+    tag: "PROJECT SIPNANA",
+    title: "Rural School Upliftment in Uva",
+    subtitle: "Distributing books, stationery & STEM support in Passara",
+  },
+  {
+    id: 3,
+    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=85",
+    tag: "ENVIRONMENT & GREEN UVA",
+    title: "Central Highlands Reforestation Drive",
+    subtitle: "Preserving biodiversity & water catchments across Badulla",
+  },
+  {
+    id: 4,
+    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=85",
+    tag: "COMMUNITY HEALTHCARE",
+    title: "UWU Annual Mega Blood Donation",
+    subtitle: "Replenishing critical reserves for Badulla Teaching Hospital",
+  },
+];
+
+export const INITIAL_TESTIMONIALS = [
+  {
+    id: "test-1",
+    quote:
+      "Being part of the Leo Club of Uva Wellassa University shaped my leadership character. Leading rural school renovation drives in Passara showed me the tangible difference university undergraduates can create when united by a single vision.",
+    author: "Leo Rashmi Jayawardena",
+    role: "Immediate Past President (2023/24)",
+    faculty: "Faculty of Applied Sciences",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80",
+    tag: "LEADERSHIP & SERVICE",
+  },
+  {
+    id: "test-2",
+    quote:
+      "Serving as Director of Health & Wellbeing gave me firsthand experience in orchestrating hospital partnerships and mobilizing 200+ blood donors in a single day. The professional maturity you gain here is unmatched.",
+    author: "Leo Kavindu Bandara",
+    role: "Director of Health & Wellbeing (2024/25)",
+    faculty: "Faculty of Management",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80",
+    tag: "COMMUNITY HEALTH",
+  },
+  {
+    id: "test-3",
+    quote:
+      "The Leo Club of UWU exemplifies what Lions Clubs International stands for: youthful energy, unshakeable integrity, and deep compassion for the less privileged communities across Uva Province.",
+    author: "Lion Dr. Sunil Wickramasinghe PMJF",
+    role: "Guiding Lion • Lions Club of Uva Capital",
+    faculty: "District 306 D10 Advisory",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=250&q=80",
+    tag: "LIONS HERITAGE",
+  },
+];
+
+export const INITIAL_PILLARS = [
+  {
+    id: "education",
+    title: "Educational Upliftment & STEM",
+    tagline: "Empowering rural schools and students across Uva",
+    description:
+      "Annual school book donation drives, rural school library renovations, and STEM workshops for schoolchildren in Badulla and Monaragala.",
+    icon: "GraduationCap",
+    color: "blue",
+  },
+  {
+    id: "environment",
+    title: "Environment & Green Uva",
+    tagline: "Preserving Central Highlands biodiversity",
+    description:
+      "Reforestation drives, university campus sustainability initiatives, plastic-free campaigns, and nature trail preservation in Uva Province.",
+    icon: "TreePine",
+    color: "emerald",
+  },
+  {
+    id: "healthcare",
+    title: "Community Health & Blood Aid",
+    tagline: "Saving lives and promoting rural wellbeing",
+    description:
+      "Annual university mega blood donation campaign, rural medical and eye screening camps, and mental health awareness programs.",
+    icon: "HeartHandshake",
+    color: "rose",
+  },
+  {
+    id: "youth-empowerment",
+    title: "Undergraduate Leadership & Skills",
+    tagline: "Developing next-generation leaders",
+    description:
+      "Professional development workshops, public speaking bootcamps, executive training, and inter-university fellowship events.",
+    icon: "Users",
+    color: "indigo",
+  },
+  {
+    id: "disaster-relief",
+    title: "Disaster Relief & Community Aid",
+    tagline: "Rapid response to communities in crisis",
+    description:
+      "Emergency flood and landslide relief operations, food distribution for underprivileged families, and community winter warmth packs in Passara.",
+    icon: "ShieldAlert",
+    color: "amber",
+  },
+  {
+    id: "vision-care",
+    title: "Vision for All & Eye Care",
+    tagline: "Lions global heritage in sight preservation",
+    description:
+      "Free pediatric and elderly eye screening camps, distribution of corrective spectacles, and cataract surgery financial assistance drives.",
+    icon: "Eye",
+    color: "cyan",
+  },
+];
+
+export const INITIAL_CLUB_PROFILE = {
+  id: "leo-uwu",
+  name: "Leo Club of Uva Wellassa University",
+  shortName: "UWU Leos",
+  type: "club",
+  district: "District 306 D10",
+  multipleDistrict: "Multiple District 306",
+  country: "Sri Lanka",
+  charterYear: 2018,
+  sponsoringLionsClub: "Lions Club of Uva Capital",
+  tagline: "Value Addition • Youth Leadership • Community Service",
+  motto: "Leadership, Experience, Opportunity",
+  description:
+    "The premier youth service organization of Uva Wellassa University of Sri Lanka (District 306 D10), empowering undergraduates to lead meaningful humanitarian projects, foster fellowship, and uplift communities across Uva Province and beyond.",
+  logos: {
+    main: "/logos/uwu-leo-logo.png",
+    lion: "/logos/lions-international.png",
+    leo: "/logos/uwu-leo-seal.png",
+    district: "/logos/district-306c2.png",
+  },
+  contact: {
+    email: "leoclub@uwu.ac.lk",
+    phone: "+94 55 222 6580",
+    address: "Uva Wellassa University, Passara Road, Badulla 90000, Sri Lanka",
+    meetingSchedule: "Bi-weekly General Meeting - Alternate Wednesdays at 4:30 PM (UWU Campus / Hybrid)",
+    socials: {
+      facebook: "https://facebook.com/uwuleos",
+      instagram: "https://instagram.com/uwuleos",
+      linkedin: "https://linkedin.com/company/leo-club-of-uva-wellassa-university",
+      youtube: "https://youtube.com/@uwuleos",
+      twitter: "",
+    },
+  },
+};
+
+export const INITIAL_FAQS = [
+  {
+    q: "How can corporations or sponsors collaborate with UWU Leos for CSR?",
+    a: "We collaborate with companies, NGOs, and foundations on impactful community initiatives. We offer end-to-end project planning, student volunteer mobilization across 4 faculties, transparent accounting, and media coverage across Leo District 306 D10.",
+  },
+  {
+    q: "How quickly does the Secretariat respond to messages?",
+    a: "Our Secretariat and Executive Council check official correspondence daily. Standard inquiries receive a response within 24 to 48 hours. For urgent matters, you can reach us on our hotline.",
+  },
+  {
+    q: "Can other Leo or Lions clubs organize joint twinning projects?",
+    a: "Yes! We welcome national and international twinning partnerships. Select 'Project Collaboration' in the form or email our secretariat directly.",
+  },
+  {
+    q: "Where and when are regular club meetings conducted?",
+    a: "General meetings are held bi-weekly on the 1st & 3rd Sundays at the Uva Wellassa University main campus auditorium or student center, with hybrid Zoom access for alumni and remote members.",
+  },
+];
+
 // ==============================================================================
 // FIRESTORE CRUD & REAL-TIME HELPERS
 // ==============================================================================
@@ -1201,6 +1376,43 @@ export function subscribeFirestoreCollection<T extends { id: string }>(
     );
   } catch (err) {
     console.warn(`Failed to initialize Firestore listener for ${collectionName}:`, err);
+    callback(fallbackData);
+    return () => {};
+  }
+}
+
+/**
+ * Subscribe to real-time updates on a single Firestore document
+ */
+export function subscribeFirestoreDoc<T>(
+  collectionName: string,
+  docId: string,
+  fallbackData: T,
+  callback: (data: T) => void
+): Unsubscribe | (() => void) {
+  if (!isFirebaseConfigured() || !db) {
+    callback(fallbackData);
+    return () => {};
+  }
+
+  try {
+    const docRef = doc(db, collectionName, docId);
+    return onSnapshot(
+      docRef,
+      (snap) => {
+        if (!snap.exists()) {
+          callback(fallbackData);
+          return;
+        }
+        callback({ ...snap.data(), id: snap.id } as T);
+      },
+      (err) => {
+        console.warn(`Firestore real-time subscription error for ${collectionName}/${docId}:`, err);
+        callback(fallbackData);
+      }
+    );
+  } catch (err) {
+    console.warn(`Failed to initialize Firestore doc listener for ${collectionName}/${docId}:`, err);
     callback(fallbackData);
     return () => {};
   }
@@ -1312,10 +1524,30 @@ export async function seedFirestoreData(): Promise<{
     await saveFirestoreDoc("settings", "impact_stats", INITIAL_IMPACT_STATS);
     count++;
 
+    // 9. Club Profile & Contact Info
+    await saveFirestoreDoc("settings", "club_profile", INITIAL_CLUB_PROFILE);
+    count++;
+
+    // 10. Hero Carousel Slides
+    await saveFirestoreDoc("settings", "hero_slides", { slides: INITIAL_HERO_SLIDES });
+    count++;
+
+    // 11. Testimonials / Reflections
+    await saveFirestoreDoc("settings", "testimonials", { testimonials: INITIAL_TESTIMONIALS });
+    count++;
+
+    // 12. Pillars / Service Causes
+    await saveFirestoreDoc("settings", "pillars", { pillars: INITIAL_PILLARS });
+    count++;
+
+    // 13. FAQs
+    await saveFirestoreDoc("settings", "faqs", { faqs: INITIAL_FAQS });
+    count++;
+
     return {
       success: true,
       seededCount: count,
-      message: `Successfully seeded ${count} documents across Projects, Magazines, Documents, Events, Gallery, Leadership, and Stats into Firestore!`,
+      message: `Successfully seeded ${count} documents across Projects, Magazines, Documents, Events, Gallery, Leadership, Impact Stats, Club Profile, Hero Slides, Testimonials, Pillars, and FAQs into Firestore!`,
     };
   } catch (err: any) {
     console.error("Firestore seeding failed:", err);

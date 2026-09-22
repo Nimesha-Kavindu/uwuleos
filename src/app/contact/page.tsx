@@ -19,7 +19,8 @@ import {
 import { submitContactForm } from "@/lib/firebase";
 
 export default function ContactPage() {
-  const { club } = useClub();
+  const { club, faqs: dynamicFaqs } = useClub();
+  const faqsList = dynamicFaqs && dynamicFaqs.length > 0 ? dynamicFaqs : [];
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -46,25 +47,6 @@ export default function ContactPage() {
     setIsSubmitting(false);
     setSubmitted(true);
   };
-
-  const FAQS = [
-    {
-      q: "How can corporations or sponsors collaborate with UWU Leos for CSR?",
-      a: "We collaborate with companies, NGOs, and foundations on impactful community initiatives. We offer end-to-end project planning, student volunteer mobilization across 4 faculties, transparent accounting, and media coverage across Leo District 306 D10.",
-    },
-    {
-      q: "How quickly does the Secretariat respond to messages?",
-      a: "Our Secretariat and Executive Council check official correspondence daily. Standard inquiries receive a response within 24 to 48 hours. For urgent matters, you can reach us on our hotline.",
-    },
-    {
-      q: "Can other Leo or Lions clubs organize joint twinning projects?",
-      a: "Yes! We welcome national and international twinning partnerships. Select 'Project Collaboration' in the form or email our secretariat directly.",
-    },
-    {
-      q: "Where and when are regular club meetings conducted?",
-      a: "General meetings are held bi-weekly on the 1st & 3rd Sundays at the Uva Wellassa University main campus auditorium or student center, with hybrid Zoom access for alumni and remote members.",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-[#FAFAFC] text-slate-900">
@@ -359,7 +341,7 @@ export default function ContactPage() {
           </div>
 
           <div className="space-y-3">
-            {FAQS.map((faq, idx) => (
+            {faqsList.map((faq, idx) => (
               <div
                 key={idx}
                 className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50 hover:bg-slate-50 transition-colors"

@@ -19,7 +19,8 @@ import {
 import { submitMembershipApplicant } from "@/lib/firebase";
 
 export default function JoinPage() {
-  const { club } = useClub();
+  const { club, faqs: dynamicFaqs } = useClub();
+  const faqsList = dynamicFaqs && dynamicFaqs.length > 0 ? dynamicFaqs : [];
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -71,25 +72,6 @@ export default function JoinPage() {
     "Event Management & Sports",
   ];
 
-  const FAQS = [
-    {
-      q: "Do I need prior experience to join UWU Leos?",
-      a: "No! Most members join in their 1st year with zero prior experience. We provide full training in project management, leadership, and public speaking.",
-    },
-    {
-      q: "How will club activities affect my academic studies?",
-      a: "Academics always come first. Projects and meetings are held on weekends with flexible shifts so lectures and exam prep are never compromised.",
-    },
-    {
-      q: "What do I receive as an official Leo member?",
-      a: "You receive an official Lions International membership kit, gilded Leo lapel pin, verified leadership certificates, and access to national youth conferences.",
-    },
-    {
-      q: "Is there an orientation for new recruits?",
-      a: "Yes! After submitting this form, you will be invited to our New Recruits Orientation Mixer to meet senior mentors and fellow batchmates.",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-[#FAFAFC] text-slate-900">
       
@@ -98,15 +80,15 @@ export default function JoinPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2.5">
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-100 text-[11px] font-medium text-slate-600">
             <span className="w-1.5 h-1.5 rounded-full bg-[#003B99]" />
-            <span>District 306 D10 • Uva Wellassa University</span>
+            <span>{club.district} • {club.name}</span>
           </div>
           
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 font-heading">
-            Join the Leo Club of UWU
+            Join the {club.shortName}
           </h1>
 
           <p className="text-slate-500 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            Open to all undergraduates across all 4 faculties. Build leadership skills, connect with fellow students, and make a lasting impact.
+            Open to all undergraduates across all faculties. Build leadership skills, connect with fellow students, and make a lasting impact.
           </p>
         </div>
       </section>
@@ -388,7 +370,7 @@ export default function JoinPage() {
           </div>
 
           <div className="space-y-2.5">
-            {FAQS.map((faq, idx) => (
+            {faqsList.map((faq, idx) => (
               <div
                 key={idx}
                 className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs"

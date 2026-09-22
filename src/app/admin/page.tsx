@@ -44,6 +44,7 @@ import {
   Sliders,
   Database,
   Check,
+  Building2,
 } from "lucide-react";
 import {
   isFirebaseConfigured,
@@ -60,6 +61,10 @@ import {
   INITIAL_MAGAZINES,
   INITIAL_DOCUMENTS,
   INITIAL_LEADERSHIP,
+  INITIAL_CLUB_PROFILE,
+  INITIAL_HERO_SLIDES,
+  INITIAL_TESTIMONIALS,
+  INITIAL_PILLARS,
 } from "@/lib/firebase";
 
 // Types
@@ -175,6 +180,10 @@ export default function AdminPage() {
   // Navigation Tab State
   const [activeTab, setActiveTab] = useState<
     | "overview"
+    | "club_profile"
+    | "hero_slides"
+    | "pillars"
+    | "testimonials"
     | "announcements"
     | "events"
     | "projects"
@@ -188,6 +197,10 @@ export default function AdminPage() {
   >("overview");
 
   // App Data State
+  const [clubProfile, setClubProfile] = useState<any>(INITIAL_CLUB_PROFILE);
+  const [heroSlidesList, setHeroSlidesList] = useState<any[]>(INITIAL_HERO_SLIDES);
+  const [testimonialsList, setTestimonialsList] = useState<any[]>(INITIAL_TESTIMONIALS);
+  const [pillarsList, setPillarsList] = useState<any[]>(INITIAL_PILLARS);
   const [announcements, setAnnouncements] = useState<Announcement[]>(INITIAL_ANNOUNCEMENTS);
   const [events, setEvents] = useState<EventItem[]>(INITIAL_EVENTS);
   const [projects, setProjects] = useState<ProjectItem[]>(INITIAL_PROJECTS);
@@ -316,6 +329,18 @@ export default function AdminPage() {
 
   const loadAllCloudData = () => {
     if (isFirebaseConfigured()) {
+      getFirestoreDoc<any>("settings", "club_profile", INITIAL_CLUB_PROFILE).then((data) => {
+        if (data && data.name) setClubProfile(data);
+      });
+      getFirestoreDoc<any>("settings", "hero_slides", { slides: INITIAL_HERO_SLIDES }).then((data) => {
+        if (data && data.slides) setHeroSlidesList(data.slides);
+      });
+      getFirestoreDoc<any>("settings", "testimonials", { testimonials: INITIAL_TESTIMONIALS }).then((data) => {
+        if (data && data.testimonials) setTestimonialsList(data.testimonials);
+      });
+      getFirestoreDoc<any>("settings", "pillars", { pillars: INITIAL_PILLARS }).then((data) => {
+        if (data && data.pillars) setPillarsList(data.pillars);
+      });
       getFirestoreCollection<Announcement>("announcements", INITIAL_ANNOUNCEMENTS).then((data) => {
         if (data && data.length > 0) setAnnouncements(data);
       });
@@ -347,6 +372,31 @@ export default function AdminPage() {
         setInquiries(data || []);
       });
     }
+  };
+
+  const handleSaveClubProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const ok = await saveFirestoreDoc("settings", "club_profile", clubProfile);
+    if (ok) showToast("Club Profile and Contact Info saved successfully!");
+    else showToast("Failed to save club profile.");
+  };
+
+  const handleSaveHeroSlides = async () => {
+    const ok = await saveFirestoreDoc("settings", "hero_slides", { slides: heroSlidesList });
+    if (ok) showToast("Hero Carousel Slides saved successfully!");
+    else showToast("Failed to save hero slides.");
+  };
+
+  const handleSaveTestimonials = async () => {
+    const ok = await saveFirestoreDoc("settings", "testimonials", { testimonials: testimonialsList });
+    if (ok) showToast("Testimonials saved successfully!");
+    else showToast("Failed to save testimonials.");
+  };
+
+  const handleSavePillars = async () => {
+    const ok = await saveFirestoreDoc("settings", "pillars", { pillars: pillarsList });
+    if (ok) showToast("Service Pillars saved successfully!");
+    else showToast("Failed to save pillars.");
   };
 
   // One-click Seed Firebase
@@ -1040,6 +1090,10 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1 py-2 text-xs font-semibold">
           {[
             { id: "overview", label: "Overview", icon: Layers },
+            { id: "club_profile", label: "Club Profile & Contact", icon: Building2 },
+            { id: "hero_slides", label: `Hero Slides (${heroSlidesList.length})`, icon: Sparkles },
+            { id: "pillars", label: `Pillars (${pillarsList.length})`, icon: Award },
+            { id: "testimonials", label: `Testimonials (${testimonialsList.length})`, icon: MessageSquare },
             { id: "announcements", label: `Announcements (${announcements.length})`, icon: Megaphone },
             { id: "events", label: `Events (${events.length})`, icon: Calendar },
             { id: "projects", label: `Projects (${projects.length})`, icon: FolderKanban },
@@ -1049,7 +1103,7 @@ export default function AdminPage() {
             { id: "gallery", label: `Gallery (${gallery.length})`, icon: ImageIcon },
             { id: "stats", label: "Impact Stats", icon: Sliders },
             { id: "members", label: `Applicants (${members.length})`, icon: UserCheck },
-            { id: "inquiries", label: `Inquiries (${inquiries.length})`, icon: MessageSquare },
+            { id: "inquiries", label: `Inquiries (${inquiries.length})`, icon: Mail },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -1110,13 +1164,15 @@ export default function AdminPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
               {[
                 { label: "Active Projects", count: projects.length, tab: "projects", icon: FolderKanban, color: "text-blue-600", bg: "bg-blue-50" },
+                { label: "Hero Slides", count: heroSlidesList.length, tab: "hero_slides", icon: Sparkles, color: "text-amber-600", bg: "bg-amber-50" },
+                { label: "Service Pillars", count: pillarsList.length, tab: "pillars", icon: Award, color: "text-emerald-600", bg: "bg-emerald-50" },
+                { label: "Testimonials", count: testimonialsList.length, tab: "testimonials", icon: MessageSquare, color: "text-cyan-600", bg: "bg-cyan-50" },
                 { label: "Announcements", count: announcements.length, tab: "announcements", icon: Megaphone, color: "text-purple-600", bg: "bg-purple-50" },
-                { label: "Events Scheduled", count: events.length, tab: "events", icon: Calendar, color: "text-amber-600", bg: "bg-amber-50" },
-                { label: "Publications", count: magazines.length, tab: "magazines", icon: BookOpen, color: "text-emerald-600", bg: "bg-emerald-50" },
+                { label: "Events Scheduled", count: events.length, tab: "events", icon: Calendar, color: "text-rose-600", bg: "bg-rose-50" },
+                { label: "Publications", count: magazines.length, tab: "magazines", icon: BookOpen, color: "text-blue-600", bg: "bg-blue-50" },
                 { label: "Brand Documents", count: documents.length, tab: "documents", icon: FileText, color: "text-indigo-600", bg: "bg-indigo-50" },
                 { label: "Gallery Photos", count: gallery.length, tab: "gallery", icon: ImageIcon, color: "text-pink-600", bg: "bg-pink-50" },
-                { label: "Member Applicants", count: members.length, tab: "members", icon: UserCheck, color: "text-cyan-600", bg: "bg-cyan-50" },
-                { label: "Contact Inquiries", count: inquiries.length, tab: "inquiries", icon: MessageSquare, color: "text-rose-600", bg: "bg-rose-50" },
+                { label: "Member Applicants", count: members.length, tab: "members", icon: UserCheck, color: "text-emerald-600", bg: "bg-emerald-50" },
               ].map((card) => {
                 const Icon = card.icon;
                 return (
@@ -1139,6 +1195,555 @@ export default function AdminPage() {
               })}
             </div>
 
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB: CLUB PROFILE & CONTACT                                                    */}
+        {/* ============================================================================== */}
+        {activeTab === "club_profile" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 font-heading">Club Profile &amp; Contact Information</h2>
+              <p className="text-xs text-slate-500">Live identity, secretariat contact numbers, meeting times, and social channels stored in Firestore.</p>
+            </div>
+
+            <form onSubmit={handleSaveClubProfile} className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-xs">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Official Club Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={clubProfile.name || ""}
+                    onChange={(e) => setClubProfile({ ...clubProfile, name: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Short Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={clubProfile.shortName || ""}
+                    onChange={(e) => setClubProfile({ ...clubProfile, shortName: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">District</label>
+                  <input
+                    type="text"
+                    required
+                    value={clubProfile.district || ""}
+                    onChange={(e) => setClubProfile({ ...clubProfile, district: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Sponsoring Lions Club</label>
+                  <input
+                    type="text"
+                    required
+                    value={clubProfile.sponsoringLionsClub || ""}
+                    onChange={(e) => setClubProfile({ ...clubProfile, sponsoringLionsClub: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <label className="text-xs font-bold text-slate-700">Tagline</label>
+                  <input
+                    type="text"
+                    value={clubProfile.tagline || ""}
+                    onChange={(e) => setClubProfile({ ...clubProfile, tagline: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <label className="text-xs font-bold text-slate-700">Description</label>
+                  <textarea
+                    rows={3}
+                    value={clubProfile.description || ""}
+                    onChange={(e) => setClubProfile({ ...clubProfile, description: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 space-y-4">
+                <h3 className="text-sm font-bold text-slate-900 font-heading">Secretariat &amp; Contact Coordinates</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">Official Email</label>
+                    <input
+                      type="email"
+                      value={clubProfile.contact?.email || ""}
+                      onChange={(e) => setClubProfile({ ...clubProfile, contact: { ...clubProfile.contact, email: e.target.value } })}
+                      className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">Hotline Phone</label>
+                    <input
+                      type="text"
+                      value={clubProfile.contact?.phone || ""}
+                      onChange={(e) => setClubProfile({ ...clubProfile, contact: { ...clubProfile.contact, phone: e.target.value } })}
+                      className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-xs font-bold text-slate-700">Campus Address</label>
+                    <input
+                      type="text"
+                      value={clubProfile.contact?.address || ""}
+                      onChange={(e) => setClubProfile({ ...clubProfile, contact: { ...clubProfile.contact, address: e.target.value } })}
+                      className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-xs font-bold text-slate-700">Meeting Schedule</label>
+                    <input
+                      type="text"
+                      value={clubProfile.contact?.meetingSchedule || ""}
+                      onChange={(e) => setClubProfile({ ...clubProfile, contact: { ...clubProfile.contact, meetingSchedule: e.target.value } })}
+                      className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 space-y-4">
+                <h3 className="text-sm font-bold text-slate-900 font-heading">Social Media Links</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">Facebook Page URL</label>
+                    <input
+                      type="url"
+                      value={clubProfile.contact?.socials?.facebook || ""}
+                      onChange={(e) => setClubProfile({
+                        ...clubProfile,
+                        contact: {
+                          ...clubProfile.contact,
+                          socials: { ...clubProfile.contact?.socials, facebook: e.target.value }
+                        }
+                      })}
+                      className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">Instagram Handle/URL</label>
+                    <input
+                      type="url"
+                      value={clubProfile.contact?.socials?.instagram || ""}
+                      onChange={(e) => setClubProfile({
+                        ...clubProfile,
+                        contact: {
+                          ...clubProfile.contact,
+                          socials: { ...clubProfile.contact?.socials, instagram: e.target.value }
+                        }
+                      })}
+                      className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">LinkedIn Company Page</label>
+                    <input
+                      type="url"
+                      value={clubProfile.contact?.socials?.linkedin || ""}
+                      onChange={(e) => setClubProfile({
+                        ...clubProfile,
+                        contact: {
+                          ...clubProfile.contact,
+                          socials: { ...clubProfile.contact?.socials, linkedin: e.target.value }
+                        }
+                      })}
+                      className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">YouTube Channel URL</label>
+                    <input
+                      type="url"
+                      value={clubProfile.contact?.socials?.youtube || ""}
+                      onChange={(e) => setClubProfile({
+                        ...clubProfile,
+                        contact: {
+                          ...clubProfile.contact,
+                          socials: { ...clubProfile.contact?.socials, youtube: e.target.value }
+                        }
+                      })}
+                      className="w-full p-2.5 text-xs bg-slate-50 border rounded-xl"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100">
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save Club Profile &amp; Contact</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB: HERO CAROUSEL SLIDES                                                      */}
+        {/* ============================================================================== */}
+        {activeTab === "hero_slides" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Homepage Hero Carousel Slides</h2>
+                <p className="text-xs text-slate-500">Add, edit, or remove the background slides displayed on the main landing page.</p>
+              </div>
+              <button
+                onClick={() => {
+                  setHeroSlidesList([
+                    ...heroSlidesList,
+                    {
+                      id: Date.now(),
+                      tag: "NEW INITIATIVE",
+                      title: "New Highlight Title",
+                      subtitle: "Brief description of the initiative or campaign",
+                      image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85",
+                    },
+                  ]);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Slide</span>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {heroSlidesList.map((slide, sIdx) => (
+                <div key={slide.id || sIdx} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#003B99]">Slide #{sIdx + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setHeroSlidesList(heroSlidesList.filter((_, idx) => idx !== sIdx));
+                      }}
+                      className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                      title="Delete Slide"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-slate-700">Top Tag</label>
+                      <input
+                        type="text"
+                        value={slide.tag || ""}
+                        onChange={(e) => {
+                          const updated = [...heroSlidesList];
+                          updated[sIdx].tag = e.target.value;
+                          setHeroSlidesList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-slate-700">Headline Title</label>
+                      <input
+                        type="text"
+                        value={slide.title || ""}
+                        onChange={(e) => {
+                          const updated = [...heroSlidesList];
+                          updated[sIdx].title = e.target.value;
+                          setHeroSlidesList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-slate-700">Subtitle</label>
+                      <input
+                        type="text"
+                        value={slide.subtitle || ""}
+                        onChange={(e) => {
+                          const updated = [...heroSlidesList];
+                          updated[sIdx].subtitle = e.target.value;
+                          setHeroSlidesList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-slate-700">Image URL</label>
+                      <input
+                        type="text"
+                        value={slide.image || ""}
+                        onChange={(e) => {
+                          const updated = [...heroSlidesList];
+                          updated[sIdx].image = e.target.value;
+                          setHeroSlidesList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={handleSaveHeroSlides}
+                  className="px-6 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save All Hero Slides</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB: SERVICE PILLARS                                                           */}
+        {/* ============================================================================== */}
+        {activeTab === "pillars" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Core Service Pillars</h2>
+                <p className="text-xs text-slate-500">Service domains displayed on the homepage causes grid.</p>
+              </div>
+              <button
+                onClick={() => {
+                  setPillarsList([
+                    ...pillarsList,
+                    {
+                      id: `pillar-${Date.now()}`,
+                      title: "New Service Pillar",
+                      tagline: "Inspiring action across communities",
+                      description: "Brief summary of projects and activities in this pillar domain.",
+                      icon: "HeartHandshake",
+                      color: "blue",
+                    },
+                  ]);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Pillar</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {pillarsList.map((pillar, pIdx) => (
+                <div key={pillar.id || pIdx} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#003B99]">Pillar #{pIdx + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPillarsList(pillarsList.filter((_, idx) => idx !== pIdx));
+                      }}
+                      className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                      title="Delete Pillar"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-700">Title</label>
+                        <input
+                          type="text"
+                          value={pillar.title || ""}
+                          onChange={(e) => {
+                            const updated = [...pillarsList];
+                            updated[pIdx].title = e.target.value;
+                            setPillarsList(updated);
+                          }}
+                          className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-700">Tagline</label>
+                        <input
+                          type="text"
+                          value={pillar.tagline || ""}
+                          onChange={(e) => {
+                            const updated = [...pillarsList];
+                            updated[pIdx].tagline = e.target.value;
+                            setPillarsList(updated);
+                          }}
+                          className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-slate-700">Description</label>
+                      <textarea
+                        rows={2}
+                        value={pillar.description || ""}
+                        onChange={(e) => {
+                          const updated = [...pillarsList];
+                          updated[pIdx].description = e.target.value;
+                          setPillarsList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={handleSavePillars}
+                className="px-6 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save All Service Pillars</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================================== */}
+        {/* TAB: TESTIMONIALS                                                              */}
+        {/* ============================================================================== */}
+        {activeTab === "testimonials" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 font-heading">Member Reflections &amp; Testimonials</h2>
+                <p className="text-xs text-slate-500">Undergraduate reflections, leader quotes, and advisor testimonials.</p>
+              </div>
+              <button
+                onClick={() => {
+                  setTestimonialsList([
+                    ...testimonialsList,
+                    {
+                      id: `test-${Date.now()}`,
+                      quote: "Being a Leo gave me purpose and the opportunity to lead transformative projects.",
+                      author: "Leo Member Name",
+                      role: "Director of Portfolio (2024/25)",
+                      faculty: "Faculty of Applied Sciences",
+                      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80",
+                      tag: "LEADERSHIP & SERVICE",
+                    },
+                  ]);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Testimonial</span>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {testimonialsList.map((test, tIdx) => (
+                <div key={test.id || tIdx} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#003B99]">Testimonial #{tIdx + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTestimonialsList(testimonialsList.filter((_, idx) => idx !== tIdx));
+                      }}
+                      className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                      title="Delete Testimonial"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-slate-700">Author Name</label>
+                      <input
+                        type="text"
+                        value={test.author || ""}
+                        onChange={(e) => {
+                          const updated = [...testimonialsList];
+                          updated[tIdx].author = e.target.value;
+                          setTestimonialsList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-slate-700">Designation / Role</label>
+                      <input
+                        type="text"
+                        value={test.role || ""}
+                        onChange={(e) => {
+                          const updated = [...testimonialsList];
+                          updated[tIdx].role = e.target.value;
+                          setTestimonialsList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-slate-700">Faculty / Advisory Body</label>
+                      <input
+                        type="text"
+                        value={test.faculty || ""}
+                        onChange={(e) => {
+                          const updated = [...testimonialsList];
+                          updated[tIdx].faculty = e.target.value;
+                          setTestimonialsList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-bold text-slate-700">Avatar Image URL</label>
+                      <input
+                        type="text"
+                        value={test.avatar || ""}
+                        onChange={(e) => {
+                          const updated = [...testimonialsList];
+                          updated[tIdx].avatar = e.target.value;
+                          setTestimonialsList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <label className="text-[11px] font-bold text-slate-700">Quote / Reflection</label>
+                      <textarea
+                        rows={3}
+                        value={test.quote || ""}
+                        onChange={(e) => {
+                          const updated = [...testimonialsList];
+                          updated[tIdx].quote = e.target.value;
+                          setTestimonialsList(updated);
+                        }}
+                        className="w-full p-2 text-xs bg-slate-50 border rounded-xl"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={handleSaveTestimonials}
+                className="px-6 py-2.5 bg-[#003B99] hover:bg-[#002D7A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save All Testimonials</span>
+              </button>
+            </div>
           </div>
         )}
 

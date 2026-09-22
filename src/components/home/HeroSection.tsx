@@ -14,57 +14,36 @@ import {
 } from "lucide-react";
 import { useClub } from "@/context/ClubContext";
 
-const HERO_SLIDES = [
-  {
-    id: 1,
-    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85",
-    tag: "UVA WELLASSA UNIVERSITY",
-    title: "Undergraduates Leading Through Service",
-    subtitle: "Fostering leadership, fellowship, and social responsibility",
-  },
-  {
-    id: 2,
-    image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=85",
-    tag: "PROJECT SIPNANA",
-    title: "Rural School Upliftment in Uva",
-    subtitle: "Distributing books, stationery & STEM support in Passara",
-  },
-  {
-    id: 3,
-    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=85",
-    tag: "ENVIRONMENT & GREEN UVA",
-    title: "Central Highlands Reforestation Drive",
-    subtitle: "Preserving biodiversity & water catchments across Badulla",
-  },
-  {
-    id: 4,
-    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=85",
-    tag: "COMMUNITY HEALTHCARE",
-    title: "UWU Annual Mega Blood Donation",
-    subtitle: "Replenishing critical reserves for Badulla Teaching Hospital",
-  },
-];
-
 export default function HeroSection() {
-  const { club } = useClub();
+  const { club, heroSlides } = useClub();
+  const slides = heroSlides && heroSlides.length > 0 ? heroSlides : [];
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   // Auto-advance carousel
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || slides.length === 0) return;
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 4500);
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, slides.length]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    if (slides.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+    if (slides.length === 0) return;
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const activeSlide = slides[currentSlide] || slides[0] || {
+    tag: "UWU LEOS",
+    title: "Undergraduates Leading Through Service",
+    subtitle: "Fostering leadership, fellowship, and social responsibility",
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85",
   };
 
   return (
@@ -159,9 +138,9 @@ export default function HeroSection() {
             <div className="relative mx-auto rounded-xl overflow-hidden shadow-xl border-2 sm:border-4 border-white bg-[#082E6E] w-full max-w-md lg:max-w-none h-[290px] sm:h-[400px] lg:h-[480px]">
               
               {/* Slides */}
-              {HERO_SLIDES.map((slide, idx) => (
+              {slides.map((slide, idx) => (
                 <div
-                  key={slide.id}
+                  key={slide.id || idx}
                   className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
                     idx === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
                   }`}
@@ -196,7 +175,7 @@ export default function HeroSection() {
 
               {/* Top Slide Counter Badge */}
               <div className="absolute top-2.5 sm:top-4 right-2.5 sm:right-4 z-20 px-2 py-0.5 sm:px-3 sm:py-1 rounded-md bg-black/40 backdrop-blur-md border border-white/20 text-white text-[9px] sm:text-[11px] font-bold tracking-widest">
-                0{currentSlide + 1} / 0{HERO_SLIDES.length}
+                0{currentSlide + 1} / 0{slides.length}
               </div>
 
               {/* Bottom Glass Caption Card */}
@@ -204,13 +183,13 @@ export default function HeroSection() {
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <div className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-leo-cyan truncate">
-                      {HERO_SLIDES[currentSlide].tag}
+                      {activeSlide.tag}
                     </div>
                     <div className="font-heading font-extrabold text-xs sm:text-base text-[#111827] truncate">
-                      {HERO_SLIDES[currentSlide].title}
+                      {activeSlide.title}
                     </div>
                     <div className="text-[10px] sm:text-xs text-slate-500 truncate">
-                      {HERO_SLIDES[currentSlide].subtitle}
+                      {activeSlide.subtitle}
                     </div>
                   </div>
 
@@ -221,7 +200,7 @@ export default function HeroSection() {
 
                 {/* Carousel Indicator Dots */}
                 <div className="flex items-center gap-1.5 pt-2 sm:pt-3 mt-2 border-t border-slate-100">
-                  {HERO_SLIDES.map((_, dotIdx) => (
+                  {slides.map((_, dotIdx) => (
                     <button
                       key={dotIdx}
                       type="button"
