@@ -2,12 +2,18 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { UwuLeoOfficialLogo, LionsEmblemSvg } from "@/components/ui/BrandingLogos";
 import { Mail, Phone, MapPin, ArrowUpRight, Heart } from "lucide-react";
 import { useClub } from "@/context/ClubContext";
 
 export default function Footer() {
+  const pathname = usePathname();
   const { club } = useClub();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <footer className="bg-[#050E21] text-slate-400 border-t border-white/10 pt-10 sm:pt-12 pb-8">

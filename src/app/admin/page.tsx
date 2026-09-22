@@ -46,6 +46,7 @@ import {
   Check,
   Building2,
 } from "lucide-react";
+import { UwuLeoOfficialLogo } from "@/components/ui/BrandingLogos";
 import {
   isFirebaseConfigured,
   getFirestoreCollection,
@@ -1025,59 +1026,70 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* Top Admin Header Bar */}
-      <header className="bg-[#050E21] text-white border-b border-white/10 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      {/* Top Admin Header Bar (Clean White) */}
+      <header className="bg-white text-slate-900 border-b border-slate-200/80 sticky top-0 z-40 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
           
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#003B99] to-[#00A3E0] flex items-center justify-center font-bold text-white shadow-xs">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
+          {/* Official Brand Logo & Identity */}
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            <Link href="/" className="shrink-0 hover:opacity-90 transition-opacity">
+              <UwuLeoOfficialLogo
+                className="h-10 sm:h-12 w-auto"
+                theme="dark"
+              />
+            </Link>
+
+            <div className="h-8 w-px bg-slate-200 hidden sm:block shrink-0" />
+
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="font-heading font-extrabold text-sm sm:text-base tracking-tight text-white">
-                  UWU Leos Admin Hub
+                <span className="font-heading font-extrabold text-sm sm:text-base text-slate-900 tracking-tight truncate">
+                  Officer CMS Hub
                 </span>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider ${
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider ${
                   isFirebaseConfigured()
-                    ? "bg-emerald-900/80 text-emerald-300 border border-emerald-500/40"
-                    : "bg-amber-900/80 text-amber-300 border border-amber-500/40"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : "bg-amber-50 text-amber-700 border border-amber-200"
                 }`}>
-                  {isFirebaseConfigured() ? "Firebase Live" : "Local Mock"}
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                  </span>
+                  <span>{isFirebaseConfigured() ? "Firestore Live" : "Local Mock"}</span>
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 hidden sm:block">
-                District 306 D10 • Content &amp; Membership Management
+              <p className="text-[11px] text-slate-500 hidden sm:block truncate">
+                Leo District 306 D10 • Content &amp; Membership Database
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Seed Database Button */}
             <button
               onClick={handleSeedDatabase}
               disabled={isSeeding}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/10 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#003B99] text-xs font-bold border border-blue-200/80 transition-all shadow-xs"
               title="Seed all initial datasets to Firebase Firestore"
             >
-              <Database className={`w-3.5 h-3.5 text-leo-cyan ${isSeeding ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">{isSeeding ? "Seeding..." : "Seed Firebase"}</span>
+              <Database className={`w-3.5 h-3.5 text-[#003B99] ${isSeeding ? "animate-spin" : ""}`} />
+              <span className="hidden md:inline">{isSeeding ? "Seeding..." : "Seed Database"}</span>
             </button>
 
             <Link
               href="/"
-              target="_blank"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100/80 hover:bg-slate-200/80 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors"
             >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">View Site</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+              <span className="hidden sm:inline">View Live Site</span>
             </Link>
 
             <button
               onClick={handleLogout}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-xs font-semibold border border-rose-500/30 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold border border-rose-200 transition-colors"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-3.5 h-3.5 text-rose-500" />
               <span>Logout</span>
             </button>
           </div>
@@ -1085,43 +1097,45 @@ export default function AdminPage() {
         </div>
       </header>
 
-      {/* Navigation Tabs Header */}
-      <div className="bg-white border-b border-slate-200 shadow-xs sticky top-16 z-30 overflow-x-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1 py-2 text-xs font-semibold">
-          {[
-            { id: "overview", label: "Overview", icon: Layers },
-            { id: "club_profile", label: "Club Profile & Contact", icon: Building2 },
-            { id: "hero_slides", label: `Hero Slides (${heroSlidesList.length})`, icon: Sparkles },
-            { id: "pillars", label: `Pillars (${pillarsList.length})`, icon: Award },
-            { id: "testimonials", label: `Testimonials (${testimonialsList.length})`, icon: MessageSquare },
-            { id: "announcements", label: `Announcements (${announcements.length})`, icon: Megaphone },
-            { id: "events", label: `Events (${events.length})`, icon: Calendar },
-            { id: "projects", label: `Projects (${projects.length})`, icon: FolderKanban },
-            { id: "magazines", label: `Magazines (${magazines.length})`, icon: BookOpen },
-            { id: "documents", label: `Brand & Forms (${documents.length})`, icon: FileText },
-            { id: "leadership", label: "Leadership Board", icon: Users },
-            { id: "gallery", label: `Gallery (${gallery.length})`, icon: ImageIcon },
-            { id: "stats", label: "Impact Stats", icon: Sliders },
-            { id: "members", label: `Applicants (${members.length})`, icon: UserCheck },
-            { id: "inquiries", label: `Inquiries (${inquiries.length})`, icon: Mail },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl whitespace-nowrap transition-all ${
-                  isActive
-                    ? "bg-[#003B99] text-white shadow-xs font-bold"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-400"}`} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
+      {/* Navigation Tabs Header (Clean scrollable bar without ugly scrollbar) */}
+      <div className="bg-[#F8FAFC] border-b border-slate-200/90 shadow-2xs sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-1.5 py-2.5 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {[
+              { id: "overview", label: "Overview", icon: Layers },
+              { id: "club_profile", label: "Club Profile & Contact", icon: Building2 },
+              { id: "hero_slides", label: `Hero Slides (${heroSlidesList.length})`, icon: Sparkles },
+              { id: "pillars", label: `Pillars (${pillarsList.length})`, icon: Award },
+              { id: "testimonials", label: `Testimonials (${testimonialsList.length})`, icon: MessageSquare },
+              { id: "announcements", label: `Announcements (${announcements.length})`, icon: Megaphone },
+              { id: "events", label: `Events (${events.length})`, icon: Calendar },
+              { id: "projects", label: `Projects (${projects.length})`, icon: FolderKanban },
+              { id: "magazines", label: `Magazines (${magazines.length})`, icon: BookOpen },
+              { id: "documents", label: `Brand & Forms (${documents.length})`, icon: FileText },
+              { id: "leadership", label: "Leadership Board", icon: Users },
+              { id: "gallery", label: `Gallery (${gallery.length})`, icon: ImageIcon },
+              { id: "stats", label: "Impact Stats", icon: Sliders },
+              { id: "members", label: `Applicants (${members.length})`, icon: UserCheck },
+              { id: "inquiries", label: `Inquiries (${inquiries.length})`, icon: Mail },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs whitespace-nowrap transition-all duration-150 shrink-0 ${
+                    isActive
+                      ? "bg-[#003B99] text-white shadow-xs font-bold"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-400"}`} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -1134,29 +1148,36 @@ export default function AdminPage() {
         {activeTab === "overview" && (
           <div className="space-y-8 animate-in fade-in duration-200">
             
-            {/* Banner */}
-            <div className="bg-gradient-to-r from-[#003B99] to-[#00A3E0] rounded-2xl p-6 sm:p-8 text-white shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-2 max-w-2xl">
-                <span className="text-[11px] font-mono font-bold uppercase tracking-wider bg-white/20 px-2.5 py-1 rounded-md">
-                  Leistic Administration 2024/2025
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold font-heading">
-                  Welcome to UWU Leos Content Control
-                </h2>
-                <p className="text-xs sm:text-sm text-blue-100 leading-relaxed font-normal">
-                  All updates made in this portal are synchronized directly with Google Firebase Firestore, reflecting instantly on the public website.
-                </p>
-              </div>
+            {/* Executive Welcome Banner */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-[#050E21] via-[#003B99] to-[#002266] rounded-2xl p-6 sm:p-10 text-white shadow-lg border border-slate-800">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-leo-cyan/15 rounded-full blur-3xl pointer-events-none" />
+              
+              <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div className="space-y-2.5 max-w-2xl">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-white/10 border border-white/15 text-[10px] font-mono font-bold tracking-wider text-leo-cyan uppercase">
+                    <Sparkles className="w-3 h-3 text-leo-cyan" />
+                    <span>UWU Leos Cloud Control • District 306 D10</span>
+                  </div>
+                  
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-heading text-white tracking-tight">
+                    Welcome to Content Control
+                  </h2>
+                  
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                    All updates made in this portal synchronize in real-time with Google Firebase Firestore (<code className="font-mono text-leo-cyan">uwu-leo</code>), reflecting immediately on the public website.
+                  </p>
+                </div>
 
-              <div className="shrink-0 flex flex-wrap items-center gap-3">
-                <button
-                  onClick={handleSeedDatabase}
-                  disabled={isSeeding}
-                  className="px-4 py-2.5 rounded-xl bg-white text-[#003B99] hover:bg-blue-50 font-bold text-xs shadow-xs transition-colors flex items-center gap-2"
-                >
-                  <Database className="w-4 h-4" />
-                  <span>{isSeeding ? "Seeding Database..." : "Seed All Data into Firebase"}</span>
-                </button>
+                <div className="shrink-0 flex flex-wrap items-center gap-3">
+                  <button
+                    onClick={handleSeedDatabase}
+                    disabled={isSeeding}
+                    className="px-5 py-3 rounded-xl bg-white text-[#003B99] hover:bg-slate-50 font-bold text-xs shadow-md transition-all flex items-center gap-2 hover:scale-[1.02] active:scale-95"
+                  >
+                    <Database className={`w-4 h-4 ${isSeeding ? "animate-spin" : ""}`} />
+                    <span>{isSeeding ? "Seeding Database..." : "Seed Initial Datasets into Firebase"}</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1179,10 +1200,10 @@ export default function AdminPage() {
                   <div
                     key={card.label}
                     onClick={() => setActiveTab(card.tab as any)}
-                    className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md hover:border-slate-300 transition-all cursor-pointer flex flex-col justify-between"
+                    className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md hover:border-[#003B99]/40 transition-all cursor-pointer flex flex-col justify-between group"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-semibold text-slate-500">{card.label}</span>
+                      <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-800 transition-colors">{card.label}</span>
                       <div className={`w-8 h-8 rounded-lg ${card.bg} ${card.color} flex items-center justify-center shrink-0`}>
                         <Icon className="w-4 h-4" />
                       </div>
